@@ -1,0 +1,101 @@
+[
+  {
+    "id": "S01",
+    "title": "الفحوصات الدورية لمريض السكري",
+    "url": "https://www.moh.gov.sa/healthawareness/educationalcontent/diseases/diabetic/pages/periodic-check-ups-for-diabetic-patients.aspx",
+    "issuer": "وزارة الصحة السعودية",
+    "host": "Saudi Ministry of Health",
+    "version": "تعديل المحتوى: 13 صفر 1445 هـ",
+    "verified_on": "2026-11-01",
+    "locator": "الفحوصات الدورية لمرضى السكري",
+    "limitation_ar": "تاريخ تحديث تذييل الموقع ليس تاريخ تحديث التوصية الطبية. توقيت العين يختلف عن مصادر أخرى."
+  },
+  {
+    "id": "S02",
+    "title": "Saudi Diabetes Clinical Practice Guidelines",
+    "url": "https://www.moh.gov.sa/Ministry/MediaCenter/Publications/Documents/Saudi-Diabetes-Clinical-Practice-Guidelines.pdf",
+    "issuer": "Saudi National Diabetes Center / Saudi Health Council",
+    "host": "Saudi Ministry of Health",
+    "version": "First Edition 2021",
+    "verified_on": "2026-11-01",
+    "locator": "PDF pp. 53, 80–84",
+    "limitation_ar": "منشور لدى الوزارة؛ الجهة المصدرة هي المركز الوطني للسكري بالمجلس الصحي السعودي. لم يثبت أنه أحدث إصدار."
+  },
+  {
+    "id": "S03",
+    "title": "Diabetes Pharmacotherapy Clinic Guideline (Protocol-018)",
+    "url": "https://www.moh.gov.sa/Ministry/MediaCenter/Publications/Documents/Protocol-018.pdf",
+    "issuer": "وزارة الصحة / الإدارة العامة للرعاية الصيدلية",
+    "host": "Saudi Ministry of Health",
+    "version": "ينص الملف على أن النسخة الأولى أُنشئت عام 2020",
+    "verified_on": "2026-11-01",
+    "locator": "PDF pp. 4, 26–27",
+    "limitation_ar": "السياق عيادات السكري؛ لا تعمم قواعده الدوائية على كل المستخدمين دون اعتماد. ذكر تحديث سنوي لا يثبت أن الملف محدّث سنويًا."
+  },
+  {
+    "id": "S04",
+    "title": "Cardiometabolic Risk Management Guidelines in Primary Care",
+    "url": "https://www.moh.gov.sa/Ministry/About/Health%20Policies/026.pdf",
+    "issuer": "وزارة الصحة السعودية",
+    "host": "Saudi Ministry of Health",
+    "version": "Third Edition, 2013",
+    "verified_on": "2026-11-01",
+    "locator": "PDF pp. 5, 16, 35–36, 52, 55–56, 69",
+    "limitation_ar": "قديم. توقيتات الضغط ومراقبة الأدوية المستخرجة منه تحتاج مراجعة إصدار أحدث قبل تفعيل الجدولة."
+  },
+  {
+    "id": "S05",
+    "title": "التوعية بارتفاع ضغط الدم",
+    "url": "https://www.moh.gov.sa/awarenessplateform/chronicdisease/pages/hypertension.aspx",
+    "issuer": "وزارة الصحة السعودية",
+    "host": "Saudi Ministry of Health",
+    "version": "تاريخ المحتوى الظاهر: 14/05/2026",
+    "verified_on": "2026-11-01",
+    "locator": "تعليمات قياس ضغط الدم والمضاعفات",
+    "limitation_ar": "تثقيف المريض؛ لا يوفر وحده جدولًا كاملًا للتحاليل الدورية."
+  },
+  {
+    "id": "S06",
+    "title": "تأثير السكري على الكلى",
+    "url": "https://www.moh.gov.sa/healthawareness/educationalcontent/diseases/diabetic/pages/0010.aspx",
+    "issuer": "وزارة الصحة السعودية",
+    "host": "Saudi Ministry of Health",
+    "version": null,
+    "verified_on": "2026-11-01",
+    "locator": "الأعراض؛ تأثير السكري على الكلى",
+    "limitation_ar": "يستخدم للشرح؛ لا يستنتج منه موعد فحص غير منصوص عليه."
+  },
+  {
+    "id": "S07",
+    "title": "تأثير السكري على العين",
+    "url": "https://www.moh.gov.sa/healthawareness/educationalcontent/diseases/diabetic/pages/impact-of-diabetes-on-eyes.aspx",
+    "issuer": "وزارة الصحة السعودية",
+    "host": "Saudi Ministry of Health",
+    "version": "تعديل المحتوى: 15 محرم 1447 هـ",
+    "verified_on": "2026-11-01",
+    "locator": "إرشادات فحص العين لمرض السكري؛ الأعراض",
+    "limitation_ar": "ينص على متابعة سنوية؛ توجد صيغ مختلفة للتكرار في S01 وS02. الحمل مسار خاص."
+  },
+  {
+    "id": "S08",
+    "title": "Anticoagulation Pharmacotherapy Clinic Guideline (Protocol-017)",
+    "url": "https://www.moh.gov.sa/ministry/mediacenter/publications/documents/protocol-017.pdf",
+    "issuer": "وزارة الصحة / الإدارة العامة للرعاية الصيدلية",
+    "host": "Saudi Ministry of Health",
+    "version": null,
+    "verified_on": "2026-11-01",
+    "locator": "PDF p. 6, Table (2) and footnotes",
+    "limitation_ar": "توقيت INR يعتمد على الاستقرار والنتائج وتغييرات العلاج؛ فاصل 12 أسبوعًا ليس قاعدة لكل مستخدم للوارفارين."
+  },
+  {
+    "id": "S09",
+    "title": "Guideline for Management of Rheumatoid Arthritis in Adult Patient (Protocol-014)",
+    "url": "https://www.moh.gov.sa/Ministry/MediaCenter/Publications/Documents/Protocol-014.pdf",
+    "issuer": "وزارة الصحة السعودية",
+    "host": "Saudi Ministry of Health",
+    "version": null,
+    "verified_on": "2026-11-01",
+    "locator": "PDF p. 15, csDMARD monitoring table",
+    "limitation_ar": "قاعدة مراقبة الميثوتريكسات هنا في سياق روماتويد البالغين؛ لا تعمم على استخدامه في الأورام أو بقية الاستطبابات."
+  }
+]

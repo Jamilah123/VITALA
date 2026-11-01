@@ -1,0 +1,12 @@
+# Runtime
+fastapi==0.162.0
+uvicorn==0.54.0
+sqlmodel==0.0.48
+pydantic-settings==2.16.2
+
+# Installed now, used by the later chatbot milestone (not imported yet)
+anthropic==0.125.0
+
+# Tests
+pytest==9.2.0
+httpx==0.28.1

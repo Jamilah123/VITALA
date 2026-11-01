@@ -1,0 +1,727 @@
+[
+  {
+    "id": "DM01",
+    "track": "diabetes",
+    "action_id": "hba1c",
+    "action_name_ar": "السكر التراكمي",
+    "eligibility_ar": "سكري مشخص؛ آخر تراكمي ضمن الهدف الفردي المعتمد",
+    "schedule": {
+      "kind": "interval",
+      "text_ar": "كل 6 أشهر",
+      "unit": "months",
+      "value": 6,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S01",
+        "locator": "فقرة A1C"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "last_hba1c_date",
+      "hba1c_at_individual_target"
+    ],
+    "notes_ar": "لا تفترض أن هدف الجميع 7%. تغير العلاج أو الحالة يحتاج مراجعة.",
+    "review_flags": [
+      "individual_target_required"
+    ],
+    "knowledge_ids": [
+      "K01"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM02",
+    "track": "diabetes",
+    "action_id": "hba1c",
+    "action_name_ar": "السكر التراكمي",
+    "eligibility_ar": "سكري مشخص؛ آخر تراكمي خارج الهدف الفردي المعتمد",
+    "schedule": {
+      "kind": "interval",
+      "text_ar": "كل 3 أشهر",
+      "unit": "months",
+      "value": 3,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S01",
+        "locator": "فقرة A1C"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "last_hba1c_date",
+      "hba1c_at_individual_target"
+    ],
+    "notes_ar": "",
+    "review_flags": [],
+    "knowledge_ids": [
+      "K01"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM03",
+    "track": "diabetes",
+    "action_id": "uacr",
+    "action_name_ar": "نسبة ألبومين البول إلى الكرياتينين UACR",
+    "eligibility_ar": "النوع الثاني، أو النوع الأول بعد مرور 5 سنوات",
+    "schedule": {
+      "kind": "interval",
+      "text_ar": "سنويًا",
+      "unit": "months",
+      "value": 12,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S01",
+        "locator": "فقرة ACR"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "diabetes_diagnosis_date",
+      "last_uacr_date"
+    ],
+    "notes_ar": "تغيير التكرار عند مرض كلوي يحتاج مسارًا فرديًا.",
+    "review_flags": [
+      "renal_disease_exception"
+    ],
+    "knowledge_ids": [
+      "K02"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM04",
+    "track": "diabetes",
+    "action_id": "egfr",
+    "action_name_ar": "وظائف الكلى بالدم / eGFR",
+    "eligibility_ar": "النوع الثاني، أو النوع الأول بعد مرور 5 سنوات",
+    "schedule": {
+      "kind": "interval",
+      "text_ar": "سنويًا في المسار الروتيني",
+      "unit": "months",
+      "value": 12,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S01",
+        "locator": "فقرة وظائف الكلى"
+      },
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 82"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "diabetes_diagnosis_date",
+      "last_egfr_date",
+      "known_kidney_disease"
+    ],
+    "notes_ar": "S01 يذكر مرتين سنويًا عند مشكلة بالكلى؛ S02 يفرق حسب مرحلة المرض. لا تختزل كل مرض كلوي إلى 6 أشهر.",
+    "review_flags": [
+      "renal_disease_exception"
+    ],
+    "knowledge_ids": [
+      "K02"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM05",
+    "track": "diabetes",
+    "action_id": "eye_exam",
+    "action_name_ar": "فحص العين الأولي",
+    "eligibility_ar": "السكري النوع الثاني",
+    "schedule": {
+      "kind": "event",
+      "text_ar": "عند التشخيص",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": "diabetes_diagnosis_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S07",
+        "locator": "إرشادات فحص العين"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "diabetes_diagnosis_date",
+      "previous_eye_exam"
+    ],
+    "notes_ar": "فحص عند التشخيص ليس موعد إعادة الفحص.",
+    "review_flags": [
+      "pregnancy_requires_separate_plan"
+    ],
+    "knowledge_ids": [
+      "K03"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM06",
+    "track": "diabetes",
+    "action_id": "eye_exam",
+    "action_name_ar": "فحص العين الأولي",
+    "eligibility_ar": "السكري النوع الأول",
+    "schedule": {
+      "kind": "within",
+      "text_ar": "خلال 5 سنوات من التشخيص",
+      "unit": "years",
+      "value": 5,
+      "min": null,
+      "max": null,
+      "anchor": "diabetes_diagnosis_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S07",
+        "locator": "إرشادات فحص العين"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "diabetes_diagnosis_date",
+      "previous_eye_exam"
+    ],
+    "notes_ar": "خلال 5 سنوات لا تعني منع الفحص قبلها.",
+    "review_flags": [
+      "pregnancy_requires_separate_plan"
+    ],
+    "knowledge_ids": [
+      "K03"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM07",
+    "track": "diabetes",
+    "action_id": "eye_exam",
+    "action_name_ar": "إعادة فحص العين",
+    "eligibility_ar": "سكري مشخص؛ سبق إجراء الفحص",
+    "schedule": {
+      "kind": "unresolved",
+      "text_ar": "الموعد حسب اعتماد الطبيب؛ اختلاف بين المصادر",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S07",
+        "locator": "الإرشادات: سنويًا"
+      },
+      {
+        "source_id": "S01",
+        "locator": "العين: التكرار حسب النوع"
+      },
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 80"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "last_eye_exam_date",
+      "retinopathy_status",
+      "pregnancy_status",
+      "clinician_next_due_date"
+    ],
+    "notes_ar": "اختلافات التكرار محفوظة في conflicts.json.",
+    "review_flags": [
+      "source_conflict",
+      "clinician_interval_required"
+    ],
+    "knowledge_ids": [
+      "K03"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM08",
+    "track": "diabetes",
+    "action_id": "blood_pressure",
+    "action_name_ar": "قياس ضغط الدم",
+    "eligibility_ar": "سكري مشخص",
+    "schedule": {
+      "kind": "encounter",
+      "text_ar": "في كل زيارة للرعاية الأولية",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S01",
+        "locator": "فقرة قياس ضغط الدم"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "encounter_date"
+    ],
+    "notes_ar": "تكرار مرتبط بزيارة، لا بمدة تقويمية.",
+    "review_flags": [],
+    "knowledge_ids": [
+      "K04"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM09",
+    "track": "diabetes",
+    "action_id": "foot_exam",
+    "action_name_ar": "الفحص السريري للقدم",
+    "eligibility_ar": "سكري مشخص",
+    "schedule": {
+      "kind": "minimum_frequency",
+      "text_ar": "مرة سنويًا على الأقل",
+      "unit": "months",
+      "value": 12,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF pp. 81–82"
+      }
+    ],
+    "required_inputs": [
+      "last_foot_exam_date",
+      "foot_ulcer_history",
+      "high_risk_foot_status"
+    ],
+    "notes_ar": "قد يلزم تكرار أقرب عند الخطورة؛ وجود قرحة أو عدوى ليس تذكيرًا روتينيًا.",
+    "review_flags": [
+      "high_risk_exception"
+    ],
+    "knowledge_ids": [
+      "K05"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "DM10",
+    "track": "diabetes",
+    "action_id": "neuropathy_exam",
+    "action_name_ar": "تقييم الاعتلال العصبي الطرفي",
+    "eligibility_ar": "النوع الثاني من التشخيص؛ النوع الأول يبدأ التقييم خلال 5 سنوات",
+    "schedule": {
+      "kind": "interval",
+      "text_ar": "سنويًا بعد بدء مسار التقييم",
+      "unit": "months",
+      "value": 12,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 81"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_type",
+      "diabetes_diagnosis_date",
+      "last_neuropathy_exam_date"
+    ],
+    "notes_ar": "قد يتداخل مع فحص القدم؛ لا تضاعف الزيارة.",
+    "review_flags": [],
+    "knowledge_ids": [
+      "K05"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN01",
+    "track": "hypertension",
+    "action_id": "bp_followup",
+    "action_name_ar": "متابعة الضغط المستقر",
+    "eligibility_ar": "ضغط مشخص؛ استقرار أكثر من 6 أشهر حسب الدليل القديم",
+    "schedule": {
+      "kind": "interval_range",
+      "text_ar": "كل 3–6 أشهر",
+      "unit": "months",
+      "value": null,
+      "min": 3,
+      "max": 6,
+      "anchor": "last_review_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 52"
+      }
+    ],
+    "required_inputs": [
+      "bp_control_status",
+      "stable_since",
+      "last_review_date"
+    ],
+    "notes_ar": "ليست مدة معتمدة تلقائيًا للنسخة الحالية.",
+    "review_flags": [
+      "legacy_2013",
+      "clinician_interval_required"
+    ],
+    "knowledge_ids": [
+      "K04"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN02",
+    "track": "hypertension",
+    "action_id": "bp_followup",
+    "action_name_ar": "متابعة بعد بدء علاج الضغط",
+    "eligibility_ar": "ضغط مشخص؛ بدء أو تغيير العلاج في سياق الخوارزمية",
+    "schedule": {
+      "kind": "interval_range",
+      "text_ar": "مراجعة خلال 2–4 أسابيع في الخوارزمية القديمة",
+      "unit": "weeks",
+      "value": null,
+      "min": 2,
+      "max": 4,
+      "anchor": "medication_change_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 52"
+      }
+    ],
+    "required_inputs": [
+      "medication_change_date",
+      "bp_control_status"
+    ],
+    "notes_ar": "زيارة متابعة؛ ليست بالضرورة موعد كل تحليل.",
+    "review_flags": [
+      "legacy_2013",
+      "clinician_interval_required"
+    ],
+    "knowledge_ids": [
+      "K04"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN03",
+    "track": "hypertension",
+    "action_id": "annual_htn_review",
+    "action_name_ar": "التقييم الشامل للضغط",
+    "eligibility_ar": "بالغ غير حامل لديه ضغط مشخص",
+    "schedule": {
+      "kind": "interval",
+      "text_ar": "عند التقييم الأولي وسنويًا حسب المصدر القديم",
+      "unit": "months",
+      "value": 12,
+      "min": null,
+      "max": null,
+      "anchor": "last_review_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 16, 35–36"
+      }
+    ],
+    "required_inputs": [
+      "hypertension_diagnosed",
+      "last_review_date"
+    ],
+    "notes_ar": "السجل التالي يبين فحوصات التقييم؛ لا يلزم إجراء كل فحص سنويًا آليًا.",
+    "review_flags": [
+      "legacy_2013"
+    ],
+    "knowledge_ids": [
+      "K04"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN04",
+    "track": "hypertension",
+    "action_id": "egfr",
+    "action_name_ar": "كرياتينين الدم وتقدير وظائف الكلى",
+    "eligibility_ar": "ضمن تقييم مريض الضغط؛ يحدد الطبيب الحاجة والتكرار",
+    "schedule": {
+      "kind": "assessment_component",
+      "text_ar": "مذكور ضمن تقييم الضغط الأولي/السنوي؛ تكرار الفحص نفسه يحتاج اعتمادًا",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 35–36"
+      }
+    ],
+    "required_inputs": [
+      "hypertension_diagnosed",
+      "last_egfr_date",
+      "clinician_next_due_date"
+    ],
+    "notes_ar": "المصدر يدرج أيضًا حمض اليوريك والهيموغلوبين والهيماتوكريت؛ لم تُفعّل كفحوصات دورية للجميع.",
+    "review_flags": [
+      "legacy_2013",
+      "test_specific_interval_unconfirmed"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN05",
+    "track": "hypertension",
+    "action_id": "electrolytes",
+    "action_name_ar": "الصوديوم والبوتاسيوم",
+    "eligibility_ar": "ضمن تقييم مريض الضغط؛ يحدد الطبيب الحاجة والتكرار",
+    "schedule": {
+      "kind": "assessment_component",
+      "text_ar": "مذكور ضمن تقييم الضغط الأولي/السنوي؛ تكرار الفحص نفسه يحتاج اعتمادًا",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 35–36"
+      }
+    ],
+    "required_inputs": [
+      "hypertension_diagnosed",
+      "last_electrolytes_date",
+      "clinician_next_due_date"
+    ],
+    "notes_ar": "المصدر يدرج أيضًا حمض اليوريك والهيموغلوبين والهيماتوكريت؛ لم تُفعّل كفحوصات دورية للجميع.",
+    "review_flags": [
+      "legacy_2013",
+      "test_specific_interval_unconfirmed"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN06",
+    "track": "hypertension",
+    "action_id": "lipid_profile",
+    "action_name_ar": "ملف الدهون",
+    "eligibility_ar": "ضمن تقييم مريض الضغط؛ يحدد الطبيب الحاجة والتكرار",
+    "schedule": {
+      "kind": "assessment_component",
+      "text_ar": "مذكور ضمن تقييم الضغط الأولي/السنوي؛ تكرار الفحص نفسه يحتاج اعتمادًا",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 35–36"
+      }
+    ],
+    "required_inputs": [
+      "hypertension_diagnosed",
+      "last_lipid_profile_date",
+      "clinician_next_due_date"
+    ],
+    "notes_ar": "المصدر يدرج أيضًا حمض اليوريك والهيموغلوبين والهيماتوكريت؛ لم تُفعّل كفحوصات دورية للجميع.",
+    "review_flags": [
+      "legacy_2013",
+      "test_specific_interval_unconfirmed"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN07",
+    "track": "hypertension",
+    "action_id": "fasting_glucose",
+    "action_name_ar": "سكر الدم الصائم",
+    "eligibility_ar": "ضمن تقييم مريض الضغط؛ يحدد الطبيب الحاجة والتكرار",
+    "schedule": {
+      "kind": "assessment_component",
+      "text_ar": "مذكور ضمن تقييم الضغط الأولي/السنوي؛ تكرار الفحص نفسه يحتاج اعتمادًا",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 35–36"
+      }
+    ],
+    "required_inputs": [
+      "hypertension_diagnosed",
+      "last_fasting_glucose_date",
+      "clinician_next_due_date"
+    ],
+    "notes_ar": "المصدر يدرج أيضًا حمض اليوريك والهيموغلوبين والهيماتوكريت؛ لم تُفعّل كفحوصات دورية للجميع.",
+    "review_flags": [
+      "legacy_2013",
+      "test_specific_interval_unconfirmed"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN08",
+    "track": "hypertension",
+    "action_id": "urine_assessment",
+    "action_name_ar": "تحليل البول وتقييم الألبومين",
+    "eligibility_ar": "ضمن تقييم مريض الضغط؛ يحدد الطبيب الحاجة والتكرار",
+    "schedule": {
+      "kind": "assessment_component",
+      "text_ar": "مذكور ضمن تقييم الضغط الأولي/السنوي؛ تكرار الفحص نفسه يحتاج اعتمادًا",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 35–36"
+      }
+    ],
+    "required_inputs": [
+      "hypertension_diagnosed",
+      "last_urine_assessment_date",
+      "clinician_next_due_date"
+    ],
+    "notes_ar": "المصدر يدرج أيضًا حمض اليوريك والهيموغلوبين والهيماتوكريت؛ لم تُفعّل كفحوصات دورية للجميع.",
+    "review_flags": [
+      "legacy_2013",
+      "test_specific_interval_unconfirmed"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "HTN09",
+    "track": "hypertension",
+    "action_id": "ecg",
+    "action_name_ar": "تخطيط القلب ECG",
+    "eligibility_ar": "ضمن تقييم مريض الضغط؛ يحدد الطبيب الحاجة والتكرار",
+    "schedule": {
+      "kind": "assessment_component",
+      "text_ar": "مذكور ضمن تقييم الضغط الأولي/السنوي؛ تكرار الفحص نفسه يحتاج اعتمادًا",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 35–36"
+      }
+    ],
+    "required_inputs": [
+      "hypertension_diagnosed",
+      "last_ecg_date",
+      "clinician_next_due_date"
+    ],
+    "notes_ar": "المصدر يدرج أيضًا حمض اليوريك والهيموغلوبين والهيماتوكريت؛ لم تُفعّل كفحوصات دورية للجميع.",
+    "review_flags": [
+      "legacy_2013",
+      "test_specific_interval_unconfirmed"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  }
+]
