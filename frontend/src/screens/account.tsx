@@ -7,7 +7,6 @@ import { ErrorState, FormError, Loading, SourceBadge, SyntheticDataNotice, useTo
 import { CheckRow, Chip, clearErrorOnEdit, DateField, Field, Modal, SegmentedField, SelectField } from "../components/forms";
 import { IconTile, Pill, Screen, SectionHead } from "../components/layout";
 import { MedicationManager } from "../components/MedicationManager";
-import { CITED_SOURCES } from "../demo/data";
 import { useDemo, type PrivacySetting } from "../demo/store";
 import { ageFrom } from "../lib/dates";
 import {
@@ -162,10 +161,11 @@ export function Account() {
           <Link to="/account/sources" className="card row-card row-card--link">
             <IconTile name="doc" tone="blue" />
             <div className="row-card__body">
-              <strong>المصادر المعتمدة</strong>
-              <span className="muted small">وزارة الصحة · ADA 2026 · ESC 2024</span>
+              <strong>مصادر القواعد</strong>
+              <span className="muted small">مصادر وزارة الصحة التي تستند إليها القواعد المسودة</span>
               <Pill tone="blue">عرض</Pill>
             </div>
+            <SourceBadge kind="live" />
           </Link>
           <button
             type="button"
@@ -418,28 +418,5 @@ function ProfileForm({ patient, onSaved }: { patient: Patient; onSaved: (patient
         {saving ? "جارٍ الحفظ…" : "حفظ الملف"}
       </button>
     </form>
-  );
-}
-
-export function Sources() {
-  return (
-    <Screen
-      title="المصادر المعتمدة"
-      back="/account"
-      demo
-      demoText="هذه الأسماء منقولة من شاشات التصميم مثالاً فقط. مكتبة المصادر والتوصيات لم تُربط بالتطبيق، ولم يراجعها طبيب بعد."
-    >
-      <div className="stack">
-        {CITED_SOURCES.map((source) => (
-          <div key={source.title} className="card row-card">
-            <IconTile name="doc" tone="blue" />
-            <div className="row-card__body">
-              <strong>{source.title}</strong>
-              <span className="muted small">{source.detail}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </Screen>
   );
 }

@@ -111,6 +111,35 @@ export function validateMedication(
   return errors;
 }
 
+export interface ScreeningRecordInput {
+  test_name: string;
+  completed_on: string;
+  result: string;
+  unit: string;
+  notes: string;
+}
+
+/** Data-entry checks only. A result is free text and is never judged. */
+export function validateScreeningRecord(input: ScreeningRecordInput, birth: string | null): FieldErrors {
+  const errors: FieldErrors = {};
+  const name = input.test_name.trim();
+  if (!name) errors.test_name = "اكتبي اسم الفحص كما في التقرير.";
+  else if (name.length > 200) errors.test_name = "يجب ألا يتجاوز الاسم 200 حرف.";
+
+  if (!input.completed_on) errors.completed_on = "أدخلي تاريخ إجراء الفحص.";
+  else {
+    const error = dateError(input.completed_on);
+    if (error) errors.completed_on = error;
+    else if (birth && input.completed_on < birth) errors.completed_on = "لا يمكن أن يسبق التاريخ تاريخ الميلاد.";
+  }
+
+  if (input.result.trim().length > 100) errors.result = "يجب ألا تتجاوز النتيجة 100 حرف.";
+  if (input.unit.trim().length > 50) errors.unit = "يجب ألا تتجاوز الوحدة 50 حرفاً.";
+  else if (input.unit.trim() && !input.result.trim()) errors.unit = "أدخلي النتيجة قبل الوحدة.";
+  if (input.notes.trim().length > 1000) errors.notes = "يجب ألا تتجاوز الملاحظات 1000 حرف.";
+  return errors;
+}
+
 export function validateResultDate(value: string): string | null {
   if (!value) return "أدخلي تاريخ النتيجة.";
   return dateError(value);

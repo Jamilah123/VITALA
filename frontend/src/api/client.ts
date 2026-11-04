@@ -7,6 +7,10 @@ import type {
   MedicationUseUpdate,
   Patient,
   PatientInput,
+  ScreeningRecord,
+  ScreeningRecordCreate,
+  ScreeningSummary,
+  ScreeningTest,
 } from "./types";
 
 const TIMEOUT_MS = 15_000;
@@ -51,4 +55,15 @@ export const api = {
     request<MedicationUse>(`/patients/${patientId}/medications/${useId}`, jsonBody("PATCH", input)),
   removeMedication: (patientId: number, useId: number) =>
     request<void>(`/patients/${patientId}/medications/${useId}`, { method: "DELETE" }),
+
+  listScreeningTests: (signal?: AbortSignal) => request<ScreeningTest[]>("/screening-tests", {}, signal),
+  getScreeningSummary: (patientId: number, signal?: AbortSignal) =>
+    request<ScreeningSummary>(`/patients/${patientId}/screening-summary`, {}, signal),
+
+  listScreeningRecords: (patientId: number, signal?: AbortSignal) =>
+    request<ScreeningRecord[]>(`/patients/${patientId}/screening-records`, {}, signal),
+  addScreeningRecord: (patientId: number, input: ScreeningRecordCreate) =>
+    request<ScreeningRecord>(`/patients/${patientId}/screening-records`, jsonBody("POST", input)),
+  removeScreeningRecord: (patientId: number, recordId: number) =>
+    request<void>(`/patients/${patientId}/screening-records/${recordId}`, { method: "DELETE" }),
 };

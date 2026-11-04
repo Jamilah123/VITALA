@@ -8,11 +8,11 @@ send "unknown" instead. Their default=None only marks them as optional.
 
 import re
 from datetime import date
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
 
-from app.models import ConditionStatus, DiabetesType, Sex
+from app.models import ConditionStatus, DiabetesType, RecordSource, Sex
 
 ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
@@ -26,6 +26,10 @@ def _require_iso_date_text(value: Any) -> Any:
 
 IsoDate = Annotated[date, BeforeValidator(_require_iso_date_text)]
 DoseText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+TestName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+ResultText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+UnitText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)]
+NotesText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
 
 
 class RequestSchema(BaseModel):
@@ -96,6 +100,50 @@ class MedicationUseRead(BaseModel):
     last_dose_change_date: date | None
 
 
+class ScreeningRecordCreate(RequestSchema):
+    test_id: str
+    test_name: TestName
+    completed_on: IsoDate
+    result: ResultText | None = None
+    unit: UnitText | None = None
+    source: RecordSource
+    notes: NotesText | None = None
+
+
+class ScreeningRecordUpdate(RequestSchema):
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={"examples": [{"notes": "Synthetic correction"}]},
+    )
+
+    test_name: TestName = Field(default=None)
+    completed_on: IsoDate = Field(default=None)
+    result: ResultText | None = None
+    unit: UnitText | None = None
+    source: RecordSource = Field(default=None)
+    notes: NotesText | None = None
+
+
+class ScreeningRecordRead(BaseModel):
+    id: int
+    patient_id: int
+    test_id: str
+    test_name: str
+    completed_on: date
+    result: str | None
+    unit: str | None
+    source: RecordSource
+    notes: str | None
+
+
+class ScreeningTestRead(BaseModel):
+    id: str
+    name_ar: str
+    rule_ids: list[str]
+    possible_overlap_test_ids: list[str]
+    mapping_status: Literal["draft_not_clinician_reviewed"] = "draft_not_clinician_reviewed"
+
+
 class SourceLocator(BaseModel):
     source_id: str
     locator: str
@@ -115,3 +163,125 @@ class CatalogueMedication(BaseModel):
 class HealthRead(BaseModel):
     status: str
     database: str
+
+
+class MissingInput(BaseModel):
+    field: str
+    # "unknown": VITALA records this field but it is empty for this patient.
+    # "not_collected": VITALA does not record this field yet.
+    reason: Literal["unknown", "not_collected"]
+    affects_eligibility: bool
+
+
+class SourceReference(BaseModel):
+    source_id: str
+    locator: str
+    title: str
+    issuer: str
+    url: str
+    version: str | None
+    limitation_ar: str
+
+
+class ScreeningAction(BaseModel):
+    rule_id: str
+    track: str
+    action_id: str
+    action_name_ar: str
+    eligibility_ar: str
+    status: Literal["candidate", "needs_information", "not_applicable", "not_triggered"]
+    reasons: list[str]
+    missing_inputs: list[MissingInput]
+    matched_medication_ids: list[str]
+    schedule_text_ar: str
+    notes_ar: str
+    review_flags: list[str]
+    conflict_ids: list[str]
+    knowledge_ids: list[str]
+    sources: list[SourceReference]
+    review_status: str
+    auto_schedule_enabled: Literal[False]
+
+
+class ScreeningPreview(BaseModel):
+    patient_id: int
+    evaluated_on: date
+    clinically_approved: Literal[False] = False
+    auto_schedule_enabled: Literal[False] = False
+    notice_ar: str
+    actions: list[ScreeningAction]
+
+
+class SummaryMissingInput(BaseModel):
+    field: str
+    reason: Literal["unknown", "not_collected"]
+    affects_eligibility: bool
+    rule_ids: list[str]
+
+
+class HistoryMappingRead(BaseModel):
+    id: str
+    version: int
+    test_id: str
+    field: str
+    kind: Literal["completion_date", "test_on_record"]
+    status: Literal["pending_review", "approved"]
+    reviewer: str | None
+    reviewed_on: date | None
+    rule_ids: list[str]
+    changes_eligibility: bool
+
+
+class AmbiguousHistoryFieldRead(BaseModel):
+    test_id: str
+    field: str
+    rule_ids: list[str]
+    reason: str
+
+
+class HistoryMappingCatalogue(BaseModel):
+    mappings: list[HistoryMappingRead]
+    ambiguous: list[AmbiguousHistoryFieldRead]
+    clinical_interpretation_fields: list[str]
+
+
+class HistoryInput(BaseModel):
+    mapping_id: str
+    version: int
+    field: str
+    kind: Literal["completion_date", "test_on_record"]
+    status: Literal["pending_review", "approved"]
+    applied: bool
+    changes_eligibility: bool
+    rule_ids: list[str]
+    record_count: int
+    latest_completed_on: date | None
+    latest_record_id: int | None
+
+
+class ScreeningTestSummary(BaseModel):
+    test_id: str
+    name_ar: str
+    mapping_status: Literal["draft_not_clinician_reviewed"] = "draft_not_clinician_reviewed"
+    recorded_tests: list[ScreeningRecordRead]
+    history_inputs: list[HistoryInput]
+    ambiguous_history_fields: list[AmbiguousHistoryFieldRead]
+    candidate_rule_ids: list[str]
+    needs_information_rule_ids: list[str]
+    not_applicable_rule_ids: list[str]
+    not_triggered_rule_ids: list[str]
+    missing_inputs: list[SummaryMissingInput]
+    review_reasons: list[str]
+    conflict_ids: list[str]
+    possible_overlap_test_ids: list[str]
+    rules: list[ScreeningAction]
+
+
+class ScreeningSummary(BaseModel):
+    patient_id: int
+    evaluated_on: date
+    clinically_approved: Literal[False] = False
+    auto_schedule_enabled: Literal[False] = False
+    notice_ar: str
+    tests: list[ScreeningTestSummary]
+    unmapped_records: list[ScreeningRecordRead]

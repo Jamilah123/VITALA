@@ -48,3 +48,129 @@ export interface Health {
   status: string;
   database: string;
 }
+
+// Screening: every rule and mapping is an unreviewed draft. The backend sends no
+// due dates, and the UI must not derive any.
+
+export type RuleStatus = "candidate" | "needs_information" | "not_applicable" | "not_triggered";
+export type RecordSource = "patient_reported" | "lab_report" | "clinician_entered" | "device";
+export type MissingReason = "unknown" | "not_collected";
+
+export interface MissingInput {
+  field: string;
+  reason: MissingReason;
+  affects_eligibility: boolean;
+}
+
+export interface SummaryMissingInput extends MissingInput {
+  rule_ids: string[];
+}
+
+export interface SourceReference {
+  source_id: string;
+  locator: string;
+  title: string;
+  issuer: string;
+  url: string;
+  version: string | null;
+  limitation_ar: string;
+}
+
+export interface ScreeningAction {
+  rule_id: string;
+  track: string;
+  action_id: string;
+  action_name_ar: string;
+  eligibility_ar: string;
+  status: RuleStatus;
+  reasons: string[];
+  missing_inputs: MissingInput[];
+  matched_medication_ids: string[];
+  schedule_text_ar: string;
+  notes_ar: string;
+  review_flags: string[];
+  conflict_ids: string[];
+  knowledge_ids: string[];
+  sources: SourceReference[];
+  review_status: string;
+  auto_schedule_enabled: false;
+}
+
+export interface ScreeningRecord {
+  id: number;
+  patient_id: number;
+  test_id: string;
+  test_name: string;
+  completed_on: string;
+  result: string | null;
+  unit: string | null;
+  source: RecordSource;
+  notes: string | null;
+}
+
+export interface ScreeningRecordCreate {
+  test_id: string;
+  test_name: string;
+  completed_on: string;
+  result: string | null;
+  unit: string | null;
+  source: RecordSource;
+  notes: string | null;
+}
+
+export interface ScreeningTest {
+  id: string;
+  name_ar: string;
+  rule_ids: string[];
+  possible_overlap_test_ids: string[];
+  mapping_status: string;
+}
+
+export interface HistoryInput {
+  mapping_id: string;
+  version: number;
+  field: string;
+  kind: "completion_date" | "test_on_record";
+  status: "pending_review" | "approved";
+  applied: boolean;
+  changes_eligibility: boolean;
+  rule_ids: string[];
+  record_count: number;
+  latest_completed_on: string | null;
+  latest_record_id: number | null;
+}
+
+export interface AmbiguousHistoryField {
+  test_id: string;
+  field: string;
+  rule_ids: string[];
+  reason: string;
+}
+
+export interface ScreeningTestSummary {
+  test_id: string;
+  name_ar: string;
+  mapping_status: string;
+  recorded_tests: ScreeningRecord[];
+  history_inputs: HistoryInput[];
+  ambiguous_history_fields: AmbiguousHistoryField[];
+  candidate_rule_ids: string[];
+  needs_information_rule_ids: string[];
+  not_applicable_rule_ids: string[];
+  not_triggered_rule_ids: string[];
+  missing_inputs: SummaryMissingInput[];
+  review_reasons: string[];
+  conflict_ids: string[];
+  possible_overlap_test_ids: string[];
+  rules: ScreeningAction[];
+}
+
+export interface ScreeningSummary {
+  patient_id: number;
+  evaluated_on: string;
+  clinically_approved: false;
+  auto_schedule_enabled: false;
+  notice_ar: string;
+  tests: ScreeningTestSummary[];
+  unmapped_records: ScreeningRecord[];
+}

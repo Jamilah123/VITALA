@@ -26,6 +26,13 @@ class DiabetesType(StrEnum):
     unknown = "unknown"
 
 
+class RecordSource(StrEnum):
+    patient_reported = "patient_reported"
+    lab_report = "lab_report"
+    clinician_entered = "clinician_entered"
+    device = "device"
+
+
 class Patient(SQLModel, table=True):
     # Missing information stays "unknown" (or NULL for dates). It never means
     # that a condition is absent; only "not_diagnosed" says that.
@@ -52,3 +59,18 @@ class MedicationUse(SQLModel, table=True):
     dose_text: str
     start_date: date | None = None
     last_dose_change_date: date | None = None
+
+
+class ScreeningRecord(SQLModel, table=True):
+    # One completed test. A patient may have many records for the same test.
+    id: int | None = Field(default=None, primary_key=True)
+    patient_id: int = Field(foreign_key="patient.id", index=True)
+    # An id from app/screening_tests.py, checked by the API like medication_id.
+    test_id: str
+    test_name: str
+    completed_on: date
+    # Stored exactly as reported. VITALA never interprets results.
+    result: str | None = None
+    unit: str | None = None
+    source: RecordSource
+    notes: str | None = None

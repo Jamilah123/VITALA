@@ -1,9 +1,10 @@
 # VITALA backend
 
 Milestone one: patient profiles, medication use, and a medication catalogue.
+Screening phase 1 adds a read-only screening preview built from the draft rules.
 
-Later milestones will add recommendations, the Arabic chatbot, and the frontend
-(see `docs/Vitala_App_Screens.pdf`). None of them exist yet.
+Later milestones will add reviewed recommendations, the Arabic chatbot, and
+doctor and clinic features (see `docs/Vitala_App_Screens.pdf`). None of them exist yet.
 
 ## Limitations
 
@@ -11,9 +12,10 @@ Later milestones will add recommendations, the Arabic chatbot, and the frontend
   every record. Use synthetic data only, never real patient information.
 - **Local use only.** Keep the server on `127.0.0.1`. Do not use `--host 0.0.0.0`
   or expose it to a network.
-- **No clinical logic.** The rule files in `data/` are drafts that no clinician
-  has reviewed. The backend does not read them or generate recommendations.
-  The date and status checks only catch data-entry mistakes.
+- **No approved clinical logic.** The rule files in `data/` are drafts that no
+  clinician has reviewed. The backend reads them only to build the screening
+  preview described below. It does not generate recommendations or schedule
+  anything. The date and status checks only catch data-entry mistakes.
 
 ## Setup
 
@@ -64,6 +66,14 @@ server was launched from. To start over, stop the server and delete that file.
 | `GET /patients/{patient_id}/medications` | List a patient's medication use |
 | `PATCH /patients/{patient_id}/medications/{use_id}` | Update part of a medication use |
 | `DELETE /patients/{patient_id}/medications/{use_id}` | Remove a medication use |
+| `GET /screening-tests` | List the mapped screening tests and their rules |
+| `GET /screening-history-mappings` | List which rule inputs recorded tests may provide, and their review status |
+| `POST /patients/{patient_id}/screening-records` | Record a completed test |
+| `GET /patients/{patient_id}/screening-records` | List a patient's screening history, newest first |
+| `PATCH /patients/{patient_id}/screening-records/{record_id}` | Update part of a screening record |
+| `DELETE /patients/{patient_id}/screening-records/{record_id}` | Remove a screening record |
+| `GET /patients/{patient_id}/screening-preview` | Draft rules evaluated against the stored record |
+| `GET /patients/{patient_id}/screening-summary` | Draft rules grouped by test, with recorded history |
 
 ## Rules the API applies
 
@@ -89,6 +99,100 @@ sent as `null` is cleared. Status fields and dose text cannot be `null`; send
 medication the patient already has returns 409: update that record instead. To
 correct the wrong medication, remove the record and add the right one.
 
+## Screening preview
+
+`GET /patients/{patient_id}/screening-preview` evaluates every draft rule against
+the patient's profile and recorded medications. It writes nothing. Every response
+carries `clinically_approved: false` and `auto_schedule_enabled: false`. Each rule
+appears with its sources, conflicts, review flags, and `review_status`. Each rule
+gets one of these statuses:
+
+| Status | Meaning |
+|---|---|
+| `candidate` | The recorded data meets every eligibility condition the engine can check. A candidate for clinician review, not a recommendation. |
+| `needs_information` | Eligibility depends on something unknown. The deciding fields have `affects_eligibility: true`. |
+| `not_applicable` | Recorded data excludes this rule, for example `diabetes_not_diagnosed`. The test may still be needed for other reasons. |
+| `not_triggered` | Medication rule with none of its medications recorded. The list may be incomplete, so this is not a negative finding. |
+
+`missing_inputs` lists every input the rule needs that is not available. `unknown`
+means VITALA records the field but it is empty. `not_collected` means VITALA does
+not record that field yet. No value is ever assumed. The response gives the
+schedule as source text only, never as a date or interval to book.
+
+The rules describe eligibility in Arabic prose. `app/screening.py` (`CRITERIA`)
+turns it into checks, using only the fields VITALA stores. That reading is as
+unreviewed as the rules. The app refuses to start if a rule has no criteria, if a
+rule is anything other than `draft_not_clinician_reviewed` with scheduling off,
+or if any source, conflict, knowledge, or medication reference does not resolve.
+
+## Screening history
+
+A screening record is one completed test: `test_id` (an id from
+`GET /screening-tests`), `test_name` as written on the report, `completed_on`,
+an optional `result` and `unit`, a `source` (`patient_reported`, `lab_report`,
+`clinician_entered`, or `device`), and optional `notes`. A patient may have any
+number of records for the same test. Results are stored exactly as entered and
+are never interpreted. Completion dates cannot be in the future or before the
+date of birth, and a unit requires a result. To record a different test, remove
+the record and add the right one.
+
+## Screening summary
+
+`GET /patients/{patient_id}/screening-summary` groups the preview's rule results
+by test and lists the patient's recorded tests next to them. It writes nothing
+and calculates no due dates. The rule results are exactly those of the preview.
+Recorded history affects them only through approved history mappings (below),
+and none is approved yet.
+
+For each test the summary separates:
+
+- `recorded_tests`: completed tests on record, newest first.
+- `history_inputs`: each rule input the recorded tests may provide, with the
+  mapping's status, whether it is `applied`, the record count, and the latest
+  completion date. A pending mapping is shown here but never applied.
+- `ambiguous_history_fields`: inputs these records might relate to but are not
+  mapped to, with the reason.
+- `candidate_rule_ids`, `needs_information_rule_ids`, `not_applicable_rule_ids`,
+  `not_triggered_rule_ids`: each rule under its own status, never combined.
+- `missing_inputs`: the preview's missing inputs, each listing the rules that need it.
+- `review_reasons`: why the test needs clinical review, given only when the test
+  concerns the patient: `draft_rules`, `draft_test_grouping`, `source_conflict`,
+  `mixed_rule_statuses` (candidate and needs-information rules together),
+  `possible_overlap`, `history_not_used_by_rules`, `history_mapping_pending_review`,
+  `ambiguous_history_mapping`, and `multiple_records_same_date`.
+- `rules`: every rule in full, with its sources and review status.
+
+Rules are grouped only by the explicit table in `app/screening_tests.py`, never
+by similar names. That table is an unreviewed mapping (`mapping_status`). Tests
+that only partly overlap, such as eGFR and creatinine with potassium, stay
+separate and are listed in `possible_overlap_test_ids`. The app refuses to start
+unless every rule belongs to exactly one test. Records whose test is no longer
+mapped appear in `unmapped_records` rather than being dropped.
+
+## History mappings
+
+`app/history_mappings.py` lists, one versioned entry at a time, which rule input
+a recorded test may provide. A mapping states a direct fact only: when a test of
+that kind was last completed (`completion_date`), or that one is on record
+(`test_on_record`). Results are never read, and no record ever means "not done".
+
+- Every mapping starts as `pending_review`. A pending mapping never changes rule
+  evaluation. Its data appears only in the summary's `history_inputs`.
+- An approved mapping needs a reviewer and a review date. It then supplies the
+  fact to rules in its own test group only. With no record, the input becomes
+  `unknown` instead of `not_collected`.
+- `changes_eligibility` marks a mapping that can change a rule's status. Today
+  that is only `HM05`: DM07 applies once a previous eye exam is on record.
+- `CLINICAL_INTERPRETATIONS`, such as `hba1c_at_individual_target`, can never be
+  mapped. A clinician must enter them.
+- `AMBIGUOUS_HISTORY_FIELDS` lists connections left unmapped on purpose, such as
+  an eGFR record and a rule asking for the last creatinine date.
+
+The app refuses to start if a mapping targets an interpretation, an unknown test,
+or a field no rule in its group uses. It also refuses one whose value would decide
+eligibility, one with inconsistent review details, or one that overlaps an
+ambiguous entry.
+
 ## Data
 
 `data/` holds byte-for-byte copies of the collected research dataset (version
@@ -96,6 +200,8 @@ correct the wrong medication, remove the record and add the right one.
 by hand: source IDs, links, review flags, and draft statuses must stay as collected.
 `.gitattributes` stops Git from changing their line endings.
 
-Only `medications.json` is loaded at this stage. The list is a practical starting
-selection, not a ranking of the most dispensed medications in Saudi Arabia. A
-medication's absence from it does not mean the medication needs no monitoring.
+The backend reads `medications.json`, the two rule files, `sources.json`,
+`conflicts.json`, and the IDs in `explanation_knowledge.json`. It never writes them.
+The medication list is a practical starting selection, not a ranking of the most
+dispensed medications in Saudi Arabia. A medication's absence from it does not
+mean the medication needs no monitoring.

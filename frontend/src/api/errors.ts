@@ -24,7 +24,9 @@ const MESSAGES = {
 // The backend's validation messages (backend/app/validation.py) are in English.
 const FIELD_MESSAGES: [RegExp, string][] = [
   [/Date of birth cannot be in the future/, "لا يمكن أن يكون تاريخ الميلاد في المستقبل."],
-  [/Date of birth is after the recorded dates/, "تاريخ الميلاد بعد تواريخ أدوية مسجّلة. عدّلي تواريخ الأدوية أولاً."],
+  [/Date of birth is after the recorded/, "تاريخ الميلاد بعد تواريخ أدوية أو فحوصات مسجّلة. عدّليها أولاً."],
+  [/A unit requires a result/, "أدخلي النتيجة قبل الوحدة."],
+  [/is not a known screening test/, "هذا الفحص غير موجود في القائمة."],
   [/diagnosis date requires/, "يتطلب تاريخ التشخيص أن تكون الحالة «مشخّصة»."],
   [/Diagnosis date cannot be in the future/, "لا يمكن أن يكون تاريخ التشخيص في المستقبل."],
   [/Diagnosis date cannot be before/, "لا يمكن أن يسبق تاريخ التشخيص تاريخ الميلاد."],

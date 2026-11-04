@@ -9,8 +9,12 @@ from sqlmodel import select
 from app.catalogue import load_catalogue
 from app.config import Settings
 from app.database import SessionDep, build_engine, init_db
-from app.routers import medications, profiles
+from app.criteria import check_criteria_cover
+from app.history_mappings import check_history_mappings
+from app.routers import medications, profiles, screening, screening_records
+from app.rules import load_rule_set
 from app.schemas import HealthRead
+from app.screening_tests import check_test_mapping
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -32,6 +36,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.engine = engine
     app.state.catalogue = load_catalogue(settings.medications_path)
+    app.state.rule_set = load_rule_set(app.state.catalogue)
+    check_criteria_cover(app.state.rule_set.rules)
+    check_test_mapping(app.state.rule_set.rules)
+    check_history_mappings(app.state.rule_set.rules)
 
     app.add_middleware(
         CORSMiddleware,
@@ -51,6 +59,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(profiles.router)
     app.include_router(medications.router)
+    app.include_router(screening.router)
+    app.include_router(screening_records.router)
     return app
 
 

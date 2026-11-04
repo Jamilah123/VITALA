@@ -7,8 +7,10 @@ screens in `docs/Vitala_App_Screens.pdf`.
 
 - **Synthetic data only.** The backend has no login, so anyone who can reach it can
   read every record. The dev server stays on `127.0.0.1`.
-- **No clinical logic.** Screens other than the profile and medications show fixed
-  demo content. Nothing is calculated from a profile.
+- **No approved clinical logic.** The checks screens show the backend's screening
+  summary, built from draft rules that no clinician has reviewed. They are labelled
+  as such, show no due dates or schedules, and never present a rule as a
+  recommendation. Other screens marked as demo show fixed content.
 - **The chat is not AI.** It shows fixed replies and says so. Typed text goes nowhere.
 
 ## Running it
@@ -38,9 +40,9 @@ Each kind of data is kept apart in the code and labelled on screen.
 
 | Label | Data | Stored in | Code |
 |---|---|---|---|
-| من الخادم | Date of birth, sex, diabetes and hypertension status, medications | Backend API | `src/api` |
+| من الخادم | Profile, medications, screening summary and rules, screening history, rule sources | Backend API | `src/api` |
 | في هذا المتصفح فقط | Height, weight, lipid history, family history. The API has no fields for them yet | `localStorage` | `src/lib/session.tsx` |
-| بيانات تجريبية | Everything about the persona "نورة": checks, results, activity, doctor view, chat, privacy settings | `src/demo/data.ts`, and demo actions in `localStorage` | `src/demo` |
+| بيانات تجريبية | The persona "نورة": diabetes and blood pressure tracking, activity, doctor view, chat, privacy settings | `src/demo/data.ts`, and demo actions in `localStorage` | `src/demo` |
 
 Rules to keep when changing the code:
 
@@ -49,6 +51,11 @@ Rules to keep when changing the code:
   sources. Demo actions never call the API.
 - Unknown is not negative. A condition is `not_diagnosed` only if the user says so;
   otherwise it stays `unknown`.
+- Screening codes are shown in Arabic through `src/lib/screening.ts`. An unknown code
+  is shown as it is. No screen renders `schedule_text_ar`, a due date, or an overdue
+  label, and the tests in `src/lib/screening.test.ts` check this.
+- Completed tests (`recorded_tests`, green) are always shown apart from draft rules
+  (blue "قد تنطبق", amber "تحتاج معلومات").
 
 ## Screens
 
@@ -60,14 +67,14 @@ Rules to keep when changing the code:
 | 3 | Health history and medications | `/onboarding/history` | API and browser |
 | 4 | Smart watch | `/onboarding/watch` | Demo |
 | 5 | Finished | `/onboarding/done` | None |
-| 6 | Home | `/home` | Demo |
-| 7 | Checks | `/checks` | Demo |
-| 8 | Check details | `/checks/:checkId` | Demo |
-| 9 | Diabetes and blood pressure tracking | `/tracking` | Demo |
+| 6 | Home | `/home` | API (screening summary) and demo (activity, chat) |
+| 7 | Checks | `/checks` | API |
+| 8 | Check details, history, and rules | `/checks/:testId` | API |
+| 9 | Diabetes and blood pressure tracking | `/tracking` | Demo, with links to API check details |
 | 10 | Activity goal | `/activity` | Demo |
 | 11 | Ask Vitala | `/chat` | Demo |
-| 12 | Results log | `/log` | Demo |
+| 12 | Screening history | `/log` | API |
 | 13 | Doctor view | `/doctor` | Demo |
 | 14 | Account | `/account` | API and demo |
 | 14 | Health profile and medications | `/account/health` | API and browser |
-| 14 | Sources | `/account/sources` | Demo |
+| 14 | Rule sources | `/account/sources` | API |

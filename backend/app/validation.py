@@ -10,7 +10,7 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
-from app.models import ConditionStatus, DiabetesType, MedicationUse
+from app.models import ConditionStatus, DiabetesType, MedicationUse, ScreeningRecord
 
 
 def raise_if_invalid(errors: Mapping[str, str]) -> None:
@@ -46,14 +46,36 @@ def profile_errors(profile: Mapping[str, Any]) -> dict[str, str]:
     return errors
 
 
-def birth_date_conflict(birth: date | None, uses: Iterable[MedicationUse]) -> dict[str, str]:
-    """Check a changed date of birth against medication dates already stored."""
+def birth_date_conflict(
+    birth: date | None,
+    uses: Iterable[MedicationUse],
+    records: Iterable[ScreeningRecord],
+) -> dict[str, str]:
+    """Check a changed date of birth against medication and screening dates already stored."""
     if birth:
         for use in uses:
             dates = (use.start_date, use.last_dose_change_date)
             if any(known and known < birth for known in dates):
                 return {"date_of_birth": f"Date of birth is after the recorded dates of {use.medication_id}"}
+        for record in records:
+            if record.completed_on < birth:
+                return {"date_of_birth": f"Date of birth is after the recorded {record.test_id} test on {record.completed_on}"}
     return {}
+
+
+def screening_record_errors(record: Mapping[str, Any], birth: date | None) -> dict[str, str]:
+    errors: dict[str, str] = {}
+    completed_on = record["completed_on"]
+
+    if completed_on > date.today():
+        errors["completed_on"] = "Date cannot be in the future"
+    elif birth and completed_on < birth:
+        errors["completed_on"] = "Date cannot be before the patient's date of birth"
+
+    if record["unit"] and not record["result"]:
+        errors["unit"] = "A unit requires a result"
+
+    return errors
 
 
 def medication_date_errors(

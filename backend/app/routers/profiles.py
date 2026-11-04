@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from sqlmodel import Session, select
 
 from app.database import SessionDep
-from app.models import MedicationUse, Patient
+from app.models import MedicationUse, Patient, ScreeningRecord
 from app.schemas import PatientCreate, PatientRead, PatientUpdate
 from app.validation import birth_date_conflict, profile_errors, raise_if_invalid
 
@@ -38,7 +38,8 @@ def update_patient(patient_id: int, body: PatientUpdate, session: SessionDep) ->
     merged = patient.model_dump() | changes
     raise_if_invalid(profile_errors(merged))
     uses = session.exec(select(MedicationUse).where(MedicationUse.patient_id == patient_id)).all()
-    raise_if_invalid(birth_date_conflict(merged["date_of_birth"], uses))
+    records = session.exec(select(ScreeningRecord).where(ScreeningRecord.patient_id == patient_id)).all()
+    raise_if_invalid(birth_date_conflict(merged["date_of_birth"], uses, records))
 
     patient.sqlmodel_update(changes)
     session.add(patient)

@@ -3,19 +3,12 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastProvider } from "./components/feedback";
 import { DemoProvider } from "./demo/store";
 import { SessionProvider, useSession } from "./lib/session";
-import { Account, HealthProfile, Sources } from "./screens/account";
+import { Account, HealthProfile } from "./screens/account";
 import { Chat } from "./screens/Chat";
-import {
-  Activity,
-  CheckDetail,
-  Checks,
-  DoctorView,
-  Home,
-  NotFound,
-  ResultsLog,
-  Tracking,
-} from "./screens/demoScreens";
+import { Activity, DoctorView, NotFound, Tracking } from "./screens/demoScreens";
+import { Home } from "./screens/home";
 import { BasicInfo, HealthHistory, OnboardingDone, OpenProfile, WatchLink, Welcome } from "./screens/onboarding";
+import { CheckDetail, Checks, ResultsLog, Sources } from "./screens/screening";
 
 function Root() {
   const { patientId } = useSession();
@@ -59,7 +52,7 @@ export function App() {
                 <Route path="/onboarding/done" element={<OnboardingDone />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/checks" element={<Checks />} />
-                <Route path="/checks/:checkId" element={<CheckDetail />} />
+                <Route path="/checks/:testId" element={<CheckDetail />} />
                 <Route path="/tracking" element={<Tracking />} />
                 <Route path="/activity" element={<Activity />} />
                 <Route path="/chat" element={<Chat />} />

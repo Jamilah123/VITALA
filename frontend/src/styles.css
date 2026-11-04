@@ -1315,3 +1315,24 @@ select {
     transition: none !important;
   }
 }
+
+/* Screening */
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding-inline-start: 18px;
+  overflow-wrap: anywhere;
+}
+
+.code {
+  display: inline-block;
+  margin-inline: 2px;
+  padding: 0 6px;
+  background: var(--surface);
+  border-radius: 6px;
+  color: var(--navy);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.8125rem;
+}
