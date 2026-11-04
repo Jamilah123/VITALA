@@ -63,6 +63,11 @@ server was launched from. To start over, stop the server and delete that file.
 | `GET /patients/{patient_id}/risk-profile` | Read risk factors (all unknown, `stored: false`, until saved) |
 | `POST /patients/{patient_id}/risk-profile` | Create risk factors (409 if they exist) |
 | `PATCH /patients/{patient_id}/risk-profile` | Update part of the risk factors |
+| `GET /clinics` | List clinics (only the demo clinic, once seeded) |
+| `GET /clinics/{clinic_id}` | Read one clinic |
+| `GET /clinics/{clinic_id}/doctors` | List the clinic's doctors |
+| `GET /clinics/{clinic_id}/patients` | List patients linked to the clinic |
+| `GET /clinics/{clinic_id}/appointments` | List the clinic's appointments, oldest first |
 | `GET /medications` | List the catalogue |
 | `GET /medications/{medication_id}` | Read one catalogue entry |
 | `POST /patients/{patient_id}/medications` | Add a medication use |
@@ -127,6 +132,25 @@ turns it into checks, using only the fields VITALA stores. That reading is as
 unreviewed as the rules. The app refuses to start if a rule has no criteria, if a
 rule is anything other than `draft_not_clinician_reviewed` with scheduling off,
 or if any source, conflict, knowledge, or medication reference does not resolve.
+
+## Demo clinic
+
+`python -m app.seed` also creates one synthetic demo clinic (`is_demo: true`): three
+doctors, five new synthetic patients linked to it, and seven appointments with
+fixed dates. Names say they are synthetic, and the patients hold basic profile
+facts only. Running the command again changes nothing, and it never edits or links
+patients it did not create. The server never seeds at startup, so the clinic
+endpoints return an empty list until the command has run.
+
+Every clinic-side row carries `clinic_id`, ready for more clinics later. A clinic
+sees a patient only through a `clinicpatient` link, so unlinked patients stay
+private. Appointments point at that link, so they always belong to a clinic the
+patient is registered with. `scheduled_at` is stored in UTC and shown in the
+clinic's `time_zone`. `booking_source` is simulated in the demo and is labelled so.
+The clinic endpoints are read-only in this phase.
+
+There is no authentication: choosing the clinic entry grants no access and
+protects nothing. Keep the server local and the data synthetic.
 
 ## Risk factors
 

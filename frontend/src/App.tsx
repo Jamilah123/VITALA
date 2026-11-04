@@ -5,6 +5,7 @@ import { DemoProvider } from "./demo/store";
 import { SessionProvider, useSession } from "./lib/session";
 import { Account, HealthProfile } from "./screens/account";
 import { Chat } from "./screens/Chat";
+import { ClinicAppointments, ClinicDoctors, ClinicHome, ClinicPatients } from "./screens/clinic";
 import { Activity, DoctorView, NotFound, Tracking } from "./screens/demoScreens";
 import { Home } from "./screens/home";
 import { BasicInfo, HealthHistory, OnboardingDone, OpenProfile, WatchLink, Welcome } from "./screens/onboarding";
@@ -61,6 +62,10 @@ export function App() {
                 <Route path="/account" element={<Account />} />
                 <Route path="/account/health" element={<HealthProfile />} />
                 <Route path="/account/sources" element={<Sources />} />
+                <Route path="/clinic" element={<ClinicHome />} />
+                <Route path="/clinic/appointments" element={<ClinicAppointments />} />
+                <Route path="/clinic/patients" element={<ClinicPatients />} />
+                <Route path="/clinic/doctors" element={<ClinicDoctors />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

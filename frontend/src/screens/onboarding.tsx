@@ -42,12 +42,24 @@ export function Welcome() {
         </h2>
         <p className="muted">تعرض Vitala الفحوصات التي قد تنطبق ومصادرها، لمراجعتها مع الطبيب.</p>
         <SyntheticDataNotice />
-        <Link to="/onboarding/basic" className="btn btn--primary btn--block">
-          البدء الآن
-        </Link>
-        <Link to="/open-profile" className="btn btn--ghost btn--block">
-          تسجيل الدخول
-        </Link>
+        <section className="card stack-tight entry-card" aria-label="مسار المريض">
+          <strong>المريض</strong>
+          <span className="muted small">ملف صحي شخصي، والفحوصات التي قد تنطبق مع مصادرها.</span>
+          <Link to="/onboarding/basic" className="btn btn--primary btn--block">
+            إنشاء ملف جديد
+          </Link>
+          <Link to="/open-profile" className="btn btn--ghost btn--block">
+            فتح ملف موجود
+          </Link>
+        </section>
+        <section className="card stack-tight entry-card" aria-label="مسار العيادة">
+          <strong>العيادة</strong>
+          <span className="muted small">مساحة عمل العيادة التجريبية: الأطباء والمرضى والمواعيد، ببيانات اصطناعية.</span>
+          <Link to="/clinic" className="btn btn--outline btn--block">
+            الدخول إلى العيادة التجريبية
+          </Link>
+        </section>
+        <p className="note">لا يوجد تسجيل دخول بعد: اختيار المسار لا يمنح صلاحيات ولا يحمي البيانات.</p>
       </div>
     </Screen>
   );

@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { DemoNotice } from "./feedback";
 import { Icon, Logo, type IconName } from "./Icon";
 
-const TABS: { to: string; label: string; icon: IconName }[] = [
+export const PATIENT_TABS: { to: string; label: string; icon: IconName }[] = [
   { to: "/home", label: "الرئيسية", icon: "home" },
   { to: "/checks", label: "فحوصاتي", icon: "list" },
   { to: "/tracking", label: "المتابعة", icon: "bars" },
@@ -11,15 +11,21 @@ const TABS: { to: string; label: string; icon: IconName }[] = [
   { to: "/account", label: "حسابي", icon: "user" },
 ];
 
-function Nav() {
+function Nav({ tabs }: { tabs: { to: string; label: string; icon: IconName }[] }) {
   return (
     <nav className="nav" aria-label="التنقل الرئيسي">
       <div className="nav__brand">
         <Logo size={40} />
         <span>vitala</span>
       </div>
-      {TABS.map((tab) => (
-        <NavLink key={tab.to} to={tab.to} className="nav__item">
+      {tabs.map((tab) => (
+        <NavLink
+          key={tab.to}
+          to={tab.to}
+          // Exact match only when another tab lives under this path, as /clinic does.
+          end={tabs.some((other) => other.to.startsWith(`${tab.to}/`))}
+          className="nav__item"
+        >
           <Icon name={tab.icon} />
           <span>{tab.label}</span>
         </NavLink>
@@ -35,6 +41,7 @@ export function Screen({
   demo = false,
   demoText,
   wide = false,
+  tabs = PATIENT_TABS,
   children,
 }: {
   title: string;
@@ -44,6 +51,7 @@ export function Screen({
   demo?: boolean;
   demoText?: ReactNode;
   wide?: boolean;
+  tabs?: { to: string; label: string; icon: IconName }[];
   children: ReactNode;
 }) {
   const navigate = useNavigate();
@@ -63,7 +71,7 @@ export function Screen({
 
   return (
     <div className={`shell${nav ? " shell--nav" : ""}`}>
-      {nav && <Nav />}
+      {nav && <Nav tabs={tabs} />}
       <div className="shell__page">
         <header className="topbar">
           <div className="topbar__side">

@@ -1,6 +1,10 @@
 import { errorFromResponse, networkError } from "./errors";
 import type {
+  Appointment,
   CatalogueMedication,
+  Clinic,
+  ClinicPatient,
+  Doctor,
   Health,
   MedicationUse,
   MedicationUseCreate,
@@ -64,6 +68,13 @@ export const api = {
     request<MedicationUse>(`/patients/${patientId}/medications/${useId}`, jsonBody("PATCH", input)),
   removeMedication: (patientId: number, useId: number) =>
     request<void>(`/patients/${patientId}/medications/${useId}`, { method: "DELETE" }),
+
+  listClinics: (signal?: AbortSignal) => request<Clinic[]>("/clinics", {}, signal),
+  listDoctors: (clinicId: number, signal?: AbortSignal) => request<Doctor[]>(`/clinics/${clinicId}/doctors`, {}, signal),
+  listClinicPatients: (clinicId: number, signal?: AbortSignal) =>
+    request<ClinicPatient[]>(`/clinics/${clinicId}/patients`, {}, signal),
+  listAppointments: (clinicId: number, signal?: AbortSignal) =>
+    request<Appointment[]>(`/clinics/${clinicId}/appointments`, {}, signal),
 
   listScreeningTests: (signal?: AbortSignal) => request<ScreeningTest[]>("/screening-tests", {}, signal),
   getScreeningSummary: (patientId: number, signal?: AbortSignal) =>

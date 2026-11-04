@@ -66,6 +66,47 @@ export interface RiskProfile extends RiskProfileInput {
   bmi: number | null;
 }
 
+// Clinic workspace. Every clinic row is synthetic in this prototype; choosing the
+// clinic entry grants no access and protects nothing.
+
+export interface Clinic {
+  id: number;
+  name_ar: string;
+  city_ar: string | null;
+  /** IANA name used to show appointment times, which arrive in UTC. */
+  time_zone: string;
+  is_demo: boolean;
+}
+
+export interface Doctor {
+  id: number;
+  clinic_id: number;
+  name_ar: string;
+  specialty_ar: string | null;
+}
+
+export interface ClinicPatient {
+  id: number;
+  clinic_id: number;
+  display_name_ar: string;
+  file_number: string | null;
+  patient: Patient;
+}
+
+export type AppointmentStatus = "scheduled" | "completed" | "cancelled" | "no_show";
+export type BookingSource = "vitala" | "clinic" | "unknown";
+
+export interface Appointment {
+  id: number;
+  clinic_id: number;
+  doctor_id: number;
+  clinic_patient_id: number;
+  scheduled_at: string;
+  status: AppointmentStatus;
+  booking_source: BookingSource;
+  visit_reason_ar: string | null;
+}
+
 export interface Health {
   status: string;
   database: string;

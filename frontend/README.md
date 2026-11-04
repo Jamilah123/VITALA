@@ -58,6 +58,10 @@ Rules to keep when changing the code:
   (blue "قد تنطبق", amber "تحتاج معلومات").
 - UI text is formal Arabic: gender-neutral where possible, otherwise standard
   masculine. `src/lib/wording.test.ts` fails on common feminine-specific forms.
+- There are two entry paths only: patient and clinic. Doctors work inside the clinic
+  workspace. Choosing an entry is not a login and grants no access; no screen asks
+  for a password. Clinic screens always show the demo notice, and simulated booking
+  sources say «محاكاة».
 - Risk factors are shown and stored, but never interpreted. Only the existing BMI
   card shows a general adult category, labelled as not a diagnosis.
 
@@ -65,7 +69,8 @@ Rules to keep when changing the code:
 
 | PDF page | Screen | Path | Data |
 |---|---|---|---|
-| 1 | Welcome | `/welcome` | None |
+| 1 | Welcome: choose the patient or clinic entry | `/welcome` | None |
+| — | Clinic overview, appointments, patients, doctors | `/clinic`, `/clinic/appointments`, `/clinic/patients`, `/clinic/doctors` | API (synthetic demo clinic) |
 | 1 | Open a profile by number (in place of login) | `/open-profile` | API |
 | 2 | Basic information | `/onboarding/basic` | API and browser |
 | 3 | Health history and medications | `/onboarding/history` | API and browser |

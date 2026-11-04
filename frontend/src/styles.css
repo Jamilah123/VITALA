@@ -1336,3 +1336,9 @@ select {
   font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
   font-size: 0.8125rem;
 }
+
+/* Entry selection */
+.entry-card {
+  width: 100%;
+  text-align: start;
+}

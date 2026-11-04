@@ -7,12 +7,21 @@ send "unknown" instead. Their default=None only marks them as optional.
 """
 
 import re
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
 
-from app.models import ConditionStatus, DiabetesType, RecordSource, Sex, SmokingStatus, YesNoUnknown
+from app.models import (
+    AppointmentStatus,
+    BookingSource,
+    ConditionStatus,
+    DiabetesType,
+    RecordSource,
+    Sex,
+    SmokingStatus,
+    YesNoUnknown,
+)
 
 ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
@@ -75,6 +84,40 @@ class PatientRead(BaseModel):
     diabetes_diagnosis_date: date | None
     hypertension_status: ConditionStatus
     hypertension_diagnosis_date: date | None
+
+
+class ClinicRead(BaseModel):
+    id: int
+    name_ar: str
+    city_ar: str | None
+    time_zone: str
+    is_demo: bool
+
+
+class DoctorRead(BaseModel):
+    id: int
+    clinic_id: int
+    name_ar: str
+    specialty_ar: str | None
+
+
+class ClinicPatientRead(BaseModel):
+    id: int
+    clinic_id: int
+    display_name_ar: str
+    file_number: str | None
+    patient: PatientRead
+
+
+class AppointmentRead(BaseModel):
+    id: int
+    clinic_id: int
+    doctor_id: int
+    clinic_patient_id: int
+    scheduled_at: datetime
+    status: AppointmentStatus
+    booking_source: BookingSource
+    visit_reason_ar: str | None
 
 
 class MedicationUseCreate(RequestSchema):
