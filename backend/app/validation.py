@@ -5,12 +5,27 @@ would produce. These are data-entry checks only, not clinical criteria.
 """
 
 from collections.abc import Iterable, Mapping
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
 from fastapi import HTTPException, status
 
-from app.models import ConditionStatus, DiabetesType, MedicationUse, ScreeningRecord, Sex, YesNoUnknown
+from app.models import AppointmentStatus, ConditionStatus, DiabetesType, MedicationUse, ScreeningRecord, Sex, YesNoUnknown
+
+# Demo policy: appointments have no stored duration, so one doctor's scheduled
+# appointments must start at least this far apart.
+APPOINTMENT_SLOT = timedelta(minutes=30)
+BOOKING_HORIZON = timedelta(days=365)
+
+# The only allowed changes. Completed, cancelled, and no-show are final.
+STATUS_TRANSITIONS: dict[AppointmentStatus, set[AppointmentStatus]] = {
+    AppointmentStatus.scheduled: {AppointmentStatus.completed, AppointmentStatus.cancelled, AppointmentStatus.no_show},
+}
+NEEDS_TIME_PASSED = {AppointmentStatus.completed, AppointmentStatus.no_show}
+
+
+def utc_now() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 def raise_if_invalid(errors: Mapping[str, str]) -> None:
@@ -105,3 +120,31 @@ def medication_date_errors(
         errors["last_dose_change_date"] = "Last dose change cannot be before the start date"
 
     return errors
+
+
+def appointment_time_errors(scheduled_at: datetime, now: datetime) -> dict[str, str]:
+    if scheduled_at <= now:
+        return {"scheduled_at": "Appointment time must be in the future"}
+    if scheduled_at > now + BOOKING_HORIZON:
+        return {"scheduled_at": "Appointment time cannot be more than 365 days ahead"}
+    return {}
+
+
+def doctor_conflict_errors(scheduled_at: datetime, doctor_times: Iterable[datetime]) -> dict[str, str]:
+    """doctor_times: the start times of the doctor's other scheduled appointments."""
+    if any(abs(scheduled_at - other) < APPOINTMENT_SLOT for other in doctor_times):
+        return {"scheduled_at": "The doctor already has an appointment within 30 minutes of this time"}
+    return {}
+
+
+def status_change_errors(
+    current: AppointmentStatus,
+    new: AppointmentStatus,
+    scheduled_at: datetime,
+    now: datetime,
+) -> dict[str, str]:
+    if new not in STATUS_TRANSITIONS.get(current, set()):
+        return {"status": f"Cannot change a {current} appointment to {new}"}
+    if new in NEEDS_TIME_PASSED and scheduled_at > now:
+        return {"status": f"An appointment cannot be marked {new} before its time"}
+    return {}

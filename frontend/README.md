@@ -71,7 +71,7 @@ Rules to keep when changing the code:
 |---|---|---|---|
 | 1 | Welcome: choose the patient or clinic entry | `/welcome` | None |
 | — | Clinic overview, appointments, patients, doctors | `/clinic`, `/clinic/appointments`, `/clinic/patients`, `/clinic/doctors` | API (synthetic demo clinic) |
-| — | Appointment details | `/clinic/appointments/:appointmentId` | API |
+| — | Appointment details, editing, cancellation, and status (demo only) | `/clinic/appointments/:appointmentId` | API |
 | 13 | Pre-appointment medical summary, inside the clinic workspace | `/clinic/appointments/:appointmentId/summary` | API |
 | 1 | Open a profile by number (in place of login) | `/open-profile` | API |
 | 2 | Basic information | `/onboarding/basic` | API and browser |

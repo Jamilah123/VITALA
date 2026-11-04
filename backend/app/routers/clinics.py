@@ -4,12 +4,25 @@ from fastapi import APIRouter, HTTPException, Request, status
 from sqlmodel import Session, select
 
 from app.database import SessionDep
-from app.models import Appointment, Clinic, ClinicPatient, Doctor, MedicationUse, Patient, PatientRiskProfile
+from app.models import (
+    Appointment,
+    AppointmentStatus,
+    BookingSource,
+    Clinic,
+    ClinicPatient,
+    Doctor,
+    MedicationUse,
+    Patient,
+    PatientRiskProfile,
+)
 from app.routers.risk_profiles import risk_profile_read
 from app.routers.screening_records import list_records
 from app.schemas import (
+    AppointmentCreate,
     AppointmentDetail,
     AppointmentRead,
+    AppointmentStatusChange,
+    AppointmentUpdate,
     ClinicPatientRead,
     ClinicRead,
     DoctorRead,
@@ -18,8 +31,17 @@ from app.schemas import (
     SummaryMedication,
 )
 from app.screening import summarize_screening
+from app.validation import (
+    appointment_time_errors,
+    doctor_conflict_errors,
+    raise_if_invalid,
+    status_change_errors,
+    utc_now,
+)
 
 router = APIRouter(prefix="/clinics", tags=["Clinics"])
+
+DEMO_WRITE_NOTE = "Demo only: no authentication, synthetic data. clinic_id in the path is not an access control."
 
 
 def get_clinic_or_404(session: Session, clinic_id: int) -> Clinic:
@@ -131,3 +153,88 @@ def read_pre_appointment_summary(clinic_id: int, appointment_id: int, request: R
         medications=medications,
         screening=summarize_screening(request.app.state.rule_set, patient, uses, list_records(session, patient.id), date.today()),
     )
+
+
+def ownership_errors(session: Session, clinic_id: int, doctor_id: int | None = None, link_id: int | None = None) -> dict[str, str]:
+    errors: dict[str, str] = {}
+    if link_id is not None:
+        link = session.get(ClinicPatient, link_id)
+        if link is None or link.clinic_id != clinic_id:
+            errors["clinic_patient_id"] = "Patient is not registered with this clinic"
+    if doctor_id is not None:
+        doctor = session.get(Doctor, doctor_id)
+        if doctor is None or doctor.clinic_id != clinic_id:
+            errors["doctor_id"] = "Doctor does not belong to this clinic"
+    return errors
+
+
+def doctor_times(session: Session, doctor_id: int, exclude_id: int | None = None) -> list:
+    query = select(Appointment.scheduled_at).where(Appointment.doctor_id == doctor_id, Appointment.status == AppointmentStatus.scheduled)
+    if exclude_id is not None:
+        query = query.where(Appointment.id != exclude_id)
+    return list(session.exec(query).all())
+
+
+def clinic_appointment(session: Session, clinic_id: int, appointment_id: int) -> Appointment:
+    appointment_detail(session, clinic_id, appointment_id)
+    return session.get(Appointment, appointment_id)
+
+
+@router.post(
+    "/{clinic_id}/appointments",
+    response_model=AppointmentRead,
+    status_code=status.HTTP_201_CREATED,
+    description=DEMO_WRITE_NOTE,
+)
+def create_appointment(clinic_id: int, body: AppointmentCreate, session: SessionDep) -> Appointment:
+    get_clinic_or_404(session, clinic_id)
+    errors = ownership_errors(session, clinic_id, doctor_id=body.doctor_id, link_id=body.clinic_patient_id)
+    raise_if_invalid(errors | appointment_time_errors(body.scheduled_at, utc_now()))
+    raise_if_invalid(doctor_conflict_errors(body.scheduled_at, doctor_times(session, body.doctor_id)))
+
+    appointment = Appointment(
+        clinic_id=clinic_id,
+        status=AppointmentStatus.scheduled,
+        booking_source=BookingSource.clinic,
+        **body.model_dump(),
+    )
+    session.add(appointment)
+    session.commit()
+    session.refresh(appointment)
+    return appointment
+
+
+@router.patch("/{clinic_id}/appointments/{appointment_id}", response_model=AppointmentRead, description=DEMO_WRITE_NOTE)
+def update_appointment(clinic_id: int, appointment_id: int, body: AppointmentUpdate, session: SessionDep) -> Appointment:
+    appointment = clinic_appointment(session, clinic_id, appointment_id)
+    if appointment.status != AppointmentStatus.scheduled:
+        raise_if_invalid({"status": "Only scheduled appointments can be changed"})
+    changes = body.model_dump(exclude_unset=True)
+
+    errors = ownership_errors(session, clinic_id, doctor_id=changes["doctor_id"]) if "doctor_id" in changes else {}
+    if "scheduled_at" in changes:
+        errors |= appointment_time_errors(changes["scheduled_at"], utc_now())
+    raise_if_invalid(errors)
+    if "doctor_id" in changes or "scheduled_at" in changes:
+        doctor_id = changes.get("doctor_id", appointment.doctor_id)
+        scheduled_at = changes.get("scheduled_at", appointment.scheduled_at)
+        raise_if_invalid(doctor_conflict_errors(scheduled_at, doctor_times(session, doctor_id, exclude_id=appointment.id)))
+
+    appointment.sqlmodel_update(changes)
+    session.add(appointment)
+    session.commit()
+    session.refresh(appointment)
+    return appointment
+
+
+@router.post("/{clinic_id}/appointments/{appointment_id}/status", response_model=AppointmentRead, description=DEMO_WRITE_NOTE)
+def change_appointment_status(clinic_id: int, appointment_id: int, body: AppointmentStatusChange, session: SessionDep) -> Appointment:
+    appointment = clinic_appointment(session, clinic_id, appointment_id)
+    new_status = AppointmentStatus(body.status)
+    raise_if_invalid(status_change_errors(appointment.status, new_status, appointment.scheduled_at, utc_now()))
+
+    appointment.status = new_status
+    session.add(appointment)
+    session.commit()
+    session.refresh(appointment)
+    return appointment

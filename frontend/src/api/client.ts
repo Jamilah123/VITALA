@@ -1,7 +1,10 @@
 import { errorFromResponse, networkError } from "./errors";
 import type {
   Appointment,
+  AppointmentCreate,
   AppointmentDetail,
+  AppointmentOutcome,
+  AppointmentUpdate,
   CatalogueMedication,
   Clinic,
   ClinicPatient,
@@ -81,6 +84,12 @@ export const api = {
     request<AppointmentDetail>(`/clinics/${clinicId}/appointments/${appointmentId}`, {}, signal),
   getPreAppointmentSummary: (clinicId: number, appointmentId: number, signal?: AbortSignal) =>
     request<PreAppointmentSummary>(`/clinics/${clinicId}/appointments/${appointmentId}/summary`, {}, signal),
+  createAppointment: (clinicId: number, input: AppointmentCreate) =>
+    request<Appointment>(`/clinics/${clinicId}/appointments`, jsonBody("POST", input)),
+  updateAppointment: (clinicId: number, appointmentId: number, input: AppointmentUpdate) =>
+    request<Appointment>(`/clinics/${clinicId}/appointments/${appointmentId}`, jsonBody("PATCH", input)),
+  changeAppointmentStatus: (clinicId: number, appointmentId: number, status: AppointmentOutcome) =>
+    request<Appointment>(`/clinics/${clinicId}/appointments/${appointmentId}/status`, jsonBody("POST", { status })),
 
   listScreeningTests: (signal?: AbortSignal) => request<ScreeningTest[]>("/screening-tests", {}, signal),
   getScreeningSummary: (patientId: number, signal?: AbortSignal) =>

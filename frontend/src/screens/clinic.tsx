@@ -1,9 +1,19 @@
-import type { DependencyList, ReactNode } from "react";
+import { useState, type DependencyList, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../api/client";
 import { ApiError } from "../api/errors";
-import type { Appointment, AppointmentDetail, Clinic, ClinicPatient, Doctor, PreAppointmentSummary, ScreeningTestSummary } from "../api/types";
-import { ErrorState, Loading, SourceBadge } from "../components/feedback";
+import type {
+  Appointment,
+  AppointmentDetail,
+  AppointmentOutcome,
+  Clinic,
+  ClinicPatient,
+  Doctor,
+  PreAppointmentSummary,
+  ScreeningTestSummary,
+} from "../api/types";
+import { AppointmentFormDialog, OutcomeDialog } from "../components/appointments";
+import { ErrorState, Loading, SourceBadge, useToast } from "../components/feedback";
 import { IconTile, Pill, Screen, SectionHead } from "../components/layout";
 import {
   ClinicalReviewNotice,
@@ -15,11 +25,14 @@ import {
 } from "../components/screening";
 import {
   APPOINTMENT_STATUS,
+  availableOutcomes,
   BOOKING_SOURCE,
+  canEditAppointment,
   CLINIC_TABS,
   formatClinicDay,
   formatClinicTime,
   groupByClinicDay,
+  OUTCOME_ACTIONS,
   UPCOMING_MODULES,
   upcomingAppointments,
 } from "../lib/clinic";
@@ -121,7 +134,10 @@ function AppointmentRow({ appointment, clinic, lists }: { appointment: Appointme
   const doctor = lists.doctors.find((item) => item.id === appointment.doctor_id);
   return (
     <li>
-      <Link to={`/clinic/appointments/${appointment.id}`} className="med med--link">
+      <Link
+        to={`/clinic/appointments/${appointment.id}`}
+        className={`med med--link${appointment.status === "cancelled" ? " med--cancelled" : ""}`}
+      >
         <div className="med__body">
           <strong>
             <bdi dir="ltr">{formatClinicTime(appointment.scheduled_at, clinic.time_zone)}</bdi> ·{" "}
@@ -194,13 +210,22 @@ export function ClinicHome() {
 
 export function ClinicAppointments() {
   const state = useClinicLists();
+  const toast = useToast();
+  const [adding, setAdding] = useState(false);
   return (
     <ClinicScreen title="المواعيد" state={state}>
       {(clinic, lists) => {
         const days = groupByClinicDay(lists.appointments, clinic.time_zone);
+        const canAdd = lists.patients.length > 0 && lists.doctors.length > 0;
         return (
           <>
-            <p className="muted">مواعيد إدارية مسجّلة في العيادة، بتوقيت {clinic.city_ar ?? "العيادة"}. لا تُحسب أي مواعيد من قواعد الفحص.</p>
+            <div className="spread">
+              <p className="muted">مواعيد إدارية مسجّلة في العيادة، بتوقيت {clinic.city_ar ?? "العيادة"}. لا تُحسب أي مواعيد من قواعد الفحص.</p>
+              <button type="button" className="btn btn--primary btn--small" onClick={() => setAdding(true)} disabled={!canAdd}>
+                إضافة موعد
+              </button>
+            </div>
+            {!canAdd && <p className="note">يلزم وجود مريض وطبيب في العيادة قبل إضافة موعد.</p>}
             {days.length === 0 && <p className="empty">لا توجد مواعيد مسجّلة.</p>}
             <div className="stack">
               {days.map((day) => (
@@ -214,6 +239,19 @@ export function ClinicAppointments() {
                 </section>
               ))}
             </div>
+            {adding && (
+              <AppointmentFormDialog
+                clinic={clinic}
+                doctors={lists.doctors}
+                patients={lists.patients}
+                onClose={() => setAdding(false)}
+                onSaved={() => {
+                  setAdding(false);
+                  state.reload();
+                  toast("أُضيف الموعد.");
+                }}
+              />
+            )}
           </>
         );
       }}
@@ -327,24 +365,96 @@ function VisitCard({ clinic, visit }: { clinic: Clinic; visit: AppointmentDetail
 
 export function ClinicAppointmentDetail() {
   const appointmentId = useAppointmentId();
-  const state = useClinic<AppointmentDetail | null>(
-    (clinic, signal) => (appointmentId === null ? Promise.resolve(null) : api.getAppointment(clinic.id, appointmentId, signal)),
+  const toast = useToast();
+  const [editing, setEditing] = useState(false);
+  const [outcome, setOutcome] = useState<AppointmentOutcome | null>(null);
+  const state = useClinic<{ visit: AppointmentDetail; doctors: Doctor[]; patients: ClinicPatient[] } | null>(
+    async (clinic, signal) => {
+      if (appointmentId === null) return null;
+      const [visit, doctors, patients] = await Promise.all([
+        api.getAppointment(clinic.id, appointmentId, signal),
+        api.listDoctors(clinic.id, signal),
+        api.listClinicPatients(clinic.id, signal),
+      ]);
+      return { visit, doctors, patients };
+    },
     [appointmentId],
   );
+  // Show the server's answer at once, so a cancelled appointment never briefly
+  // keeps its edit button while the page reloads.
+  const apply = (updated: Appointment) => {
+    if (state.data?.data) {
+      const current = state.data.data;
+      state.setData({ clinic: state.data.clinic, data: { ...current, visit: { ...current.visit, appointment: updated } } });
+    }
+    state.reload();
+  };
   return (
     <ClinicScreen title="تفاصيل الموعد" back="/clinic/appointments" state={state}>
-      {(clinic, visit) =>
-        visit === null ? (
-          <NotFoundCard />
-        ) : (
+      {(clinic, data) => {
+        if (data === null) return <NotFoundCard />;
+        const { appointment } = data.visit;
+        const outcomes = availableOutcomes(appointment, new Date());
+        return (
           <div className="stack">
-            <VisitCard clinic={clinic} visit={visit} />
-            <Link to={`/clinic/appointments/${visit.appointment.id}/summary`} className="btn btn--primary btn--block">
+            <VisitCard clinic={clinic} visit={data.visit} />
+            <Link to={`/clinic/appointments/${appointment.id}/summary`} className="btn btn--primary btn--block">
               عرض الملخص الطبي
             </Link>
+            {canEditAppointment(appointment) ? (
+              <section className="card stack-tight" aria-label="إدارة الموعد">
+                <strong>إدارة الموعد</strong>
+                <p className="muted small">تعديل تجريبي على بيانات اصطناعية. يبقى الموعد الملغى في السجل ولا يُحذف.</p>
+                <div className="btn-row btn-row--wrap">
+                  <button type="button" className="btn btn--outline" onClick={() => setEditing(true)}>
+                    تعديل الموعد
+                  </button>
+                  {outcomes.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      className={item === "cancelled" ? "btn btn--outline btn--danger-outline" : "btn btn--outline"}
+                      onClick={() => setOutcome(item)}
+                    >
+                      {OUTCOME_ACTIONS[item].label}
+                    </button>
+                  ))}
+                </div>
+                {!outcomes.includes("completed") && <p className="muted small">يمكن تسجيل الحضور أو عدمه بعد وقت الموعد.</p>}
+              </section>
+            ) : (
+              <p className="note">هذا الموعد بحالة «{APPOINTMENT_STATUS[appointment.status].label}»، ولا يمكن تعديله. يبقى في السجل.</p>
+            )}
+            {editing && (
+              <AppointmentFormDialog
+                clinic={clinic}
+                doctors={data.doctors}
+                patients={data.patients}
+                editing={appointment}
+                onClose={() => setEditing(false)}
+                onSaved={(updated) => {
+                  setEditing(false);
+                  apply(updated);
+                  toast("حُفظ تعديل الموعد.");
+                }}
+              />
+            )}
+            {outcome && (
+              <OutcomeDialog
+                clinic={clinic}
+                appointment={appointment}
+                outcome={outcome}
+                onClose={() => setOutcome(null)}
+                onDone={(updated) => {
+                  setOutcome(null);
+                  apply(updated);
+                  toast(outcome === "cancelled" ? "أُلغي الموعد وبقي في السجل." : "حُدّثت حالة الموعد.");
+                }}
+              />
+            )}
           </div>
-        )
-      }
+        );
+      }}
     </ClinicScreen>
   );
 }

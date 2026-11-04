@@ -169,12 +169,15 @@ def test_database_rejects_rows_for_a_missing_clinic(client):
             session.commit()
 
 
-def test_clinic_endpoints_are_read_only(client, demo):
+def test_only_appointments_are_writable_and_never_deletable(client, demo):
     base = f"/clinics/{demo['id']}"
+    first = client.get(f"{base}/appointments").json()[0]["id"]
 
     assert client.post("/clinics", json={"name_ar": "x"}).status_code == 405
-    assert client.post(f"{base}/appointments", json={}).status_code == 405
+    assert client.post(f"{base}/patients", json={}).status_code == 405
+    assert client.post(f"{base}/doctors", json={}).status_code == 405
     assert client.delete(f"{base}/patients").status_code == 405
+    assert client.delete(f"{base}/appointments/{first}").status_code == 405
 
 
 # Existing databases

@@ -10,7 +10,7 @@ import re
 from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
+from pydantic import AwareDatetime, BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
 
 from app.models import (
     AppointmentStatus,
@@ -34,6 +34,19 @@ def _require_iso_date_text(value: Any) -> Any:
 
 
 IsoDate = Annotated[date, BeforeValidator(_require_iso_date_text)]
+
+ISO_AWARE_DATETIME = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})")
+
+
+def _require_aware_iso_text(value: Any) -> Any:
+    # A wall-clock time without an offset is ambiguous across clinics, and a
+    # number would be read as a Unix timestamp.
+    if not isinstance(value, str) or not ISO_AWARE_DATETIME.fullmatch(value):
+        raise ValueError("Time must be ISO 8601 text with a time zone offset, such as 2026-11-09T09:00:00+03:00")
+    return value
+
+
+AwareTimestamp = Annotated[AwareDatetime, BeforeValidator(_require_aware_iso_text)]
 DoseText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 TestName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 ResultText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
@@ -118,6 +131,32 @@ class AppointmentRead(BaseModel):
     status: AppointmentStatus
     booking_source: BookingSource
     visit_reason_ar: str | None
+
+
+VisitReason = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+
+
+class AppointmentCreate(RequestSchema):
+    # Status and booking source are set by the server: scheduled, booked by the clinic.
+    clinic_patient_id: int = Field(strict=True)
+    doctor_id: int = Field(strict=True)
+    scheduled_at: AwareTimestamp
+    visit_reason_ar: VisitReason | None = None
+
+
+class AppointmentUpdate(RequestSchema):
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={"examples": [{"scheduled_at": "2026-11-20T10:00:00+03:00"}]},
+    )
+
+    doctor_id: int = Field(default=None, strict=True)
+    scheduled_at: AwareTimestamp = Field(default=None)
+    visit_reason_ar: VisitReason | None = None
+
+
+class AppointmentStatusChange(RequestSchema):
+    status: Literal["completed", "cancelled", "no_show"]
 
 
 class AppointmentDetail(BaseModel):

@@ -107,6 +107,18 @@ export interface Appointment {
   visit_reason_ar: string | null;
 }
 
+/** Demo only: no authentication. The server sets status and booking source itself. */
+export interface AppointmentCreate {
+  clinic_patient_id: number;
+  doctor_id: number;
+  /** ISO 8601 with an offset; the server stores UTC. */
+  scheduled_at: string;
+  visit_reason_ar: string | null;
+}
+
+export type AppointmentUpdate = Partial<Omit<AppointmentCreate, "clinic_patient_id">>;
+export type AppointmentOutcome = Exclude<AppointmentStatus, "scheduled">;
+
 export interface AppointmentDetail {
   appointment: Appointment;
   doctor: Doctor;

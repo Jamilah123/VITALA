@@ -1404,3 +1404,26 @@ select {
 .details[open] summary {
   margin-bottom: 8px;
 }
+
+/* Appointment management */
+.btn-row--wrap {
+  flex-wrap: wrap;
+}
+
+.btn-row--wrap > .btn,
+.btn-row--wrap > .btn--outline {
+  flex: 1 1 auto;
+}
+
+.btn--danger-outline {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.med--cancelled {
+  opacity: 0.7;
+}
+
+.med--cancelled .med__body strong {
+  text-decoration: line-through;
+}

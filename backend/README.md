@@ -70,6 +70,9 @@ server was launched from. To start over, stop the server and delete that file.
 | `GET /clinics/{clinic_id}/appointments` | List the clinic's appointments, oldest first |
 | `GET /clinics/{clinic_id}/appointments/{appointment_id}` | Read one appointment with its patient and doctor |
 | `GET /clinics/{clinic_id}/appointments/{appointment_id}/summary` | Pre-appointment medical summary for that patient |
+| `POST /clinics/{clinic_id}/appointments` | Book an appointment (demo only) |
+| `PATCH /clinics/{clinic_id}/appointments/{appointment_id}` | Reschedule, change doctor, or edit the visit reason (demo only) |
+| `POST /clinics/{clinic_id}/appointments/{appointment_id}/status` | Mark completed, cancelled, or no-show (demo only) |
 | `GET /medications` | List the catalogue |
 | `GET /medications/{medication_id}` | Read one catalogue entry |
 | `POST /patients/{patient_id}/medications` | Add a medication use |
@@ -160,6 +163,28 @@ profile, the risk profile with BMI, medications with catalogue names, and the sa
 screening summary the patient endpoint returns. Medication records store no entry
 source, so none is shown. `smartwatch_data_available` and `clinically_validated`
 are always `false`. The endpoint is read-only.
+
+**Appointment management (demo only).** Clinics can book, edit, and change the
+status of their appointments. There is no delete: a cancelled appointment stays in
+the history. No schema change was needed.
+
+- Every write checks that the appointment, its patient link, and its doctor
+  belong to the clinic in the path. Another clinic's appointment returns 404.
+  A doctor or patient from elsewhere is a 422 on that field.
+- The server sets `status: scheduled` and `booking_source: clinic` on booking.
+  Neither can be sent, so simulated VITALA attribution cannot be created here.
+- `scheduled_at` must be ISO 8601 text with an offset (`+03:00` or `Z`), in
+  the future, and at most 365 days ahead. It is stored in UTC.
+- Appointments have no stored duration, so a demo policy applies: one doctor's
+  scheduled appointments must start at least 30 minutes apart
+  (`APPOINTMENT_SLOT` in `app/validation.py`). Cancelled and finished
+  appointments do not block a slot.
+- Lifecycle: `scheduled` can become `cancelled` at any time, or `completed` /
+  `no_show` once its time has passed. All three are final, and only scheduled
+  appointments can be edited.
+
+`clinic_id` in the path is not authentication or authorization. These endpoints
+are for local synthetic data only and do not protect real patient records.
 
 There is no authentication: choosing the clinic entry grants no access and
 protects nothing. Keep the server local and the data synthetic.
