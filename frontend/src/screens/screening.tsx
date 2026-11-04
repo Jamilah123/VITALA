@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { api } from "../api/client";
 import type { ScreeningRecord, ScreeningTestSummary } from "../api/types";
 import { SourceBadge, useToast } from "../components/feedback";
@@ -267,7 +267,6 @@ export function CheckDetail() {
 
 export function ResultsLog() {
   const { patientId } = useSession();
-  const navigate = useNavigate();
   const state = useAsync(async (signal) => {
     if (patientId === null) return null;
     const [records, tests] = await Promise.all([api.listScreeningRecords(patientId, signal), api.listScreeningTests(signal)]);
@@ -314,9 +313,6 @@ export function ResultsLog() {
           </div>
         </>
       )}
-      <button type="button" className="btn btn--outline btn--block" onClick={() => navigate("/doctor")}>
-        معاينة ملخص الطبيب (تجريبي)
-      </button>
     </Screen>
   );
 }

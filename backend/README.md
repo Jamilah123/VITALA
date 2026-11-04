@@ -68,6 +68,8 @@ server was launched from. To start over, stop the server and delete that file.
 | `GET /clinics/{clinic_id}/doctors` | List the clinic's doctors |
 | `GET /clinics/{clinic_id}/patients` | List patients linked to the clinic |
 | `GET /clinics/{clinic_id}/appointments` | List the clinic's appointments, oldest first |
+| `GET /clinics/{clinic_id}/appointments/{appointment_id}` | Read one appointment with its patient and doctor |
+| `GET /clinics/{clinic_id}/appointments/{appointment_id}/summary` | Pre-appointment medical summary for that patient |
 | `GET /medications` | List the catalogue |
 | `GET /medications/{medication_id}` | Read one catalogue entry |
 | `POST /patients/{patient_id}/medications` | Add a medication use |
@@ -148,6 +150,16 @@ private. Appointments point at that link, so they always belong to a clinic the
 patient is registered with. `scheduled_at` is stored in UTC and shown in the
 clinic's `time_zone`. `booking_source` is simulated in the demo and is labelled so.
 The clinic endpoints are read-only in this phase.
+
+The pre-appointment summary is reached only through an appointment: appointment,
+then its clinic-patient link, then the patient. A patient is never addressed
+directly, so unlinked patients cannot be reached. If the appointment, its link, or
+its doctor belongs to another clinic, the response is 404, so ids from other
+clinics reveal nothing. The summary reuses existing logic without adding any: the
+profile, the risk profile with BMI, medications with catalogue names, and the same
+screening summary the patient endpoint returns. Medication records store no entry
+source, so none is shown. `smartwatch_data_available` and `clinically_validated`
+are always `false`. The endpoint is read-only.
 
 There is no authentication: choosing the clinic entry grants no access and
 protects nothing. Keep the server local and the data synthetic.

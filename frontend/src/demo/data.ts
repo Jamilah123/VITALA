@@ -2,17 +2,6 @@
 // invented person. It is not computed from any profile, not clinically reviewed,
 // and must never be merged with API data. Nothing under src/api imports this folder.
 
-export const PERSONA = {
-  name: "نورة",
-  age: 31,
-  sex: "أنثى",
-  bmi: 23.5,
-  conditions: "سكري · ضغط",
-  medication: "ميتفورمين",
-};
-
-export type Tone = "rose" | "amber" | "green" | "blue" | "neutral";
-
 export interface ResultEntry {
   date: string;
   value: string;
@@ -59,12 +48,3 @@ export const WATCH_OPTIONS = [
 ] as const;
 
 export type WatchOption = (typeof WATCH_OPTIONS)[number]["id"];
-
-export const DOCTOR_CHECKLIST = [
-  { id: "hba1c", title: "HbA1c كل 3 أشهر", detail: "بسبب السكري · ADA 2026", badge: "مستحق", tone: "amber" as Tone },
-  { id: "eye", title: "قاع العين سنوياً", detail: "بسبب السكري · ADA 2026", badge: "متأخر", tone: "rose" as Tone },
-  { id: "uacr", title: "UACR سنوياً", detail: "سكري وضغط · ADA / ESC 2024", badge: "قادم", tone: "amber" as Tone },
-  { id: "lipid", title: "ملف الدهون", detail: "تم مارس 2026 · وزارة الصحة", badge: "مكتمل", tone: "green" as Tone },
-];
-
-export const DOCTOR_CONFIRMED_DEFAULT = ["hba1c", "uacr", "lipid"];

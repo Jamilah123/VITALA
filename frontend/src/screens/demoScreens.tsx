@@ -3,14 +3,13 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { SourceBadge, useToast } from "../components/feedback";
-import { CheckRow, clearErrorOnEdit, DateField, Field, Modal } from "../components/forms";
+import { clearErrorOnEdit, DateField, Field, Modal } from "../components/forms";
 import { IconTile, Meter, Pill, Screen, SectionHead } from "../components/layout";
-import { ACTIVITY, DOCTOR_CHECKLIST, HBA1C_TARGET, PERSONA } from "../demo/data";
+import { ACTIVITY, HBA1C_TARGET } from "../demo/data";
 import { useDemo } from "../demo/store";
 import { formatMonth, formatMonthYear, todayIso } from "../lib/dates";
 import {
   parseNumber,
-  rangeError,
   validateBloodPressure,
   validateResultDate,
   type FieldErrors,
@@ -223,116 +222,6 @@ export function Activity() {
       <button type="button" className="btn btn--primary btn--block" onClick={() => remind("activity")}>
         ضبط تذكير يومي (تجريبي)
       </button>
-    </Screen>
-  );
-}
-
-export function DoctorView() {
-  const demo = useDemo();
-  const toast = useToast();
-  const [editingGoal, setEditingGoal] = useState(false);
-  const [goalText, setGoalText] = useState(String(demo.activityGoal));
-  const [goalError, setGoalError] = useState<string | null>(null);
-  const confirmed = DOCTOR_CHECKLIST.filter((item) => demo.doctorConfirmed.includes(item.id)).length;
-  const total = DOCTOR_CHECKLIST.length + 1;
-
-  const toggle = (id: string, checked: boolean) =>
-    demo.update({
-      doctorConfirmed: checked ? [...demo.doctorConfirmed, id] : demo.doctorConfirmed.filter((item) => item !== id),
-    });
-
-  const saveGoal = (event: FormEvent) => {
-    event.preventDefault();
-    const error = rangeError(goalText, 10, 1000, "دقيقة");
-    setGoalError(error);
-    if (error) return;
-    demo.update({ activityGoal: Math.round(parseNumber(goalText)!) });
-    setEditingGoal(false);
-  };
-
-  return (
-    <Screen
-      title="عرض الطبيب"
-      back
-      nav={false}
-      demo
-      demoText="معاينة لما قد يراه الطبيب. لم يُرسل شيء إلى أي طبيب، ولا تُحفظ المراجعة إلا في هذا المتصفح."
-    >
-      <section className="card card--soft spread">
-        <div>
-          <strong>
-            {PERSONA.name} · {PERSONA.age} سنة · {PERSONA.sex}
-          </strong>
-          <p className="muted small">
-            {PERSONA.conditions} · BMI {PERSONA.bmi}
-          </p>
-        </div>
-        <Pill tone="blue">ملف تجريبي</Pill>
-      </section>
-
-      <SectionHead title="قائمة المراجعة" aside={`${confirmed} من ${total} مؤكدة`} />
-      <div className="stack">
-        {DOCTOR_CHECKLIST.map((item) => (
-          <div key={item.id} className="card doctor-row">
-            <CheckRow checked={demo.doctorConfirmed.includes(item.id)} onChange={(checked) => toggle(item.id, checked)}>
-              <strong>{item.title}</strong>
-              <span className="muted small">{item.detail}</span>
-            </CheckRow>
-            <Pill tone={item.tone}>{item.badge}</Pill>
-          </div>
-        ))}
-        <div className="card doctor-row">
-          <div className="row-card__body doctor-row__goal">
-            <strong>هدف النشاط</strong>
-            <span className="muted small">
-              {demo.activityGoal} دقيقة أسبوعياً · أنجز {ACTIVITY.doneMinutes}
-            </span>
-          </div>
-          <button
-            type="button"
-            className="btn btn--outline btn--small"
-            onClick={() => {
-              setGoalText(String(demo.activityGoal));
-              setGoalError(null);
-              setEditingGoal(true);
-            }}
-          >
-            تعديل
-          </button>
-        </div>
-      </div>
-
-      {demo.doctorReviewedOn && <p className="note">سُجّلت مراجعة تجريبية في {demo.doctorReviewedOn}. لم يراجع طبيب هذه البيانات فعلياً.</p>}
-      <button
-        type="button"
-        className="btn btn--primary btn--block"
-        onClick={() => {
-          demo.update({ doctorReviewedOn: todayIso() });
-          toast("سُجّلت مراجعة تجريبية في هذا المتصفح فقط.");
-        }}
-      >
-        تأكيد المراجعة (تجريبي)
-      </button>
-      <p className="note">أداة دعم تخطيط وقائي. لا تغني عن التقدير السريري.</p>
-
-      {editingGoal && (
-        <Modal title="تعديل هدف النشاط (تجريبي)" onClose={() => setEditingGoal(false)}>
-          <form className="stack" onSubmit={saveGoal} noValidate>
-            <Field label="الهدف الأسبوعي" suffix="دقيقة" value={goalText} onChange={(next) => {
-                setGoalText(next);
-                setGoalError(null);
-              }} error={goalError ?? undefined} inputMode="numeric" />
-            <div className="btn-row">
-              <button type="button" className="btn btn--outline" onClick={() => setEditingGoal(false)}>
-                إلغاء
-              </button>
-              <button type="submit" className="btn btn--primary btn--grow">
-                حفظ
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
     </Screen>
   );
 }

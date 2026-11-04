@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { readJson, removeKey, writeJson } from "../lib/browserStore";
-import { ACTIVITY, BASE_RESULTS, DOCTOR_CONFIRMED_DEFAULT, type ResultEntry, type WatchOption } from "./data";
+import { ACTIVITY, BASE_RESULTS, type ResultEntry, type WatchOption } from "./data";
 
 // DEMO ONLY. What the user does on demo screens stays in this browser under its
 // own key, apart from the patient id and browser profile. Nothing here reaches the API.
@@ -14,8 +14,6 @@ interface DemoState {
   watch: Record<WatchOption, boolean>;
   privacy: Record<PrivacySetting, boolean>;
   reminders: string[];
-  doctorConfirmed: string[];
-  doctorReviewedOn: string | null;
   activityGoal: number;
 }
 
@@ -24,8 +22,6 @@ const INITIAL: DemoState = {
   watch: { steps: true, pulse: true, sleep: false },
   privacy: { watch: true, reminders: true, sharing: false },
   reminders: [],
-  doctorConfirmed: DOCTOR_CONFIRMED_DEFAULT,
-  doctorReviewedOn: null,
   activityGoal: ACTIVITY.goalMinutes,
 };
 

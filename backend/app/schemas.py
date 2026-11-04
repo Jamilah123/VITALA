@@ -120,6 +120,12 @@ class AppointmentRead(BaseModel):
     visit_reason_ar: str | None
 
 
+class AppointmentDetail(BaseModel):
+    appointment: AppointmentRead
+    doctor: DoctorRead
+    patient: ClinicPatientRead
+
+
 class MedicationUseCreate(RequestSchema):
     medication_id: str
     dose_text: DoseText
@@ -380,3 +386,26 @@ class ScreeningSummary(BaseModel):
     notice_ar: str
     tests: list[ScreeningTestSummary]
     unmapped_records: list[ScreeningRecordRead]
+
+
+class SummaryMedication(BaseModel):
+    id: int
+    medication_id: str
+    # None when the id is not in the catalogue. The record itself stores no source.
+    name_ar: str | None
+    generic_name: str | None
+    drug_class: str | None
+    dose_text: str
+    start_date: date | None
+    last_dose_change_date: date | None
+
+
+class PreAppointmentSummary(BaseModel):
+    # Read-only and built from existing records. Nothing here is clinically validated.
+    clinic: ClinicRead
+    visit: AppointmentDetail
+    risk_profile: RiskProfileRead
+    medications: list[SummaryMedication]
+    screening: ScreeningSummary
+    smartwatch_data_available: Literal[False] = False
+    clinically_validated: Literal[False] = False

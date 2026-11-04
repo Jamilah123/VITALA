@@ -1,6 +1,7 @@
 import { errorFromResponse, networkError } from "./errors";
 import type {
   Appointment,
+  AppointmentDetail,
   CatalogueMedication,
   Clinic,
   ClinicPatient,
@@ -11,6 +12,7 @@ import type {
   MedicationUseUpdate,
   Patient,
   PatientInput,
+  PreAppointmentSummary,
   RiskProfile,
   RiskProfileInput,
   ScreeningRecord,
@@ -75,6 +77,10 @@ export const api = {
     request<ClinicPatient[]>(`/clinics/${clinicId}/patients`, {}, signal),
   listAppointments: (clinicId: number, signal?: AbortSignal) =>
     request<Appointment[]>(`/clinics/${clinicId}/appointments`, {}, signal),
+  getAppointment: (clinicId: number, appointmentId: number, signal?: AbortSignal) =>
+    request<AppointmentDetail>(`/clinics/${clinicId}/appointments/${appointmentId}`, {}, signal),
+  getPreAppointmentSummary: (clinicId: number, appointmentId: number, signal?: AbortSignal) =>
+    request<PreAppointmentSummary>(`/clinics/${clinicId}/appointments/${appointmentId}/summary`, {}, signal),
 
   listScreeningTests: (signal?: AbortSignal) => request<ScreeningTest[]>("/screening-tests", {}, signal),
   getScreeningSummary: (patientId: number, signal?: AbortSignal) =>

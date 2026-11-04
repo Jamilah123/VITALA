@@ -107,6 +107,35 @@ export interface Appointment {
   visit_reason_ar: string | null;
 }
 
+export interface AppointmentDetail {
+  appointment: Appointment;
+  doctor: Doctor;
+  patient: ClinicPatient;
+}
+
+export interface SummaryMedication {
+  id: number;
+  medication_id: string;
+  /** Null when the id is not in the catalogue. Medication records store no source. */
+  name_ar: string | null;
+  generic_name: string | null;
+  drug_class: string | null;
+  dose_text: string;
+  start_date: string | null;
+  last_dose_change_date: string | null;
+}
+
+/** Read-only, built from existing records. Never clinically validated. */
+export interface PreAppointmentSummary {
+  clinic: Clinic;
+  visit: AppointmentDetail;
+  risk_profile: RiskProfile;
+  medications: SummaryMedication[];
+  screening: ScreeningSummary;
+  smartwatch_data_available: false;
+  clinically_validated: false;
+}
+
 export interface Health {
   status: string;
   database: string;

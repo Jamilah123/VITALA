@@ -42,7 +42,7 @@ Each kind of data is kept apart in the code and labelled on screen.
 |---|---|---|---|
 | من الخادم | Profile, risk factors, medications, screening summary and rules, screening history, rule sources | Backend API | `src/api` |
 | في هذا المتصفح فقط | Height, weight, lipids, and family history typed before the API stored them. Kept as they are and offered once for import on the health profile page; never overwritten | `localStorage` | `src/lib/session.tsx`, `src/lib/riskProfile.ts` |
-| بيانات تجريبية | The persona "نورة": diabetes and blood pressure tracking, activity, doctor view, chat, privacy settings | `src/demo/data.ts`, and demo actions in `localStorage` | `src/demo` |
+| بيانات تجريبية | The persona "نورة": diabetes and blood pressure tracking, activity, chat, privacy settings | `src/demo/data.ts`, and demo actions in `localStorage` | `src/demo` |
 
 Rules to keep when changing the code:
 
@@ -71,6 +71,8 @@ Rules to keep when changing the code:
 |---|---|---|---|
 | 1 | Welcome: choose the patient or clinic entry | `/welcome` | None |
 | — | Clinic overview, appointments, patients, doctors | `/clinic`, `/clinic/appointments`, `/clinic/patients`, `/clinic/doctors` | API (synthetic demo clinic) |
+| — | Appointment details | `/clinic/appointments/:appointmentId` | API |
+| 13 | Pre-appointment medical summary, inside the clinic workspace | `/clinic/appointments/:appointmentId/summary` | API |
 | 1 | Open a profile by number (in place of login) | `/open-profile` | API |
 | 2 | Basic information | `/onboarding/basic` | API and browser |
 | 3 | Health history and medications | `/onboarding/history` | API and browser |
@@ -83,7 +85,6 @@ Rules to keep when changing the code:
 | 10 | Activity goal | `/activity` | Demo |
 | 11 | Ask Vitala | `/chat` | Demo |
 | 12 | Screening history | `/log` | API |
-| 13 | Doctor view | `/doctor` | Demo |
 | 14 | Account | `/account` | API and demo |
 | 14 | Health profile and medications | `/account/health` | API and browser |
 | 14 | Rule sources | `/account/sources` | API |

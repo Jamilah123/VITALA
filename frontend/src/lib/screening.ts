@@ -10,7 +10,7 @@ export const RULE_STATUS: Record<RuleStatus, { label: string; tone: Tone; detail
   candidate: {
     label: "قد تنطبق · للمراجعة",
     tone: "blue",
-    detail: "تنطبق شروط هذه القاعدة المسودة على بياناتك المسجّلة. ليست توصية طبية معتمدة، ويُنصح بمناقشتها مع الطبيب.",
+    detail: "تنطبق شروط هذه القاعدة المسودة على البيانات المسجّلة. ليست توصية طبية معتمدة، وتحتاج إلى تقييم سريري.",
   },
   needs_information: {
     label: "تحتاج معلومات",
@@ -20,23 +20,23 @@ export const RULE_STATUS: Record<RuleStatus, { label: string; tone: Tone; detail
   not_applicable: {
     label: "لا تنطبق حالياً",
     tone: "neutral",
-    detail: "بحسب بياناتك المسجّلة. لا يعني ذلك أن الفحص غير لازم.",
+    detail: "بحسب البيانات المسجّلة. لا يعني ذلك أن الفحص غير لازم.",
   },
   not_triggered: {
     label: "لا دواء مرتبط مسجّل",
     tone: "neutral",
-    detail: "تخص القاعدة أدوية غير مسجّلة في ملفك. قد تكون قائمة الأدوية ناقصة.",
+    detail: "تخص القاعدة أدوية غير مسجّلة في الملف. قد تكون قائمة الأدوية ناقصة.",
   },
 };
 
 const EXCLUSION_REASONS: Record<string, string> = {
-  diabetes_not_diagnosed: "السكري غير مشخّص في ملفك.",
-  hypertension_not_diagnosed: "ضغط الدم غير مشخّص في ملفك.",
-  diabetes_diagnosed: "القاعدة لمن ليس لديهم سكري، والسكري مشخّص في ملفك.",
+  diabetes_not_diagnosed: "السكري غير مشخّص في الملف.",
+  hypertension_not_diagnosed: "ضغط الدم غير مشخّص في الملف.",
+  diabetes_diagnosed: "القاعدة لمن ليس لديهم سكري، والسكري مشخّص في الملف.",
   diabetes_type_not_covered: "القاعدة لا تشمل نوع السكري المسجّل.",
   diabetes_duration_below_minimum: "لم تمضِ على تشخيص السكري المدة التي تذكرها القاعدة.",
   age_below_minimum: "العمر المسجّل أقل مما تذكره القاعدة.",
-  no_matching_medication_recorded: "لا يوجد في ملفك دواء تخصه هذه القاعدة.",
+  no_matching_medication_recorded: "لا يوجد في الملف دواء تخصه هذه القاعدة.",
 };
 
 const REVIEW_REASONS: Record<string, string> = {
@@ -134,7 +134,7 @@ const FIELDS: Record<string, string> = {
 };
 
 export const MISSING_REASONS: Record<MissingReason, string> = {
-  unknown: "غير مسجّل في ملفك",
+  unknown: "غير مسجّل في الملف",
   not_collected: "لا يجمعه التطبيق بعد",
 };
 
