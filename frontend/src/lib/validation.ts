@@ -22,14 +22,14 @@ export function parseNumber(text: string): number | null {
 }
 
 function dateError(value: string, today = todayIso()): string | null {
-  if (!isValidIsoDate(value) || value < "1900-01-01") return "أدخلي تاريخاً صحيحاً.";
+  if (!isValidIsoDate(value) || value < "1900-01-01") return "يلزم إدخال تاريخ صحيح.";
   if (value > today) return "لا يمكن أن يكون التاريخ في المستقبل.";
   return null;
 }
 
 export function rangeError(text: string, min: number, max: number, unit: string): string | null {
   const value = parseNumber(text);
-  if (value === null || value < min || value > max) return `أدخلي رقماً بين ${min} و${max} ${unit}.`;
+  if (value === null || value < min || value > max) return `يلزم إدخال رقم بين ${min} و${max} ${unit}.`;
   return null;
 }
 
@@ -86,11 +86,11 @@ export function validateMedication(
   takenIds: readonly string[] = [],
 ): FieldErrors {
   const errors: FieldErrors = {};
-  if (!input.medication_id) errors.medication_id = "اختاري دواءً من القائمة.";
+  if (!input.medication_id) errors.medication_id = "يلزم اختيار دواء من القائمة.";
   else if (takenIds.includes(input.medication_id)) errors.medication_id = "هذا الدواء مسجّل مسبقاً في ملفك.";
 
   const dose = input.dose_text.trim();
-  if (!dose) errors.dose_text = "اكتبي الجرعة كما وصفها طبيبك.";
+  if (!dose) errors.dose_text = "يلزم كتابة الجرعة كما وصفها الطبيب.";
   else if (dose.length > 200) errors.dose_text = "يجب ألا تتجاوز الجرعة 200 حرف.";
 
   for (const field of ["start_date", "last_dose_change_date"] as const) {
@@ -123,10 +123,10 @@ export interface ScreeningRecordInput {
 export function validateScreeningRecord(input: ScreeningRecordInput, birth: string | null): FieldErrors {
   const errors: FieldErrors = {};
   const name = input.test_name.trim();
-  if (!name) errors.test_name = "اكتبي اسم الفحص كما في التقرير.";
+  if (!name) errors.test_name = "يلزم كتابة اسم الفحص كما في التقرير.";
   else if (name.length > 200) errors.test_name = "يجب ألا يتجاوز الاسم 200 حرف.";
 
-  if (!input.completed_on) errors.completed_on = "أدخلي تاريخ إجراء الفحص.";
+  if (!input.completed_on) errors.completed_on = "يلزم إدخال تاريخ إجراء الفحص.";
   else {
     const error = dateError(input.completed_on);
     if (error) errors.completed_on = error;
@@ -135,13 +135,13 @@ export function validateScreeningRecord(input: ScreeningRecordInput, birth: stri
 
   if (input.result.trim().length > 100) errors.result = "يجب ألا تتجاوز النتيجة 100 حرف.";
   if (input.unit.trim().length > 50) errors.unit = "يجب ألا تتجاوز الوحدة 50 حرفاً.";
-  else if (input.unit.trim() && !input.result.trim()) errors.unit = "أدخلي النتيجة قبل الوحدة.";
+  else if (input.unit.trim() && !input.result.trim()) errors.unit = "يلزم إدخال النتيجة قبل الوحدة.";
   if (input.notes.trim().length > 1000) errors.notes = "يجب ألا تتجاوز الملاحظات 1000 حرف.";
   return errors;
 }
 
 export function validateResultDate(value: string): string | null {
-  if (!value) return "أدخلي تاريخ النتيجة.";
+  if (!value) return "يلزم إدخال تاريخ النتيجة.";
   return dateError(value);
 }
 

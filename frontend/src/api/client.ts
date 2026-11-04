@@ -7,6 +7,8 @@ import type {
   MedicationUseUpdate,
   Patient,
   PatientInput,
+  RiskProfile,
+  RiskProfileInput,
   ScreeningRecord,
   ScreeningRecordCreate,
   ScreeningSummary,
@@ -44,6 +46,13 @@ export const api = {
   createPatient: (input: PatientInput) => request<Patient>("/patients", jsonBody("POST", input)),
   getPatient: (id: number, signal?: AbortSignal) => request<Patient>(`/patients/${id}`, {}, signal),
   updatePatient: (id: number, input: PatientInput) => request<Patient>(`/patients/${id}`, jsonBody("PATCH", input)),
+
+  getRiskProfile: (patientId: number, signal?: AbortSignal) =>
+    request<RiskProfile>(`/patients/${patientId}/risk-profile`, {}, signal),
+  createRiskProfile: (patientId: number, input: Partial<RiskProfileInput>) =>
+    request<RiskProfile>(`/patients/${patientId}/risk-profile`, jsonBody("POST", input)),
+  updateRiskProfile: (patientId: number, input: Partial<RiskProfileInput>) =>
+    request<RiskProfile>(`/patients/${patientId}/risk-profile`, jsonBody("PATCH", input)),
 
   listCatalogue: (signal?: AbortSignal) => request<CatalogueMedication[]>("/medications", {}, signal),
 

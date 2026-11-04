@@ -178,7 +178,7 @@ describe("screening record validation", () => {
       { loc: ["body", "unit"], msg: "Value error, A unit requires a result" },
       { loc: ["body", "test_id"], msg: "'x' is not a known screening test" },
     ]);
-    expect(errors.unit).toBe("أدخلي النتيجة قبل الوحدة.");
+    expect(errors.unit).toBe("يلزم إدخال النتيجة قبل الوحدة.");
     expect(errors.test_id).toBe("هذا الفحص غير موجود في القائمة.");
   });
 });

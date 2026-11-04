@@ -44,6 +44,28 @@ export interface CatalogueMedication {
   brand_names: string[];
 }
 
+export type SmokingStatus = "current" | "former" | "never" | "unknown";
+export type YesNoUnknown = "yes" | "no" | "unknown";
+
+export type FamilyHistoryField = "family_diabetes" | "family_heart_disease" | "family_breast_cancer" | "family_colorectal_cancer";
+
+/** Not read by the screening engine. "unknown" and null never mean "no". */
+export interface RiskProfileInput extends Record<FamilyHistoryField, YesNoUnknown> {
+  smoking_status: SmokingStatus;
+  height_cm: number | null;
+  weight_kg: number | null;
+  activity_minutes_per_week: number | null;
+  raised_lipids: YesNoUnknown;
+  pregnancy_status: YesNoUnknown;
+}
+
+export interface RiskProfile extends RiskProfileInput {
+  patient_id: number;
+  /** False when nothing is saved yet; every value is then unknown. */
+  stored: boolean;
+  bmi: number | null;
+}
+
 export interface Health {
   status: string;
   database: string;

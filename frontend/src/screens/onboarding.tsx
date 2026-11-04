@@ -2,17 +2,27 @@ import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { ApiError, errorMessage } from "../api/errors";
-import type { ConditionStatus, Patient, Sex } from "../api/types";
+import type { ConditionStatus, Patient, RiskProfile, Sex } from "../api/types";
 import { DemoNotice, ErrorState, FormError, Loading, SourceBadge, SyntheticDataNotice } from "../components/feedback";
 import { CheckRow, Chip, clearErrorOnEdit, DateField, Field } from "../components/forms";
 import { Logo } from "../components/Icon";
 import { IconTile, Progress, Screen } from "../components/layout";
 import { MedicationManager } from "../components/MedicationManager";
+import { MeasurementFields, RiskFactorFields } from "../components/riskProfile";
 import { WATCH_OPTIONS } from "../demo/data";
 import { useDemo } from "../demo/store";
 import { ageFrom } from "../lib/dates";
-import { computeBmi, conditionFields } from "../lib/profile";
-import { readBrowserProfile, saveBrowserProfile, useSession } from "../lib/session";
+import { conditionFields } from "../lib/profile";
+import {
+  draftFromRisk,
+  numberOrNull,
+  riskInputFromDraft,
+  saveRiskProfile,
+  UNKNOWN_DRAFT,
+  validateRiskDraft,
+  type RiskDraft,
+} from "../lib/riskProfile";
+import { useSession } from "../lib/session";
 import { useAsync } from "../lib/useAsync";
 import { parseNumber, validateBasics, type FieldErrors } from "../lib/validation";
 
@@ -26,14 +36,14 @@ export function Welcome() {
         </p>
         <hr />
         <h2>
-          ابدئي رحلتك
+          رحلتك الصحية الوقائية
           <br />
-          الصحية الوقائية
+          تبدأ هنا
         </h2>
-        <p className="muted">Vitala تعرّفك على الفحوصات المناسبة لك، ومتى موعدها، ومن أين جاءت التوصية.</p>
+        <p className="muted">تعرض Vitala الفحوصات التي قد تنطبق ومصادرها، لمراجعتها مع الطبيب.</p>
         <SyntheticDataNotice />
         <Link to="/onboarding/basic" className="btn btn--primary btn--block">
-          ابدئي الآن
+          البدء الآن
         </Link>
         <Link to="/open-profile" className="btn btn--ghost btn--block">
           تسجيل الدخول
@@ -55,7 +65,7 @@ export function OpenProfile() {
     event.preventDefault();
     const id = parseNumber(value);
     if (id === null || !Number.isInteger(id) || id < 1) {
-      setError("أدخلي رقم ملف صحيحاً.");
+      setError("يلزم إدخال رقم ملف صحيح.");
       return;
     }
     setError(null);
@@ -98,12 +108,13 @@ export function OpenProfile() {
   );
 }
 
-function usePatient() {
+function useOnboardingData() {
   const { patientId } = useSession();
-  return useAsync<Patient | null>(
-    (signal) => (patientId === null ? Promise.resolve(null) : api.getPatient(patientId, signal)),
-    [patientId],
-  );
+  return useAsync(async (signal) => {
+    if (patientId === null) return null;
+    const [patient, risk] = await Promise.all([api.getPatient(patientId, signal), api.getRiskProfile(patientId, signal)]);
+    return { patient, risk };
+  }, [patientId]);
 }
 
 function StaleProfileError({ error, onRetry }: { error: unknown; onRetry: () => void }) {
@@ -124,50 +135,53 @@ function StaleProfileError({ error, onRetry }: { error: unknown; onRetry: () => 
 }
 
 export function BasicInfo() {
-  const state = usePatient();
+  const state = useOnboardingData();
   return (
     <Screen title="المعلومات الأساسية" back="/welcome" nav={false}>
       <Progress step={1} />
       <p className="step-count">الخطوة 1 من 4</p>
       {state.loading && !state.data && <Loading />}
       {state.error ? <StaleProfileError error={state.error} onRetry={state.reload} /> : null}
-      {!state.loading && !state.error && <BasicInfoForm patient={state.data ?? null} />}
+      {!state.loading && !state.error && <BasicInfoForm patient={state.data?.patient ?? null} risk={state.data?.risk ?? null} />}
     </Screen>
   );
 }
 
-function BasicInfoForm({ patient }: { patient: Patient | null }) {
+function BasicInfoForm({ patient, risk }: { patient: Patient | null; risk: RiskProfile | null }) {
   const { setPatientId } = useSession();
   const navigate = useNavigate();
-  const stored = readBrowserProfile(patient?.id ?? null);
+  // Remembered after the first save, so a retry never creates a second patient.
+  const [savedId, setSavedId] = useState(patient?.id ?? null);
+  const [riskStored, setRiskStored] = useState(risk?.stored ?? false);
   const [dateOfBirth, setDateOfBirth] = useState(patient?.date_of_birth ?? "");
   const [sex, setSex] = useState<Sex>(patient?.sex ?? "unknown");
-  const [height, setHeight] = useState(stored.height);
-  const [weight, setWeight] = useState(stored.weight);
+  const [draft, setDraft] = useState<RiskDraft>(risk ? draftFromRisk(risk) : UNKNOWN_DRAFT);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const heightValue = parseNumber(height);
-  const weightValue = parseNumber(weight);
-  const liveErrors = validateBasics({ dateOfBirth, height, weight });
-  const bmi =
-    heightValue && weightValue && !liveErrors.height && !liveErrors.weight
-      ? computeBmi(heightValue, weightValue, dateOfBirth && !liveErrors.date_of_birth ? ageFrom(dateOfBirth) : null)
-      : null;
+  const set = <K extends keyof RiskDraft>(field: K, value: RiskDraft[K]) => setDraft((previous) => ({ ...previous, [field]: value }));
+  const dateErrors = validateBasics({ dateOfBirth, height: "", weight: "" });
+  const age = dateOfBirth && !dateErrors.date_of_birth ? ageFrom(dateOfBirth) : null;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    setErrors(liveErrors);
+    const found = { ...dateErrors, ...validateRiskDraft({ ...draft, activity: "" }) };
+    setErrors(found);
     setFormError(null);
-    if (Object.keys(liveErrors).length > 0) return;
+    if (Object.keys(found).length > 0) return;
 
     const fields = { date_of_birth: dateOfBirth || null, sex };
+    const measurements = { height_cm: numberOrNull(draft.height), weight_kg: numberOrNull(draft.weight) };
     setSaving(true);
     try {
-      const saved = patient ? await api.updatePatient(patient.id, fields) : await api.createPatient(fields);
+      const saved = savedId ? await api.updatePatient(savedId, fields) : await api.createPatient(fields);
+      setSavedId(saved.id);
       setPatientId(saved.id);
-      saveBrowserProfile(saved.id, { height: height.trim(), weight: weight.trim() });
+      if (riskStored || measurements.height_cm !== null || measurements.weight_kg !== null) {
+        await saveRiskProfile(saved.id, riskStored, measurements);
+        setRiskStored(true);
+      }
       navigate("/onboarding/history");
     } catch (error) {
       if (error instanceof ApiError) setErrors(error.fieldErrors);
@@ -180,7 +194,7 @@ function BasicInfoForm({ patient }: { patient: Patient | null }) {
     <form onSubmit={submit} onChange={clearErrorOnEdit(setErrors)} noValidate className="stack">
       <div>
         <h2 className="screen-heading">المعلومات الأساسية</h2>
-        <p className="muted">نستخدمها لتحديد الفحوصات المناسبة لعمرك وجنسك.</p>
+        <p className="muted">تُستخدم لتحديد الفحوصات التي قد تنطبق حسب العمر والجنس.</p>
       </div>
       <SyntheticDataNotice />
       <DateField name="date_of_birth" label="تاريخ الميلاد" value={dateOfBirth} onChange={setDateOfBirth} error={errors.date_of_birth} />
@@ -191,12 +205,8 @@ function BasicInfoForm({ patient }: { patient: Patient | null }) {
           </Chip>
         ))}
       </div>
-      <Field name="height" label="الطول" suffix="سم" value={height} onChange={setHeight} error={errors.height} inputMode="decimal" />
-      <Field name="weight" label="الوزن" suffix="كجم" value={weight} onChange={setWeight} error={errors.weight} inputMode="decimal" />
-      <p className="field__hint">
-        التاريخ والجنس يُحفظان في الخادم. الطول والوزن يبقيان في هذا المتصفح فقط، لأن الخادم لا يدعمهما بعد.
-      </p>
-      {bmi && <BmiCard value={bmi.value} category={bmi.category} />}
+      <MeasurementFields draft={draft} set={set} errors={errors} age={age} />
+      <p className="field__hint">تُحفظ هذه البيانات في الخادم. الطول والوزن اختياريان.</p>
       <FormError message={formError} />
       <div className="btn-row">
         <Link to="/welcome" className="btn btn--outline">
@@ -210,34 +220,11 @@ function BasicInfoForm({ patient }: { patient: Patient | null }) {
   );
 }
 
-const BMI_SCALE_MIN = 15;
-const BMI_SCALE_MAX = 40;
-
-export function BmiCard({ value, category }: { value: number; category: string | null }) {
-  const position = ((Math.min(BMI_SCALE_MAX, Math.max(BMI_SCALE_MIN, value)) - BMI_SCALE_MIN) / (BMI_SCALE_MAX - BMI_SCALE_MIN)) * 100;
-  return (
-    <section className="card card--soft bmi" aria-label="مؤشر كتلة الجسم">
-      <div className="bmi__head">
-        <strong>مؤشر كتلة الجسم</strong>
-        <span className="bmi__value">{value}</span>
-      </div>
-      <div className="bmi__track" dir="ltr">
-        <span className="bmi__marker" style={{ left: `${position}%` }} />
-      </div>
-      <p className="muted small">
-        {category ?? "تصنيف البالغين لا ينطبق هنا."} {category && "· تصنيف عام للبالغين، وليس تشخيصاً."}
-      </p>
-    </section>
-  );
-}
-
-type ConditionChip = "diabetes" | "hypertension" | "dyslipidemia" | "none";
-
-const FAMILY_OPTIONS = ["سكري", "سرطان الثدي", "القولون", "أمراض القلب"];
+type ConditionChip = "diabetes" | "hypertension" | "none";
 
 export function HealthHistory() {
   const { patientId } = useSession();
-  const state = usePatient();
+  const state = useOnboardingData();
   if (patientId === null) return <Navigate to="/onboarding/basic" replace />;
 
   return (
@@ -246,27 +233,28 @@ export function HealthHistory() {
       <p className="step-count">الخطوة 2 من 4</p>
       {state.loading && !state.data && <Loading />}
       {state.error ? <StaleProfileError error={state.error} onRetry={state.reload} /> : null}
-      {state.data && <HealthHistoryForm patient={state.data} />}
+      {state.data && <HealthHistoryForm patient={state.data.patient} risk={state.data.risk} />}
     </Screen>
   );
 }
 
-function initialConditions(patient: Patient, dyslipidemia: boolean): Set<ConditionChip> {
+function initialConditions(patient: Patient): Set<ConditionChip> {
   const chips = new Set<ConditionChip>();
   if (patient.diabetes_status === "diagnosed") chips.add("diabetes");
   if (patient.hypertension_status === "diagnosed") chips.add("hypertension");
-  if (dyslipidemia) chips.add("dyslipidemia");
   if (patient.diabetes_status === "not_diagnosed" && patient.hypertension_status === "not_diagnosed") chips.add("none");
   return chips;
 }
 
-function HealthHistoryForm({ patient }: { patient: Patient }) {
+function HealthHistoryForm({ patient, risk }: { patient: Patient; risk: RiskProfile }) {
   const navigate = useNavigate();
-  const stored = readBrowserProfile(patient.id);
-  const [conditions, setConditions] = useState(() => initialConditions(patient, stored.dyslipidemia));
-  const [family, setFamily] = useState<string[]>(stored.familyHistory);
+  const [conditions, setConditions] = useState(() => initialConditions(patient));
+  const [draft, setDraft] = useState<RiskDraft>(() => draftFromRisk(risk));
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const set = <K extends keyof RiskDraft>(field: K, value: RiskDraft[K]) => setDraft((previous) => ({ ...previous, [field]: value }));
 
   const toggleCondition = (chip: ConditionChip) => {
     setConditions((previous) => {
@@ -290,13 +278,17 @@ function HealthHistoryForm({ patient }: { patient: Patient }) {
   };
 
   const next = async () => {
-    setSaving(true);
+    const found = validateRiskDraft(draft);
+    setErrors(found);
     setError(null);
+    if (Object.keys(found).length > 0) return;
+    setSaving(true);
     try {
       await api.updatePatient(patient.id, conditionFields(statusOf("diabetes"), statusOf("hypertension")));
-      saveBrowserProfile(patient.id, { dyslipidemia: conditions.has("dyslipidemia"), familyHistory: family });
+      await saveRiskProfile(patient.id, risk.stored, riskInputFromDraft(draft));
       navigate("/onboarding/watch");
     } catch (failure) {
+      if (failure instanceof ApiError) setErrors(failure.fieldErrors);
       setError(errorMessage(failure));
       setSaving(false);
     }
@@ -305,15 +297,14 @@ function HealthHistoryForm({ patient }: { patient: Patient }) {
   const labels: [ConditionChip, string][] = [
     ["diabetes", "السكري"],
     ["hypertension", "ضغط الدم"],
-    ["dyslipidemia", "ارتفاع الدهون"],
-    ["none", "لا شيء"],
+    ["none", "لا شيء مما سبق"],
   ];
 
   return (
     <div className="stack">
       <div>
         <h2 className="screen-heading">التاريخ الصحي</h2>
-        <p className="muted">اختاري ما ينطبق عليك. يمكنك التعديل لاحقاً.</p>
+        <p className="muted">يُرجى اختيار ما ينطبق. يمكن التعديل لاحقاً.</p>
       </div>
 
       <section className="stack-tight">
@@ -325,27 +316,17 @@ function HealthHistoryForm({ patient }: { patient: Patient }) {
             </Chip>
           ))}
         </div>
-        <p className="field__hint">ما لا تختارينه يُسجَّل «غير معروف» ولا يعني عدم الإصابة. «لا شيء» يعني أنه لا يوجد تشخيص.</p>
+        <p className="field__hint">
+          ما لا يُختار يُسجَّل «غير معروف» ولا يعني عدم الإصابة. «لا شيء مما سبق» يعني عدم وجود تشخيص بالسكري أو الضغط.
+        </p>
       </section>
 
       <section className="stack-tight">
-        <h3 className="group-title">تاريخ العائلة</h3>
-        <div className="chips" role="group" aria-label="تاريخ العائلة">
-          {FAMILY_OPTIONS.map((option) => (
-            <Chip
-              key={option}
-              selected={family.includes(option)}
-              onClick={() =>
-                setFamily((previous) =>
-                  previous.includes(option) ? previous.filter((item) => item !== option) : [...previous, option],
-                )
-              }
-            >
-              {option}
-            </Chip>
-          ))}
+        <div className="section-head section-head--flush">
+          <h3 className="group-title">عوامل الخطر</h3>
+          <SourceBadge kind="live" />
         </div>
-        <p className="field__hint">ارتفاع الدهون وتاريخ العائلة يبقيان في هذا المتصفح فقط، لأن الخادم لا يدعمهما بعد.</p>
+        <RiskFactorFields draft={draft} set={set} errors={errors} sex={patient.sex} />
       </section>
 
       <section className="stack-tight">
@@ -416,13 +397,11 @@ export function OnboardingDone() {
       <Progress step={4} />
       <div className="done">
         <Logo size={96} />
-        <h2 className="screen-heading">حفظنا ملفك</h2>
-        <p className="muted">
-          بياناتك الأساسية وأدويتك محفوظة في الخادم. محرّك التوصيات غير متاح بعد، فلم نحسب فحوصات من بياناتك.
-        </p>
-        <p className="note">يمكنك استعراض خريطة وقائية تجريبية لشخصية افتراضية لترَي كيف ستبدو.</p>
+        <h2 className="screen-heading">حُفظ الملف</h2>
+        <p className="muted">البيانات الأساسية والأدوية وعوامل الخطر محفوظة في الخادم.</p>
+        <p className="note">تعرض صفحة «الفحوصات» ما قد ينطبق وفق قواعد مسودة لم يراجعها طبيب، دون مواعيد أو توصيات معتمدة.</p>
         <Link to="/home" className="btn btn--primary btn--block">
-          عرض الخريطة التجريبية
+          الانتقال إلى الرئيسية
         </Link>
       </div>
     </Screen>

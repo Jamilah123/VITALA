@@ -10,7 +10,7 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
-from app.models import ConditionStatus, DiabetesType, MedicationUse, ScreeningRecord
+from app.models import ConditionStatus, DiabetesType, MedicationUse, ScreeningRecord, Sex, YesNoUnknown
 
 
 def raise_if_invalid(errors: Mapping[str, str]) -> None:
@@ -60,6 +60,15 @@ def birth_date_conflict(
         for record in records:
             if record.completed_on < birth:
                 return {"date_of_birth": f"Date of birth is after the recorded {record.test_id} test on {record.completed_on}"}
+    return {}
+
+
+def pregnancy_conflict(sex: Sex, pregnancy_status: YesNoUnknown, field: str) -> dict[str, str]:
+    """A data-entry check only. It decides nothing about screening."""
+    if sex == Sex.male and pregnancy_status == YesNoUnknown.yes:
+        if field == "sex":
+            return {"sex": "Sex cannot be male while pregnancy is recorded as yes"}
+        return {field: "Pregnancy cannot be yes for a patient recorded as male"}
     return {}
 
 

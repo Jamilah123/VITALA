@@ -13,20 +13,24 @@ export class ApiError extends Error {
 }
 
 const MESSAGES = {
-  network: "تعذّر الوصول إلى الخادم. تأكدي من تشغيله ثم أعيدي المحاولة.",
-  server: "حدث خطأ في الخادم. أعيدي المحاولة بعد قليل.",
-  not_found: "لم نجد هذا السجل في الخادم.",
-  conflict: "هذا الدواء مسجّل مسبقاً في ملفك. يمكنك تعديل السجل الموجود.",
-  validation: "راجعي الحقول المحددة ثم أعيدي المحاولة.",
+  network: "تعذّر الوصول إلى الخادم. يُرجى التأكد من تشغيله ثم إعادة المحاولة.",
+  server: "حدث خطأ في الخادم. يُرجى إعادة المحاولة بعد قليل.",
+  not_found: "لم يُعثر على هذا السجل في الخادم.",
+  conflict: "هذا السجل موجود مسبقاً. يمكن تعديل السجل الحالي بدلاً من إضافته.",
+  validation: "يُرجى مراجعة الحقول المحددة ثم إعادة المحاولة.",
   unknownField: "قيمة غير صالحة.",
 } as const;
 
 // The backend's validation messages (backend/app/validation.py) are in English.
 const FIELD_MESSAGES: [RegExp, string][] = [
   [/Date of birth cannot be in the future/, "لا يمكن أن يكون تاريخ الميلاد في المستقبل."],
-  [/Date of birth is after the recorded/, "تاريخ الميلاد بعد تواريخ أدوية أو فحوصات مسجّلة. عدّليها أولاً."],
-  [/A unit requires a result/, "أدخلي النتيجة قبل الوحدة."],
+  [/Date of birth is after the recorded/, "تاريخ الميلاد بعد تواريخ أدوية أو فحوصات مسجّلة. يُرجى تعديلها أولاً."],
+  [/A unit requires a result/, "يلزم إدخال النتيجة قبل الوحدة."],
   [/is not a known screening test/, "هذا الفحص غير موجود في القائمة."],
+  [/Pregnancy cannot be yes/, "لا يمكن تسجيل الحمل لملف جنسه «ذكر»."],
+  [/Sex cannot be male while pregnancy/, "لا يمكن اختيار «ذكر» مع تسجيل حمل. يُرجى تعديل حالة الحمل أولاً."],
+  [/greater than or equal|less than or equal/, "القيمة خارج النطاق المسموح."],
+  [/valid number|valid integer/, "يلزم إدخال رقم صالح."],
   [/diagnosis date requires/, "يتطلب تاريخ التشخيص أن تكون الحالة «مشخّصة»."],
   [/Diagnosis date cannot be in the future/, "لا يمكن أن يكون تاريخ التشخيص في المستقبل."],
   [/Diagnosis date cannot be before/, "لا يمكن أن يسبق تاريخ التشخيص تاريخ الميلاد."],
@@ -36,7 +40,7 @@ const FIELD_MESSAGES: [RegExp, string][] = [
   [/Last dose change cannot be before/, "لا يمكن أن يسبق آخر تغيير للجرعة تاريخ البدء."],
   [/not in the medication catalogue/, "هذا الدواء غير موجود في القائمة."],
   [/YYYY-MM-DD|valid date/i, "صيغة التاريخ غير صحيحة."],
-  [/at least 1 character|at most 200/, "اكتبي الجرعة (حتى 200 حرف)."],
+  [/at least 1 character|at most 200/, "يلزم كتابة الجرعة (حتى 200 حرف)."],
 ];
 
 interface ValidationItem {

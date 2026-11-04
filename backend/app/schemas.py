@@ -12,7 +12,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
 
-from app.models import ConditionStatus, DiabetesType, RecordSource, Sex
+from app.models import ConditionStatus, DiabetesType, RecordSource, Sex, SmokingStatus, YesNoUnknown
 
 ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
@@ -30,6 +30,10 @@ TestName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1,
 ResultText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
 UnitText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)]
 NotesText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
+# Strict numbers: "170" or true must fail rather than be read as a measurement.
+HeightCm = Annotated[float, Field(ge=50, le=250, strict=True)]
+WeightKg = Annotated[float, Field(ge=2, le=350, strict=True)]
+ActivityMinutes = Annotated[int, Field(ge=0, le=10080, strict=True)]
 
 
 class RequestSchema(BaseModel):
@@ -98,6 +102,54 @@ class MedicationUseRead(BaseModel):
     dose_text: str
     start_date: date | None
     last_dose_change_date: date | None
+
+
+class RiskProfileCreate(RequestSchema):
+    smoking_status: SmokingStatus = SmokingStatus.unknown
+    height_cm: HeightCm | None = None
+    weight_kg: WeightKg | None = None
+    activity_minutes_per_week: ActivityMinutes | None = None
+    raised_lipids: YesNoUnknown = YesNoUnknown.unknown
+    pregnancy_status: YesNoUnknown = YesNoUnknown.unknown
+    family_diabetes: YesNoUnknown = YesNoUnknown.unknown
+    family_heart_disease: YesNoUnknown = YesNoUnknown.unknown
+    family_breast_cancer: YesNoUnknown = YesNoUnknown.unknown
+    family_colorectal_cancer: YesNoUnknown = YesNoUnknown.unknown
+
+
+class RiskProfileUpdate(RequestSchema):
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={"examples": [{"smoking_status": "never", "height_cm": 165}]},
+    )
+
+    smoking_status: SmokingStatus = Field(default=None)
+    height_cm: HeightCm | None = None
+    weight_kg: WeightKg | None = None
+    activity_minutes_per_week: ActivityMinutes | None = None
+    raised_lipids: YesNoUnknown = Field(default=None)
+    pregnancy_status: YesNoUnknown = Field(default=None)
+    family_diabetes: YesNoUnknown = Field(default=None)
+    family_heart_disease: YesNoUnknown = Field(default=None)
+    family_breast_cancer: YesNoUnknown = Field(default=None)
+    family_colorectal_cancer: YesNoUnknown = Field(default=None)
+
+
+class RiskProfileRead(BaseModel):
+    patient_id: int
+    # False when nothing has been saved yet: every value below is then unknown.
+    stored: bool
+    smoking_status: SmokingStatus
+    height_cm: float | None
+    weight_kg: float | None
+    bmi: float | None
+    activity_minutes_per_week: int | None
+    raised_lipids: YesNoUnknown
+    pregnancy_status: YesNoUnknown
+    family_diabetes: YesNoUnknown
+    family_heart_disease: YesNoUnknown
+    family_breast_cancer: YesNoUnknown
+    family_colorectal_cancer: YesNoUnknown
 
 
 class ScreeningRecordCreate(RequestSchema):

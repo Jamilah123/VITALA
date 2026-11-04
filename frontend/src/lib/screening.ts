@@ -10,7 +10,7 @@ export const RULE_STATUS: Record<RuleStatus, { label: string; tone: Tone; detail
   candidate: {
     label: "قد تنطبق · للمراجعة",
     tone: "blue",
-    detail: "تنطبق شروط هذه القاعدة المسودة على بياناتك المسجّلة. ليست توصية طبية معتمدة، فناقشيها مع طبيبك.",
+    detail: "تنطبق شروط هذه القاعدة المسودة على بياناتك المسجّلة. ليست توصية طبية معتمدة، ويُنصح بمناقشتها مع الطبيب.",
   },
   needs_information: {
     label: "تحتاج معلومات",

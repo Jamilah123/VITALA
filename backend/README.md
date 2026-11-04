@@ -60,6 +60,9 @@ server was launched from. To start over, stop the server and delete that file.
 | `POST /patients` | Create a profile |
 | `GET /patients/{patient_id}` | Read a profile |
 | `PATCH /patients/{patient_id}` | Update part of a profile |
+| `GET /patients/{patient_id}/risk-profile` | Read risk factors (all unknown, `stored: false`, until saved) |
+| `POST /patients/{patient_id}/risk-profile` | Create risk factors (409 if they exist) |
+| `PATCH /patients/{patient_id}/risk-profile` | Update part of the risk factors |
 | `GET /medications` | List the catalogue |
 | `GET /medications/{medication_id}` | Read one catalogue entry |
 | `POST /patients/{patient_id}/medications` | Add a medication use |
@@ -124,6 +127,22 @@ turns it into checks, using only the fields VITALA stores. That reading is as
 unreviewed as the rules. The app refuses to start if a rule has no criteria, if a
 rule is anything other than `draft_not_clinician_reviewed` with scheduling off,
 or if any source, conflict, knowledge, or medication reference does not resolve.
+
+## Risk factors
+
+`patientriskprofile` holds one row per patient: smoking (`current`, `former`,
+`never`, `unknown`), height in cm (50–250), weight in kg (2–350), physical activity
+in minutes per week (0–10080), and `yes`/`no`/`unknown` for raised lipids,
+pregnancy, and family history of diabetes, heart disease, breast cancer, and
+colorectal cancer. Every value defaults to unknown or null, and neither means "no".
+Numbers must be real JSON numbers. `bmi` is calculated in each response and never
+stored. Pregnancy cannot be `yes` for a patient recorded as male, in either order
+of saving. Kidney disease is not collected here: it is a clinical assessment.
+
+**The screening engine does not read risk factors.** None of the draft rules use
+smoking, BMI, activity, or family history, and the HTN03 pregnancy criterion stays
+`not_collected` until a clinician approves using it. Tests check that the preview
+and summary are identical with and without a risk profile.
 
 ## Screening history
 

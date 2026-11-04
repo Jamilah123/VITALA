@@ -50,7 +50,7 @@ export function Chat() {
       demo
       demoText="هذه محاكاة وليست ذكاءً اصطناعياً: الردود مكتوبة مسبقاً، ولا يوجد اتصال بأي نموذج."
     >
-      <p className="note">عند توفره، سيشرح المساعد معلوماتك وتوصياتك المعتمدة، ولن يشخّص الأمراض أو يغيّر العلاج.</p>
+      <p className="note">عند توفره، سيشرح المساعد معلوماتك والفحوصات التي قد تنطبق ومصادرها، ولن يشخّص الأمراض أو يغيّر العلاج.</p>
       <div className="chat" aria-live="polite">
         {messages.map((message) => (
           <div key={message.id} className={`bubble bubble--${message.from}`}>
@@ -73,7 +73,7 @@ export function Chat() {
           onChange={(event) => setText(event.target.value)}
           maxLength={MAX_LENGTH}
           placeholder="الأسئلة المكتوبة غير مدعومة بعد"
-          aria-label="اكتبي سؤالك. الأسئلة المكتوبة غير مدعومة بعد"
+          aria-label="كتابة سؤال. الأسئلة المكتوبة غير مدعومة بعد"
         />
         <button type="submit" className="send-btn" aria-label="إرسال" disabled={!text.trim()}>
           <Icon name="send" size={20} />

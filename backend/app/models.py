@@ -26,6 +26,19 @@ class DiabetesType(StrEnum):
     unknown = "unknown"
 
 
+class SmokingStatus(StrEnum):
+    current = "current"
+    former = "former"
+    never = "never"
+    unknown = "unknown"
+
+
+class YesNoUnknown(StrEnum):
+    yes = "yes"
+    no = "no"
+    unknown = "unknown"
+
+
 class RecordSource(StrEnum):
     patient_reported = "patient_reported"
     lab_report = "lab_report"
@@ -59,6 +72,22 @@ class MedicationUse(SQLModel, table=True):
     dose_text: str
     start_date: date | None = None
     last_dose_change_date: date | None = None
+
+
+class PatientRiskProfile(SQLModel, table=True):
+    # A separate table, so existing databases gain it without altering Patient.
+    # The screening engine does not read it. Unknown never means "no".
+    patient_id: int = Field(foreign_key="patient.id", primary_key=True)
+    smoking_status: SmokingStatus = SmokingStatus.unknown
+    height_cm: float | None = None
+    weight_kg: float | None = None
+    activity_minutes_per_week: int | None = None
+    raised_lipids: YesNoUnknown = YesNoUnknown.unknown
+    pregnancy_status: YesNoUnknown = YesNoUnknown.unknown
+    family_diabetes: YesNoUnknown = YesNoUnknown.unknown
+    family_heart_disease: YesNoUnknown = YesNoUnknown.unknown
+    family_breast_cancer: YesNoUnknown = YesNoUnknown.unknown
+    family_colorectal_cancer: YesNoUnknown = YesNoUnknown.unknown
 
 
 class ScreeningRecord(SQLModel, table=True):

@@ -11,7 +11,7 @@ from app.config import Settings
 from app.database import SessionDep, build_engine, init_db
 from app.criteria import check_criteria_cover
 from app.history_mappings import check_history_mappings
-from app.routers import medications, profiles, screening, screening_records
+from app.routers import medications, profiles, risk_profiles, screening, screening_records
 from app.rules import load_rule_set
 from app.schemas import HealthRead
 from app.screening_tests import check_test_mapping
@@ -59,6 +59,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(profiles.router)
     app.include_router(medications.router)
+    app.include_router(risk_profiles.router)
     app.include_router(screening.router)
     app.include_router(screening_records.router)
     return app

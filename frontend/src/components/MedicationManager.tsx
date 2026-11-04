@@ -82,7 +82,7 @@ function MedicationForm({
             error={errors.medication_id}
             hint="قائمة أولية محدودة من الخادم، وليست شاملة لكل الأدوية."
           >
-            <option value="">اختاري من القائمة</option>
+            <option value="">اختيار من القائمة</option>
             {catalogue.map((medication) => (
               <option key={medication.id} value={medication.id}>
                 {medication.name_ar} ({medication.generic_name})
@@ -152,7 +152,7 @@ function RemoveDialog({
 
   return (
     <Modal title="حذف الدواء" onClose={onClose}>
-      <p className="stack-text">هل تريدين حذف {name} من ملفك؟ لا يمكن التراجع عن الحذف.</p>
+      <p className="stack-text">هل تريد حذف {name} من الملف؟ لا يمكن التراجع عن الحذف.</p>
       <FormError message={error} />
       <div className="btn-row">
         <button type="button" className="btn btn--outline" onClick={onClose} disabled={saving}>

@@ -7,14 +7,15 @@ import { readJson, removeKey, writeJson } from "./browserStore";
 const PATIENT_KEY = "vitala.patientId";
 
 /**
- * Details the backend has no fields for yet. They stay in this browser and are
- * labelled that way wherever they appear. They are not demo data: the user typed them.
+ * Details typed before the backend stored risk factors. They are kept as they are
+ * and offered once for import. `serverImport` records the user's choice.
  */
 export interface BrowserProfile {
   height: string;
   weight: string;
   dyslipidemia: boolean;
   familyHistory: string[];
+  serverImport?: "imported" | "dismissed";
 }
 
 const EMPTY_BROWSER_PROFILE: BrowserProfile = { height: "", weight: "", dyslipidemia: false, familyHistory: [] };

@@ -40,8 +40,8 @@ Each kind of data is kept apart in the code and labelled on screen.
 
 | Label | Data | Stored in | Code |
 |---|---|---|---|
-| من الخادم | Profile, medications, screening summary and rules, screening history, rule sources | Backend API | `src/api` |
-| في هذا المتصفح فقط | Height, weight, lipid history, family history. The API has no fields for them yet | `localStorage` | `src/lib/session.tsx` |
+| من الخادم | Profile, risk factors, medications, screening summary and rules, screening history, rule sources | Backend API | `src/api` |
+| في هذا المتصفح فقط | Height, weight, lipids, and family history typed before the API stored them. Kept as they are and offered once for import on the health profile page; never overwritten | `localStorage` | `src/lib/session.tsx`, `src/lib/riskProfile.ts` |
 | بيانات تجريبية | The persona "نورة": diabetes and blood pressure tracking, activity, doctor view, chat, privacy settings | `src/demo/data.ts`, and demo actions in `localStorage` | `src/demo` |
 
 Rules to keep when changing the code:
@@ -56,6 +56,10 @@ Rules to keep when changing the code:
   label, and the tests in `src/lib/screening.test.ts` check this.
 - Completed tests (`recorded_tests`, green) are always shown apart from draft rules
   (blue "قد تنطبق", amber "تحتاج معلومات").
+- UI text is formal Arabic: gender-neutral where possible, otherwise standard
+  masculine. `src/lib/wording.test.ts` fails on common feminine-specific forms.
+- Risk factors are shown and stored, but never interpreted. Only the existing BMI
+  card shows a general adult category, labelled as not a diagnosis.
 
 ## Screens
 

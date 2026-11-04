@@ -406,7 +406,7 @@ export function RemoveRecordDialog({
   return (
     <Modal title="حذف السجل" onClose={onClose}>
       <p className="stack-text">
-        هل تريدين حذف سجل «<bdi>{record.test_name}</bdi>» بتاريخ {formatDate(record.completed_on)}؟ لا يمكن التراجع عن الحذف.
+        هل تريد حذف سجل «<bdi>{record.test_name}</bdi>» بتاريخ {formatDate(record.completed_on)}؟ لا يمكن التراجع عن الحذف.
       </p>
       <FormError message={error} />
       <div className="btn-row">

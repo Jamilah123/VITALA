@@ -2,15 +2,16 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { ApiError, errorMessage } from "../api/errors";
-import type { ConditionStatus, DiabetesType, MedicationUse, Patient, Sex } from "../api/types";
+import type { ConditionStatus, DiabetesType, MedicationUse, Patient, RiskProfile, Sex } from "../api/types";
 import { ErrorState, FormError, Loading, SourceBadge, SyntheticDataNotice, useToast } from "../components/feedback";
-import { CheckRow, Chip, clearErrorOnEdit, DateField, Field, Modal, SegmentedField, SelectField } from "../components/forms";
+import { CheckRow, clearErrorOnEdit, DateField, Modal, SegmentedField, SelectField } from "../components/forms";
 import { IconTile, Pill, Screen, SectionHead } from "../components/layout";
 import { MedicationManager } from "../components/MedicationManager";
+import { BrowserImportCard, MeasurementFields, RiskFactorFields } from "../components/riskProfile";
+import { PatientGate } from "../components/screening";
 import { useDemo, type PrivacySetting } from "../demo/store";
 import { ageFrom } from "../lib/dates";
 import {
-  computeBmi,
   conditionsSummary,
   DIABETES_TYPE_LABELS,
   draftFromPatient,
@@ -19,10 +20,17 @@ import {
   STATUS_LABELS,
   type ProfileDraft,
 } from "../lib/profile";
-import { readBrowserProfile, saveBrowserProfile, useSession } from "../lib/session";
+import {
+  draftFromRisk,
+  hasBrowserData,
+  riskInputFromDraft,
+  saveRiskProfile,
+  validateRiskDraft,
+  type RiskDraft,
+} from "../lib/riskProfile";
+import { readBrowserProfile, useSession } from "../lib/session";
 import { useAsync } from "../lib/useAsync";
-import { parseNumber, validateBasics, validateProfileDates, type FieldErrors } from "../lib/validation";
-import { BmiCard } from "./onboarding";
+import { validateProfileDates, type FieldErrors } from "../lib/validation";
 
 const PRIVACY_ROWS: { id: PrivacySetting; label: string }[] = [
   { id: "watch", label: "بيانات الساعة الذكية" },
@@ -33,28 +41,27 @@ const PRIVACY_ROWS: { id: PrivacySetting; label: string }[] = [
 interface AccountData {
   patient: Patient;
   uses: MedicationUse[];
+  risk: RiskProfile;
   names: Record<string, string>;
 }
 
 function useAccountData(patientId: number | null) {
   return useAsync<AccountData | null>(async (signal) => {
     if (patientId === null) return null;
-    const [patient, uses, catalogue] = await Promise.all([
+    const [patient, uses, catalogue, risk] = await Promise.all([
       api.getPatient(patientId, signal),
       api.listMedications(patientId, signal),
       api.listCatalogue(signal),
+      api.getRiskProfile(patientId, signal),
     ]);
-    return { patient, uses, names: Object.fromEntries(catalogue.map((item) => [item.id, item.name_ar])) };
+    return { patient, uses, risk, names: Object.fromEntries(catalogue.map((item) => [item.id, item.name_ar])) };
   }, [patientId]);
 }
 
-function profileLine(patient: Patient): string {
+function profileLine(patient: Patient, risk: RiskProfile): string {
   const parts = [SEX_LABELS[patient.sex]];
   if (patient.date_of_birth) parts.push(`${ageFrom(patient.date_of_birth)} سنة`);
-  const stored = readBrowserProfile(patient.id);
-  const height = parseNumber(stored.height);
-  const weight = parseNumber(stored.weight);
-  if (height && weight) parts.push(`BMI ${computeBmi(height, weight, null).value}`);
+  if (risk.bmi !== null) parts.push(`BMI ${risk.bmi}`);
   return parts.join(" · ");
 }
 
@@ -116,7 +123,7 @@ export function Account() {
                   <strong>
                     ملف رقم <bdi>{state.data.patient.id}</bdi>
                   </strong>
-                  <span className="muted small">{profileLine(state.data.patient)}</span>
+                  <span className="muted small">{profileLine(state.data.patient, state.data.risk)}</span>
                 </div>
                 <SourceBadge kind="live" />
               </div>
@@ -211,68 +218,55 @@ const STATUS_OPTIONS = (["diagnosed", "not_diagnosed", "unknown"] as ConditionSt
   label: STATUS_LABELS[value],
 }));
 
-const FAMILY_OPTIONS = ["سكري", "سرطان الثدي", "القولون", "أمراض القلب"];
-
 export function HealthProfile() {
-  const { patientId, forgetPatient } = useSession();
-  const state = useAsync<Patient | null>(
-    (signal) => (patientId === null ? Promise.resolve(null) : api.getPatient(patientId, signal)),
-    [patientId],
-  );
-  const notFound = state.error instanceof ApiError && state.error.kind === "not_found";
+  const { patientId } = useSession();
+  const state = useAsync(async (signal) => {
+    if (patientId === null) return null;
+    const [patient, risk] = await Promise.all([api.getPatient(patientId, signal), api.getRiskProfile(patientId, signal)]);
+    return { patient, risk };
+  }, [patientId]);
+  const browser = state.data ? readBrowserProfile(state.data.patient.id) : null;
+  const offerImport = browser !== null && hasBrowserData(browser) && !browser.serverImport;
 
   return (
     <Screen title="التاريخ الصحي والأدوية" back="/account" wide>
-      {patientId === null && (
-        <div className="card stack-tight">
-          <p>لا يوجد ملف مفتوح في هذا المتصفح.</p>
-          <Link to="/onboarding/basic" className="btn btn--primary btn--block">
-            إنشاء ملف
-          </Link>
-        </div>
-      )}
-      {state.loading && !state.data && patientId !== null && <Loading label="جارٍ تحميل ملفك…" />}
-      {state.error ? (
-        <ErrorState
-          error={state.error}
-          onRetry={state.reload}
-          action={
-            notFound ? (
-              <button type="button" className="btn btn--outline btn--small" onClick={forgetPatient}>
-                البدء بملف جديد
-              </button>
-            ) : undefined
-          }
-        />
-      ) : null}
+      <PatientGate state={state} label="جارٍ تحميل الملف…" />
       {state.data && (
-        <div className="grid-2">
-          {/* Remounted on save, so the form always shows what the server stored. */}
-          <ProfileForm key={JSON.stringify(state.data)} patient={state.data} onSaved={state.setData} />
-          <div className="stack">
-            <SectionHead title="الأدوية الحالية" aside={<SourceBadge kind="live" />} />
-            <MedicationManager patientId={state.data.id} birthDate={state.data.date_of_birth} />
+        <>
+          {offerImport && <BrowserImportCard server={state.data.risk} onDone={state.reload} />}
+          <div className="grid-2">
+            {/* Remounted on save, so the form always shows what the server stored. */}
+            <ProfileForm key={JSON.stringify(state.data)} patient={state.data.patient} risk={state.data.risk} onSaved={state.reload} />
+            <div className="stack">
+              <SectionHead title="الأدوية الحالية" aside={<SourceBadge kind="live" />} />
+              <MedicationManager patientId={state.data.patient.id} birthDate={state.data.patient.date_of_birth} />
+            </div>
           </div>
-        </div>
+        </>
       )}
     </Screen>
   );
 }
 
-function ProfileForm({ patient, onSaved }: { patient: Patient; onSaved: (patient: Patient) => void }) {
+function ProfileForm({ patient, risk, onSaved }: { patient: Patient; risk: RiskProfile; onSaved: () => void }) {
   const toast = useToast();
-  const stored = readBrowserProfile(patient.id);
   const [draft, setDraft] = useState<ProfileDraft>(() => draftFromPatient(patient));
-  const [height, setHeight] = useState(stored.height);
-  const [weight, setWeight] = useState(stored.weight);
-  const [dyslipidemia, setDyslipidemia] = useState(stored.dyslipidemia);
-  const [family, setFamily] = useState(stored.familyHistory);
+  const [riskDraft, setRiskDraft] = useState<RiskDraft>(() => draftFromRisk(risk));
+  const [riskStored, setRiskStored] = useState(risk.stored);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const set = <K extends keyof ProfileDraft>(field: K, value: ProfileDraft[K]) =>
     setDraft((previous) => ({ ...previous, [field]: value }));
+  const setRisk = <K extends keyof RiskDraft>(field: K, value: RiskDraft[K]) =>
+    setRiskDraft((previous) => ({ ...previous, [field]: value }));
+
+  const setSex = (sex: Sex) => {
+    set("sex", sex);
+    // Mirrors the backend check: a male record cannot also record pregnancy.
+    if (sex === "male" && riskDraft.pregnancy_status === "yes") setRisk("pregnancy_status", "unknown");
+  };
 
   const setStatus = (condition: "diabetes" | "hypertension", status: ConditionStatus) =>
     setDraft((previous) => {
@@ -286,34 +280,30 @@ function ProfileForm({ patient, onSaved }: { patient: Patient; onSaved: (patient
       };
     });
 
-  const heightValue = parseNumber(height);
-  const weightValue = parseNumber(weight);
-  const bmi =
-    heightValue && weightValue && heightValue >= 50 && heightValue <= 250 && weightValue >= 2 && weightValue <= 350
-      ? computeBmi(heightValue, weightValue, draft.date_of_birth ? ageFrom(draft.date_of_birth) : null)
-      : null;
-
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const found = {
-      ...validateProfileDates(draft),
-      ...validateBasics({ dateOfBirth: "", height, weight }),
-    };
+    const found = { ...validateProfileDates(draft), ...validateRiskDraft(riskDraft) };
     setErrors(found);
     setFormError(null);
     if (Object.keys(found).length > 0) return;
 
+    const savePatient = () => api.updatePatient(patient.id, draftToUpdate(draft));
+    const saveRisk = async () => {
+      await saveRiskProfile(patient.id, riskStored, riskInputFromDraft(riskDraft));
+      setRiskStored(true);
+    };
     setSaving(true);
     try {
-      const saved = await api.updatePatient(patient.id, draftToUpdate(draft));
-      saveBrowserProfile(patient.id, {
-        height: height.trim(),
-        weight: weight.trim(),
-        dyslipidemia,
-        familyHistory: family,
-      });
-      toast("حُفظ ملفك في الخادم.");
-      onSaved(saved);
+      // Clearing pregnancy must reach the server before a change of sex to male.
+      if (draft.sex === "male") {
+        await saveRisk();
+        await savePatient();
+      } else {
+        await savePatient();
+        await saveRisk();
+      }
+      toast("حُفظ الملف في الخادم.");
+      onSaved();
     } catch (error) {
       if (error instanceof ApiError) setErrors(error.fieldErrors);
       setFormError(errorMessage(error));
@@ -329,7 +319,7 @@ function ProfileForm({ patient, onSaved }: { patient: Patient; onSaved: (patient
       <SegmentedField<Sex>
         legend="الجنس"
         value={draft.sex}
-        onChange={(value) => set("sex", value)}
+        onChange={setSex}
         error={errors.sex}
         options={(["female", "male", "unknown"] as Sex[]).map((value) => ({ value, label: SEX_LABELS[value] }))}
       />
@@ -385,33 +375,16 @@ function ProfileForm({ patient, onSaved }: { patient: Patient; onSaved: (patient
       <p className="field__hint">«غير معروف» لا يعني عدم الإصابة. وحده «غير مشخّص» يعني أنه لا يوجد تشخيص.</p>
 
       <div className="section-head section-head--flush">
-        <h3 className="group-title">تفاصيل إضافية</h3>
-        <SourceBadge kind="browser" />
+        <h3 className="group-title">القياسات وعوامل الخطر</h3>
+        <SourceBadge kind="live" />
       </div>
-      <Field name="height" label="الطول" suffix="سم" value={height} onChange={setHeight} error={errors.height} inputMode="decimal" />
-      <Field name="weight" label="الوزن" suffix="كجم" value={weight} onChange={setWeight} error={errors.weight} inputMode="decimal" />
-      {bmi && <BmiCard value={bmi.value} category={bmi.category} />}
-      <div className="chips" role="group" aria-label="ارتفاع الدهون">
-        <Chip selected={dyslipidemia} onClick={() => setDyslipidemia(!dyslipidemia)}>
-          ارتفاع الدهون
-        </Chip>
-      </div>
-      <h3 className="group-title">تاريخ العائلة</h3>
-      <div className="chips" role="group" aria-label="تاريخ العائلة">
-        {FAMILY_OPTIONS.map((option) => (
-          <Chip
-            key={option}
-            selected={family.includes(option)}
-            onClick={() =>
-              setFamily((previous) =>
-                previous.includes(option) ? previous.filter((item) => item !== option) : [...previous, option],
-              )
-            }
-          >
-            {option}
-          </Chip>
-        ))}
-      </div>
+      <MeasurementFields
+        draft={riskDraft}
+        set={setRisk}
+        errors={errors}
+        age={draft.date_of_birth ? ageFrom(draft.date_of_birth) : null}
+      />
+      <RiskFactorFields draft={riskDraft} set={setRisk} errors={errors} sex={draft.sex} />
 
       <FormError message={formError} />
       <button type="submit" className="btn btn--primary btn--block" disabled={saving}>

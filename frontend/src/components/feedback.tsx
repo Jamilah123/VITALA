@@ -71,7 +71,7 @@ export function DemoNotice({ children }: { children?: ReactNode }) {
 }
 
 export function SyntheticDataNotice() {
-  return <p className="note note--warn">نسخة للتجربة بلا تسجيل دخول: استخدمي بيانات اصطناعية فقط، ولا تدخلي معلوماتك الصحية الحقيقية.</p>;
+  return <p className="note note--warn">نسخة للتجربة بلا تسجيل دخول: يُرجى استخدام بيانات اصطناعية فقط، وعدم إدخال معلومات صحية حقيقية.</p>;
 }
 
 const ToastContext = createContext<(message: string) => void>(() => undefined);
