@@ -1,0 +1,259 @@
+{
+  "_warning": "SYNTHETIC TEST DATA ONLY. These people do not exist. Values were written by the engineering team to test personalised answers; they are not clinical data, not medical evidence, and not output of the real VITALA screening engine. Never add real patient information to this file.",
+  "_schema": "Each profile mirrors the fields the VITALA app collects (patient feature description, sections 3-10 and 22-23). 'screening_plan' items simulate the output of VITALA's rule-based screening engine: the chatbot only explains them and never creates or changes them. 'reason' is the stored explanation for the recommendation; null means none is stored.",
+  "schema_version": "1.0",
+  "data_as_of": "2026-11-10",
+  "profiles": [
+    {
+      "is_synthetic": true,
+      "patient_id": "SYN-DEMO-A",
+      "label": "Demo patient A - type 2 diabetes (synthetic)",
+      "label_ar": "مريض تجريبي (أ) - سكري من النوع الثاني (بيانات اصطناعية)",
+      "age": 54,
+      "sex": "male",
+      "height_cm": 172,
+      "weight_kg": 86,
+      "bmi": 29.1,
+      "medical_history": [
+        {"condition": "Type 2 diabetes mellitus", "condition_ar": "السكري من النوع الثاني", "since": "2021", "status": "active"}
+      ],
+      "family_history": [
+        {"relative": "father", "condition": "Type 2 diabetes", "condition_ar": "السكري من النوع الثاني"},
+        {"relative": "mother", "condition": "Hypertension", "condition_ar": "ارتفاع ضغط الدم"}
+      ],
+      "medications": [
+        {"name": "Metformin", "name_ar": "ميتفورمين", "dose": "500 mg", "frequency": "twice daily", "since": "2021-06"}
+      ],
+      "risk_factors": [
+        {"factor": "Overweight (BMI 29.1)", "factor_ar": "زيادة الوزن (مؤشر كتلة الجسم 29.1)"},
+        {"factor": "Low physical activity", "factor_ar": "قلة النشاط البدني"},
+        {"factor": "First-degree relative with diabetes", "factor_ar": "قريب من الدرجة الأولى مصاب بالسكري"}
+      ],
+      "previous_results": [
+        {"code": "HBA1C", "test": "HbA1c", "test_ar": "السكر التراكمي (HbA1c)", "value": "7.4", "unit": "%", "date": "2025-04-08", "source": "clinic upload (synthetic)"},
+        {"code": "HBA1C", "test": "HbA1c", "test_ar": "السكر التراكمي (HbA1c)", "value": "7.1", "unit": "%", "date": "2025-10-14", "source": "clinic upload (synthetic)"},
+        {"code": "FPG", "test": "Fasting plasma glucose", "test_ar": "سكر الدم الصائم", "value": "138", "unit": "mg/dL", "date": "2025-10-14", "source": "clinic upload (synthetic)"},
+        {"code": "UACR", "test": "Urine albumin-to-creatinine ratio (UACR)", "test_ar": "نسبة الألبومين إلى الكرياتينين في البول (UACR)", "value": "18", "unit": "mg/g", "date": "2025-11-25", "source": "clinic upload (synthetic)"},
+        {"code": "EYE", "test": "Dilated eye exam", "test_ar": "فحص العين بتوسيع الحدقة", "value": "No retinopathy reported", "value_ar": "لم يُذكر وجود اعتلال في الشبكية", "unit": "", "date": "2025-05-20", "source": "clinic upload (synthetic)"},
+        {"code": "HBA1C", "test": "HbA1c", "test_ar": "السكر التراكمي (HbA1c)", "value": "6.9", "unit": "%", "date": "2026-04-12", "source": "clinic upload (synthetic)"},
+        {"code": "FPG", "test": "Fasting plasma glucose", "test_ar": "سكر الدم الصائم", "value": "131", "unit": "mg/dL", "date": "2026-04-12", "source": "clinic upload (synthetic)"},
+        {"code": "BP", "test": "Blood pressure (clinic)", "test_ar": "ضغط الدم (في العيادة)", "value": "128/82", "unit": "mmHg", "date": "2026-04-12", "source": "clinic upload (synthetic)"},
+        {"code": "LDL", "test": "LDL cholesterol", "test_ar": "الكوليسترول الضار (LDL)", "value": "112", "unit": "mg/dL", "date": "2026-04-12", "source": "clinic upload (synthetic)"},
+        {"code": "EGFR", "test": "eGFR (kidney function)", "test_ar": "معدل الترشيح الكبيبي (eGFR) لوظائف الكلى", "value": "92", "unit": "mL/min/1.73m²", "date": "2026-04-12", "source": "clinic upload (synthetic)"}
+      ],
+      "screening_plan": [
+        {
+          "code": "HBA1C", "related_codes": ["HBA1C"],
+          "name": "HbA1c (glycated haemoglobin) test", "name_ar": "تحليل السكر التراكمي (HbA1c)",
+          "status": "overdue", "due_date": "2026-10-12", "last_completed": "2026-04-12",
+          "interval": "every 6 months (VITALA plan setting, synthetic demo value)",
+          "reason": "Type 2 diabetes is recorded in the medical history and Metformin is a current medication. The last HbA1c was on 2026-04-12, and the plan schedules HbA1c follow-up every 6 months for patients with diabetes, so the test became overdue after 2026-10-12.",
+          "reason_ar": "السكري من النوع الثاني مسجّل في التاريخ المرضي، والميتفورمين من الأدوية الحالية. آخر تحليل للسكر التراكمي كان بتاريخ 2026-04-12، والخطة تجدول متابعة السكر التراكمي كل 6 أشهر لمرضى السكري، لذلك أصبح الفحص متأخرًا بعد 2026-10-12.",
+          "guideline_reference": "SA-PHA-DM-2025, section 12.1 (Type 2 diabetes: glucose control and follow-up)",
+          "rule_id": "SYN-RULE-DM-HBA1C (synthetic)"
+        },
+        {
+          "code": "UACR", "related_codes": ["UACR", "EGFR"],
+          "name": "Kidney screening (urine albumin-to-creatinine ratio, UACR)", "name_ar": "فحص الكلى (نسبة الألبومين إلى الكرياتينين في البول UACR)",
+          "status": "due", "due_date": "2026-11-25", "last_completed": "2025-11-25",
+          "interval": "every year",
+          "reason": "Annual screening for diabetic kidney disease is part of the complication-screening schedule for type 2 diabetes. The last UACR was on 2025-11-25.",
+          "reason_ar": "الفحص السنوي لاعتلال الكلى السكري جزء من جدول فحص مضاعفات السكري من النوع الثاني. آخر فحص UACR كان بتاريخ 2025-11-25.",
+          "guideline_reference": "SA-PHA-DM-2025, Table 10 (screening for diabetes complications: diabetic kidney disease)",
+          "rule_id": "SYN-RULE-DM-UACR (synthetic)"
+        },
+        {
+          "code": "EYE", "related_codes": ["EYE"],
+          "name": "Diabetic eye (retinopathy) screening", "name_ar": "فحص العين لاعتلال الشبكية السكري",
+          "status": "upcoming", "due_date": "2027-01-15", "last_completed": "2025-05-20",
+          "interval": null,
+          "reason": "Retinopathy screening is part of the complication-screening schedule for type 2 diabetes. The last dilated eye exam was on 2025-05-20.",
+          "reason_ar": "فحص اعتلال الشبكية جزء من جدول فحص مضاعفات السكري من النوع الثاني. آخر فحص للعين بتوسيع الحدقة كان بتاريخ 2025-05-20.",
+          "guideline_reference": "SA-PHA-DM-2025, Table 10 (screening for diabetes complications: retinopathy)",
+          "rule_id": "SYN-RULE-DM-EYE (synthetic)"
+        }
+      ],
+      "wearable_data": {
+        "source": "Apple Health (synthetic)", "period": "2026-10-12 to 2026-11-10",
+        "avg_daily_steps": 5200, "avg_active_minutes_per_week": 95, "avg_sleep_hours": 6.6, "avg_resting_heart_rate_bpm": 76
+      }
+    },
+    {
+      "is_synthetic": true,
+      "patient_id": "SYN-DEMO-B",
+      "label": "Demo patient B - hypertension (synthetic)",
+      "label_ar": "مريضة تجريبية (ب) - ارتفاع ضغط الدم (بيانات اصطناعية)",
+      "age": 61,
+      "sex": "female",
+      "height_cm": 158,
+      "weight_kg": 70,
+      "bmi": 28.0,
+      "medical_history": [
+        {"condition": "Hypertension", "condition_ar": "ارتفاع ضغط الدم", "since": "2019", "status": "active"}
+      ],
+      "family_history": [
+        {"relative": "mother", "condition": "Hypertension and stroke", "condition_ar": "ارتفاع ضغط الدم وسكتة دماغية"},
+        {"relative": "brother", "condition": "Type 2 diabetes", "condition_ar": "السكري من النوع الثاني"}
+      ],
+      "medications": [
+        {"name": "Lisinopril", "name_ar": "ليسينوبريل", "dose": "10 mg", "frequency": "once daily", "since": "2019-09"}
+      ],
+      "risk_factors": [
+        {"factor": "Hypertension on treatment", "factor_ar": "ارتفاع ضغط الدم تحت العلاج"},
+        {"factor": "Overweight (BMI 28.0)", "factor_ar": "زيادة الوزن (مؤشر كتلة الجسم 28.0)"},
+        {"factor": "High dietary salt intake (self-reported)", "factor_ar": "تناول كمية عالية من الملح (حسب إفادة المستخدمة)"}
+      ],
+      "previous_results": [
+        {"code": "MAMMO", "test": "Screening mammogram", "test_ar": "تصوير الثدي الشعاعي (الماموجرام)", "value": "BI-RADS 1 (negative)", "value_ar": "BI-RADS 1 (سلبي)", "unit": "", "date": "2024-10-05", "source": "clinic upload (synthetic)"},
+        {"code": "HBA1C", "test": "HbA1c", "test_ar": "السكر التراكمي (HbA1c)", "value": "5.8", "unit": "%", "date": "2025-11-20", "source": "clinic upload (synthetic)"},
+        {"code": "FPG", "test": "Fasting plasma glucose", "test_ar": "سكر الدم الصائم", "value": "104", "unit": "mg/dL", "date": "2025-11-20", "source": "clinic upload (synthetic)"},
+        {"code": "LDL", "test": "LDL cholesterol", "test_ar": "الكوليسترول الضار (LDL)", "value": "131", "unit": "mg/dL", "date": "2025-11-20", "source": "clinic upload (synthetic)"},
+        {"code": "EGFR", "test": "eGFR (kidney function)", "test_ar": "معدل الترشيح الكبيبي (eGFR) لوظائف الكلى", "value": "78", "unit": "mL/min/1.73m²", "date": "2025-11-20", "source": "clinic upload (synthetic)"},
+        {"code": "FIT", "test": "Faecal immunochemical test (FIT)", "test_ar": "فحص الدم الخفي في البراز (FIT)", "value": "Negative", "value_ar": "سلبي", "unit": "", "date": "2026-01-20", "source": "clinic upload (synthetic)"},
+        {"code": "BP", "test": "Blood pressure (clinic)", "test_ar": "ضغط الدم (في العيادة)", "value": "142/88", "unit": "mmHg", "date": "2026-02-03", "source": "clinic upload (synthetic)"},
+        {"code": "BP", "test": "Blood pressure (clinic)", "test_ar": "ضغط الدم (في العيادة)", "value": "136/84", "unit": "mmHg", "date": "2026-06-10", "source": "clinic upload (synthetic)"},
+        {"code": "BP", "test": "Blood pressure (clinic)", "test_ar": "ضغط الدم (في العيادة)", "value": "134/82", "unit": "mmHg", "date": "2026-10-02", "source": "clinic upload (synthetic)"},
+        {"code": "BP", "test": "Blood pressure (home monitor, 7-day average)", "test_ar": "ضغط الدم (جهاز منزلي، متوسط 7 أيام)", "value": "131/80", "unit": "mmHg", "date": "2026-10-28", "source": "self-entered (synthetic)"}
+      ],
+      "screening_plan": [
+        {
+          "code": "BP", "related_codes": ["BP"],
+          "name": "Blood pressure check", "name_ar": "قياس ضغط الدم",
+          "status": "due", "due_date": "2026-11-30", "last_completed": "2026-10-28",
+          "interval": "regular monitoring (VITALA plan setting, synthetic demo value)",
+          "reason": "Hypertension is recorded in the medical history and Lisinopril (an ACE inhibitor) is a current medication, so the plan tracks blood pressure readings regularly.",
+          "reason_ar": "ارتفاع ضغط الدم مسجّل في التاريخ المرضي والليسينوبريل (من مثبطات الإنزيم المحول) من الأدوية الحالية، لذلك تتابع الخطة قراءات ضغط الدم بشكل منتظم.",
+          "guideline_reference": "SA-PHA-HTN-2024 (blood pressure measurement and monitoring)",
+          "rule_id": "SYN-RULE-HTN-BP (synthetic)"
+        },
+        {
+          "code": "DM_SCREEN", "related_codes": ["HBA1C", "FPG", "DM_SCREEN"],
+          "name": "Diabetes screening (HbA1c or fasting plasma glucose)", "name_ar": "فحص الكشف عن السكري (السكر التراكمي أو السكر الصائم)",
+          "status": "due", "due_date": "2026-11-20", "last_completed": "2025-11-20",
+          "interval": "every year",
+          "reason": "Hypertension on treatment is listed as a diabetes risk factor, and the last results on 2025-11-20 were HbA1c 5.8 % and fasting plasma glucose 104 mg/dL. The plan repeats diabetes screening every year for this combination.",
+          "reason_ar": "ارتفاع ضغط الدم تحت العلاج من عوامل خطر السكري، وكانت آخر النتائج بتاريخ 2025-11-20: السكر التراكمي 5.8 % وسكر الدم الصائم 104 mg/dL. تكرر الخطة فحص السكري كل سنة لهذه الحالة.",
+          "guideline_reference": "SA-PHA-SCPG-2023 diabetes-screening risk factors; SA-PHA-DM-2025 section 11 (Screening)",
+          "rule_id": "SYN-RULE-DM-SCREEN-RISK (synthetic)"
+        },
+        {
+          "code": "LIPID", "related_codes": ["LDL", "LIPID"],
+          "name": "Fasting lipid profile", "name_ar": "تحليل الدهون (صائم)",
+          "status": "due", "due_date": "2026-11-20", "last_completed": "2025-11-20",
+          "interval": "every year (VITALA plan setting, synthetic demo value)",
+          "reason": "The Saudi preventive checklist for adults aged 60 and above lists a fasting lipid profile. The last LDL cholesterol result was on 2025-11-20.",
+          "reason_ar": "قائمة الفحوصات الوقائية السعودية للبالغين بعمر 60 سنة فأكثر تتضمن تحليل الدهون الصائم. آخر نتيجة للكوليسترول الضار كانت بتاريخ 2025-11-20.",
+          "guideline_reference": "SA-PHA-SCPG-2023, checklist (60 years and above): fasting lipid profile",
+          "rule_id": "SYN-RULE-LIPID-60 (synthetic)"
+        },
+        {
+          "code": "MAMMO", "related_codes": ["MAMMO"],
+          "name": "Screening mammogram", "name_ar": "تصوير الثدي الشعاعي (الماموجرام)",
+          "status": "overdue", "due_date": "2026-10-05", "last_completed": "2024-10-05",
+          "interval": "every 2 years",
+          "reason": "Woman aged 61. The Saudi Expert Panel suggests mammography screening for women aged 40-69 every 1 to 2 years. The last mammogram was on 2024-10-05.",
+          "reason_ar": "امرأة بعمر 61 سنة. تقترح لجنة الخبراء السعودية فحص الماموجرام للنساء بعمر 40-69 سنة كل سنة إلى سنتين. آخر ماموجرام كان بتاريخ 2024-10-05.",
+          "guideline_reference": "SA-PHA-SCPG-2023, checklist footnote (10): mammogram",
+          "rule_id": "SYN-RULE-MAMMO (synthetic)"
+        },
+        {
+          "code": "CRC", "related_codes": ["FIT", "CRC"],
+          "name": "Colorectal cancer screening (FIT)", "name_ar": "فحص الكشف المبكر عن سرطان القولون (FIT)",
+          "status": "upcoming", "due_date": "2027-01-20", "last_completed": "2026-01-20",
+          "interval": "every year",
+          "reason": "Age 61 is within the 50 to 75 range for colorectal cancer screening, and FIT is repeated every year. The last FIT was on 2026-01-20.",
+          "reason_ar": "العمر 61 سنة ضمن الفئة العمرية 50 إلى 75 سنة لفحص سرطان القولون، ويُكرر فحص FIT كل سنة. آخر فحص FIT كان بتاريخ 2026-01-20.",
+          "guideline_reference": "SA-PHA-SCPG-2023, checklist (60 years and above): colon cancer screening",
+          "rule_id": "SYN-RULE-CRC (synthetic)"
+        }
+      ],
+      "wearable_data": {
+        "source": "Apple Health (synthetic)", "period": "2026-10-12 to 2026-11-10",
+        "avg_daily_steps": 4100, "avg_active_minutes_per_week": 60, "avg_sleep_hours": 6.1, "avg_resting_heart_rate_bpm": 72
+      }
+    },
+    {
+      "is_synthetic": true,
+      "patient_id": "SYN-DEMO-C",
+      "label": "Demo patient C - no chronic conditions, preventive risk factors (synthetic)",
+      "label_ar": "مريض تجريبي (ج) - بدون أمراض مزمنة مع عوامل خطورة وقائية (بيانات اصطناعية)",
+      "age": 45,
+      "sex": "male",
+      "height_cm": 178,
+      "weight_kg": 87,
+      "bmi": 27.5,
+      "medical_history": [
+        {"condition": "Appendectomy (surgery)", "condition_ar": "استئصال الزائدة الدودية (عملية جراحية)", "since": "2010", "status": "resolved"}
+      ],
+      "family_history": [
+        {"relative": "father", "condition": "Type 2 diabetes", "condition_ar": "السكري من النوع الثاني"},
+        {"relative": "father", "condition": "Heart attack at age 58", "condition_ar": "نوبة قلبية بعمر 58 سنة"}
+      ],
+      "medications": [],
+      "risk_factors": [
+        {"factor": "Current smoker (about 10 cigarettes a day)", "factor_ar": "مدخن حاليًا (حوالي 10 سجائر يوميًا)"},
+        {"factor": "Overweight (BMI 27.5)", "factor_ar": "زيادة الوزن (مؤشر كتلة الجسم 27.5)"},
+        {"factor": "Low physical activity", "factor_ar": "قلة النشاط البدني"},
+        {"factor": "First-degree relative with diabetes", "factor_ar": "قريب من الدرجة الأولى مصاب بالسكري"}
+      ],
+      "previous_results": [
+        {"code": "FPG", "test": "Fasting plasma glucose", "test_ar": "سكر الدم الصائم", "value": "97", "unit": "mg/dL", "date": "2023-08-14", "source": "clinic upload (synthetic)"},
+        {"code": "LDL", "test": "LDL cholesterol", "test_ar": "الكوليسترول الضار (LDL)", "value": "128", "unit": "mg/dL", "date": "2023-08-14", "source": "clinic upload (synthetic)"},
+        {"code": "BP", "test": "Blood pressure (clinic)", "test_ar": "ضغط الدم (في العيادة)", "value": "128/84", "unit": "mmHg", "date": "2025-09-01", "source": "clinic upload (synthetic)"}
+      ],
+      "screening_plan": [
+        {
+          "code": "DM_SCREEN", "related_codes": ["HBA1C", "FPG", "DM_SCREEN"],
+          "name": "Diabetes screening (fasting plasma glucose or HbA1c)", "name_ar": "فحص الكشف عن السكري (السكر الصائم أو السكر التراكمي)",
+          "status": "overdue", "due_date": "2026-08-14", "last_completed": "2023-08-14",
+          "interval": "every 3 years if normal",
+          "reason": "BMI 27.5 with additional risk factors (low physical activity, father with diabetes). The Saudi diabetes guideline screens adults with BMI of 25 or more plus at least one risk factor and repeats every 3 years if normal. The last fasting glucose test was on 2023-08-14.",
+          "reason_ar": "مؤشر كتلة الجسم 27.5 مع عوامل خطورة إضافية (قلة النشاط البدني، والأب مصاب بالسكري). إرشادات السكري السعودية توصي بفحص البالغين الذين مؤشر كتلة الجسم لديهم 25 أو أكثر مع عامل خطورة واحد على الأقل وتكرار الفحص كل 3 سنوات إذا كانت النتيجة طبيعية. آخر تحليل للسكر الصائم كان بتاريخ 2023-08-14.",
+          "guideline_reference": "SA-PHA-DM-2025, section 11 (Screening)",
+          "rule_id": "SYN-RULE-DM-SCREEN-BMI (synthetic)"
+        },
+        {
+          "code": "BP", "related_codes": ["BP"],
+          "name": "Blood pressure screening", "name_ar": "فحص ضغط الدم",
+          "status": "overdue", "due_date": "2026-09-01", "last_completed": "2025-09-01",
+          "interval": "every year",
+          "reason": "Adults aged 40 years or older are screened for high blood pressure every year. The last reading was on 2025-09-01.",
+          "reason_ar": "يُفحص ضغط الدم سنويًا للبالغين بعمر 40 سنة فأكثر. آخر قراءة كانت بتاريخ 2025-09-01.",
+          "guideline_reference": "SA-PHA-HTN-2024, section 4.1 (screening for hypertension)",
+          "rule_id": "SYN-RULE-HTN-SCREEN-40 (synthetic)"
+        },
+        {
+          "code": "CRC", "related_codes": ["FIT", "CRC"],
+          "name": "Colorectal cancer screening", "name_ar": "فحص الكشف المبكر عن سرطان القولون",
+          "status": "due", "due_date": "2026-12-31", "last_completed": null,
+          "interval": null,
+          "reason": "Age 45. The Saudi Clinical Preventive Guideline notes that colorectal cancer screening starts locally at age 45.",
+          "reason_ar": "العمر 45 سنة. يذكر الدليل السعودي للرعاية الوقائية أن فحص سرطان القولون يبدأ محليًا من عمر 45 سنة.",
+          "guideline_reference": "SA-PHA-SCPG-2023, checklist footnote (12): colon cancer screening",
+          "rule_id": "SYN-RULE-CRC-45 (synthetic)"
+        },
+        {
+          "code": "SMOKING", "related_codes": ["SMOKING"],
+          "name": "Smoking cessation counselling", "name_ar": "استشارة الإقلاع عن التدخين",
+          "status": "due", "due_date": "2026-11-30", "last_completed": null,
+          "interval": null,
+          "reason": "Current smoking is recorded in the risk factors, and the Saudi preventive checklist for adults lists smoking cessation.",
+          "reason_ar": "التدخين الحالي مسجّل ضمن عوامل الخطورة، وقائمة الفحوصات الوقائية السعودية للبالغين تتضمن الإقلاع عن التدخين.",
+          "guideline_reference": "SA-PHA-SCPG-2023, checklist (18-59 years): smoking cessation",
+          "rule_id": "SYN-RULE-SMOKING (synthetic)"
+        },
+        {
+          "code": "LIPID", "related_codes": ["LDL", "LIPID"],
+          "name": "Fasting lipid profile", "name_ar": "تحليل الدهون (صائم)",
+          "status": "upcoming", "due_date": "2027-02-01", "last_completed": "2023-08-14",
+          "interval": null,
+          "reason": null,
+          "reason_ar": null,
+          "guideline_reference": null,
+          "rule_id": null
+        }
+      ],
+      "wearable_data": null
+    }
+  ]
+}

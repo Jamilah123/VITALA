@@ -1,0 +1,231 @@
+[
+  {
+    "id": "metformin",
+    "generic_name": "Metformin",
+    "name_ar": "ميتفورمين",
+    "drug_class": "biguanide",
+    "identity_evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 53"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED01",
+      "MED02"
+    ],
+    "status": "active",
+    "demo_scope": "metformin",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "enalapril",
+    "generic_name": "Enalapril",
+    "name_ar": "إنالابريل",
+    "drug_class": "ace_inhibitor",
+    "identity_evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 55"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED03",
+      "MED04",
+      "MED05"
+    ],
+    "status": "active",
+    "demo_scope": "ace_inhibitor",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "lisinopril",
+    "generic_name": "Lisinopril",
+    "name_ar": "ليزينوبريل",
+    "drug_class": "ace_inhibitor",
+    "identity_evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 55"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED03",
+      "MED04",
+      "MED05"
+    ],
+    "status": "active",
+    "demo_scope": "ace_inhibitor",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "losartan",
+    "generic_name": "Losartan",
+    "name_ar": "لوسارتان",
+    "drug_class": "arb",
+    "identity_evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 56"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED03",
+      "MED04",
+      "MED05"
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
+  },
+  {
+    "id": "valsartan",
+    "generic_name": "Valsartan",
+    "name_ar": "فالسارتان",
+    "drug_class": "arb",
+    "identity_evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 56"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED03",
+      "MED04",
+      "MED05"
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
+  },
+  {
+    "id": "hydrochlorothiazide",
+    "generic_name": "Hydrochlorothiazide",
+    "name_ar": "هيدروكلوروثيازيد",
+    "drug_class": "thiazide_diuretic",
+    "identity_evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 55"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED03",
+      "MED04",
+      "MED06"
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
+  },
+  {
+    "id": "atorvastatin",
+    "generic_name": "Atorvastatin",
+    "name_ar": "أتورفاستاتين",
+    "drug_class": "statin",
+    "identity_evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 69"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED07",
+      "MED08",
+      "MED09",
+      "MED10"
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
+  },
+  {
+    "id": "rosuvastatin",
+    "generic_name": "Rosuvastatin",
+    "name_ar": "روزوفاستاتين",
+    "drug_class": "statin",
+    "identity_evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 69"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED07",
+      "MED08",
+      "MED09",
+      "MED10"
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
+  },
+  {
+    "id": "warfarin",
+    "generic_name": "Warfarin",
+    "name_ar": "وارفارين",
+    "drug_class": "vitamin_k_antagonist",
+    "identity_evidence": [
+      {
+        "source_id": "S08",
+        "locator": "PDF p. 3"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED11",
+      "MED12",
+      "MED13"
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
+  },
+  {
+    "id": "methotrexate",
+    "generic_name": "Methotrexate",
+    "name_ar": "ميثوتريكسات",
+    "drug_class": "csdmard",
+    "identity_evidence": [
+      {
+        "source_id": "S09",
+        "locator": "PDF p. 15"
+      }
+    ],
+    "selection_basis_ar": "قائمة عملية أولية؛ لا تمثل ترتيب الأكثر صرفًا في السعودية",
+    "brand_names": [],
+    "monitoring_rule_ids": [
+      "MED14"
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
+  }
+]

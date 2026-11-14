@@ -1,0 +1,171 @@
+[
+  {
+    "id": "K01",
+    "action_id": "hba1c",
+    "explanation_ar": "يعرض متوسط سكر الدم خلال الشهرين إلى الثلاثة الماضية.",
+    "evidence": [
+      {
+        "source_id": "S01",
+        "locator": "A1C"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  },
+  {
+    "id": "K02",
+    "action_id": "renal_monitoring",
+    "explanation_ar": "يساعد تقييم الكلى في متابعة تأثير السكري؛ قد تتأخر الأعراض.",
+    "evidence": [
+      {
+        "source_id": "S06",
+        "locator": "الأعراض وتأثير السكري على الكلى"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  },
+  {
+    "id": "K03",
+    "action_id": "eye_exam",
+    "explanation_ar": "قد تبدأ تغيرات العين المرتبطة بالسكري دون أعراض؛ الفحص يساعد على اكتشافها.",
+    "evidence": [
+      {
+        "source_id": "S07",
+        "locator": "الأعراض والتشخيص"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  },
+  {
+    "id": "K04",
+    "action_id": "blood_pressure",
+    "explanation_ar": "القياسات المسجلة تساعد متابعة الضغط الذي قد يرتفع دون أعراض واضحة.",
+    "evidence": [
+      {
+        "source_id": "S05",
+        "locator": "تعريف المرض وتعليمات القياس"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  },
+  {
+    "id": "K05",
+    "action_id": "foot_neuropathy",
+    "explanation_ar": "التقييم السريري يكشف فقد الإحساس ومخاطر تقرح القدم.",
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF pp. 81–82"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  },
+  {
+    "id": "K06",
+    "action_id": "vitamin_b12",
+    "explanation_ar": "قد يرتبط الاستخدام المطوّل للميتفورمين بنقص B12.",
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 53"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  },
+  {
+    "id": "K07",
+    "action_id": "renal_potassium",
+    "explanation_ar": "تراقب هذه التحاليل وظائف الكلى والبوتاسيوم أثناء العلاج المعني.",
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF pp. 83–84"
+      },
+      {
+        "source_id": "S03",
+        "locator": "PDF p. 26"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  },
+  {
+    "id": "K08",
+    "action_id": "lipid_profile",
+    "explanation_ar": "متابعة الدهون تساعد تقييم الاستجابة للعلاج.",
+    "evidence": [
+      {
+        "source_id": "S03",
+        "locator": "PDF p. 26"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "archived"
+  },
+  {
+    "id": "K09",
+    "action_id": "inr",
+    "explanation_ar": "INR يُستخدم لمراقبة تأثير الوارفارين؛ تحدد العيادة الموعد حسب النتائج والاستقرار.",
+    "evidence": [
+      {
+        "source_id": "S08",
+        "locator": "PDF pp. 5–6"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "archived"
+  },
+  {
+    "id": "K10",
+    "action_id": "cbc_lft_renal",
+    "explanation_ar": "هذه تحاليل مراقبة موصى بها مع الميثوتريكسات في سياق روماتويد البالغين.",
+    "evidence": [
+      {
+        "source_id": "S09",
+        "locator": "PDF p. 15"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "archived"
+  },
+  {
+    "id": "K11",
+    "action_id": "egfr",
+    "explanation_ar": "متابعة وظائف الكلى جزء من مراقبة استخدام الميتفورمين.",
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 84"
+      }
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "text_type": "paraphrase_not_verbatim",
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
+  }
+]

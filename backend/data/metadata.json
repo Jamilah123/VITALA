@@ -1,0 +1,44 @@
+{
+  "dataset": "VITALA focused clinical research seed",
+  "version": "0.2.0",
+  "collected_on": "2026-11-01",
+  "language": "ar",
+  "scope": [
+    "diagnosed_diabetes_followup",
+    "diagnosed_hypertension_followup",
+    "selected_medication_monitoring"
+  ],
+  "status": "research_draft_not_clinically_validated",
+  "source_policy": "Rules (S01–S09): moh.gov.sa hosted sources only; issuer retained separately. S10–S12 (StatPearls x2, internal Saudi KB) are evidence for draft medication-rule proposals only; no executable rule cites them.",
+  "default_auto_schedule_enabled": false,
+  "missing_data_policy": "needs_information_not_assumed_negative",
+  "scope_notes_ar": "مسودة جمع بيانات لبناء النموذج الأولي؛ ليست إرشادات علاجية نهائية. قائمة الأدوية مختارة وليست إحصائية للأكثر صرفًا. لا توصيات لبدء/إيقاف أو تعديل جرعة.",
+  "counts": {
+    "diabetes_rules": 10,
+    "hypertension_rules": 9,
+    "medication_rules": 14,
+    "medications": 10,
+    "sources": 12,
+    "knowledge_items": 11,
+    "active_medication_rules": 5,
+    "archived_medication_rules": 9,
+    "active_medications": 3,
+    "medication_rule_proposals": 6
+  },
+  "medication_scope": {
+    "active": [
+      "metformin",
+      "ace_inhibitor (enalapril, lisinopril)"
+    ],
+    "archived_on": "2026-11-14",
+    "archived": [
+      "losartan",
+      "valsartan",
+      "hydrochlorothiazide",
+      "atorvastatin",
+      "rosuvastatin",
+      "warfarin",
+      "methotrexate"
+    ]
+  }
+}

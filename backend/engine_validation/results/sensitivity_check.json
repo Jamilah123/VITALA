@@ -1,0 +1,58 @@
+{
+ "reactivate_archived_medication_rules": {
+  "detected": true,
+  "failing_cases": [
+   "VIT-19",
+   "VIT-20"
+  ],
+  "example_reasons": [
+   "gate:focus_rule_not_candidate",
+   "gate:listed_as_out_of_scope",
+   "gate:no_medication_candidate"
+  ]
+ },
+ "assume_diabetes_type_when_unknown": {
+  "detected": true,
+  "failing_cases": [
+   "VIT-04"
+  ],
+  "example_reasons": [
+   "gate:focus_status_matches_label"
+  ]
+ },
+ "approve_unreviewed_risk_mapping": {
+  "detected": true,
+  "failing_cases": [
+   "VIT-01",
+   "VIT-02",
+   "VIT-03",
+   "VIT-04",
+   "VIT-05",
+   "VIT-06",
+   "VIT-07",
+   "VIT-08",
+   "VIT-09",
+   "VIT-10",
+   "VIT-11",
+   "VIT-12",
+   "VIT-13",
+   "VIT-14",
+   "VIT-15",
+   "VIT-16",
+   "VIT-17",
+   "VIT-18",
+   "VIT-19",
+   "VIT-20",
+   "VIT-21",
+   "VIT-22",
+   "VIT-23",
+   "VIT-24",
+   "VIT-25"
+  ],
+  "example_reasons": [
+   "gate:no_risk_factor_actionable",
+   "safety:no_actionable_risk_factor"
+  ]
+ },
+ "unmutated_rerun_all_pass": true
+}

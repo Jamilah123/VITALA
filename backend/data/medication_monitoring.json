@@ -1,0 +1,640 @@
+[
+  {
+    "id": "MED01",
+    "track": "medication",
+    "action_id": "vitamin_b12",
+    "action_name_ar": "فيتامين B12",
+    "eligibility_ar": "استخدام طويل المدى للميتفورمين؛ خصوصًا مع فقر الدم أو اعتلال الأعصاب",
+    "schedule": {
+      "kind": "periodic_unspecified",
+      "text_ar": "النظر في قياس دوري؛ لا يحدد المصدر عدد أشهر",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 53"
+      }
+    ],
+    "required_inputs": [
+      "medication_start_date",
+      "anemia_status",
+      "neuropathy_status",
+      "last_b12_date"
+    ],
+    "notes_ar": "توصية للنظر في الفحص؛ ليست إلزامًا سنويًا لكل مستخدم.",
+    "review_flags": [
+      "interval_not_specified",
+      "long_term_not_numerically_defined"
+    ],
+    "knowledge_ids": [
+      "K06"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "metformin"
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "MED02",
+    "track": "medication",
+    "action_id": "egfr",
+    "action_name_ar": "وظائف الكلى / eGFR",
+    "eligibility_ar": "استخدام الميتفورمين",
+    "schedule": {
+      "kind": "periodic_unspecified",
+      "text_ar": "مراقبة أثناء الاستخدام؛ التوقيت حسب الحالة",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 84"
+      }
+    ],
+    "required_inputs": [
+      "last_egfr_date",
+      "renal_status"
+    ],
+    "notes_ar": "",
+    "review_flags": [
+      "interval_not_specified"
+    ],
+    "knowledge_ids": [
+      "K11"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "metformin"
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "MED03",
+    "track": "medication",
+    "action_id": "renal_potassium",
+    "action_name_ar": "كرياتينين الدم والبوتاسيوم",
+    "eligibility_ar": "استخدام ACE inhibitor أو ARB أو مدر بول ضمن سياق دليل السكري",
+    "schedule": {
+      "kind": "baseline",
+      "text_ar": "قياس أساسي عند بدء المسار",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S02",
+        "locator": "PDF p. 83"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_diagnosed",
+      "medication_start_date",
+      "baseline_creatinine",
+      "baseline_potassium"
+    ],
+    "notes_ar": "الاستدلال من فئة الدواء؛ لا يتجاوز سياق المصدر.",
+    "review_flags": [
+      "diabetes_context"
+    ],
+    "knowledge_ids": [
+      "K07"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "enalapril",
+      "lisinopril",
+      "losartan",
+      "valsartan",
+      "hydrochlorothiazide"
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "MED04",
+    "track": "medication",
+    "action_id": "renal_potassium",
+    "action_name_ar": "وظائف الكلى والبوتاسيوم",
+    "eligibility_ar": "سكري مع استخدام ACE inhibitor أو ARB أو مدر بول",
+    "schedule": {
+      "kind": "minimum_frequency",
+      "text_ar": "سنويًا على الأقل في سياق المصدر",
+      "unit": "months",
+      "value": 12,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S03",
+        "locator": "PDF p. 26, hypertension item l"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_diagnosed",
+      "last_creatinine_date",
+      "last_potassium_date",
+      "medication_change_date"
+    ],
+    "notes_ar": "ليس هذا جدول الفحوصات المبكرة بعد بدء الدواء أو تغيير الجرعة.",
+    "review_flags": [
+      "diabetes_context",
+      "early_monitoring_not_covered"
+    ],
+    "knowledge_ids": [
+      "K07"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "enalapril",
+      "lisinopril",
+      "losartan",
+      "valsartan",
+      "hydrochlorothiazide"
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "MED05",
+    "track": "medication",
+    "action_id": "renal_potassium",
+    "action_name_ar": "الكرياتينين والبوتاسيوم",
+    "eligibility_ar": "مستخدم ACE inhibitor أو ARB خارج سياق السكري",
+    "schedule": {
+      "kind": "periodic_unspecified",
+      "text_ar": "مراقبة دورية؛ لا مدة محددة",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF pp. 55–56"
+      }
+    ],
+    "required_inputs": [
+      "last_creatinine_date",
+      "last_potassium_date",
+      "medication_change_date"
+    ],
+    "notes_ar": "لا تعمم مدة MED04 السنوية على هذه الفئة دون اعتماد.",
+    "review_flags": [
+      "legacy_2013",
+      "interval_not_specified"
+    ],
+    "knowledge_ids": [
+      "K07"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "enalapril",
+      "lisinopril",
+      "losartan",
+      "valsartan"
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
+  },
+  {
+    "id": "MED06",
+    "track": "medication",
+    "action_id": "thiazide_labs",
+    "action_name_ar": "الأملاح وحمض اليوريك والكالسيوم والسكر الصائم",
+    "eligibility_ar": "استخدام مدر ثيازيدي",
+    "schedule": {
+      "kind": "periodic_unspecified",
+      "text_ar": "مراقبة دورية مذكورة دون فاصل ثابت",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 55"
+      }
+    ],
+    "required_inputs": [
+      "last_electrolytes_date",
+      "last_uric_acid_date",
+      "last_calcium_date",
+      "last_glucose_date"
+    ],
+    "notes_ar": "",
+    "review_flags": [
+      "legacy_2013",
+      "interval_not_specified"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "hydrochlorothiazide"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED07",
+    "track": "medication",
+    "action_id": "lipid_profile",
+    "action_name_ar": "ملف الدهون",
+    "eligibility_ar": "سكري مع بدء ستاتين أو تعديل جرعته",
+    "schedule": {
+      "kind": "after_event_range",
+      "text_ar": "بعد 4–12 أسبوعًا",
+      "unit": "weeks",
+      "value": null,
+      "min": 4,
+      "max": 12,
+      "anchor": "medication_start_or_change_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S03",
+        "locator": "PDF p. 26, dyslipidemia item b"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_diagnosed",
+      "medication_start_or_change_date",
+      "last_lipid_date"
+    ],
+    "notes_ar": "المصدر يذكر أيضًا فحصًا عند البدء؛ مدة ضمن نطاق يختاره الطبيب.",
+    "review_flags": [
+      "diabetes_context",
+      "clinician_interval_required"
+    ],
+    "knowledge_ids": [
+      "K08"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "atorvastatin",
+      "rosuvastatin"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED08",
+    "track": "medication",
+    "action_id": "lipid_profile",
+    "action_name_ar": "ملف الدهون",
+    "eligibility_ar": "سكري مع استمرار علاج الستاتين",
+    "schedule": {
+      "kind": "interval",
+      "text_ar": "سنويًا بعد متابعة البدء/التعديل",
+      "unit": "months",
+      "value": 12,
+      "min": null,
+      "max": null,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S03",
+        "locator": "PDF p. 26, dyslipidemia item b"
+      }
+    ],
+    "required_inputs": [
+      "diabetes_diagnosed",
+      "last_lipid_date",
+      "medication_change_date"
+    ],
+    "notes_ar": "فحص فعالية العلاج؛ مختلف عن فحوصات سلامته.",
+    "review_flags": [
+      "diabetes_context"
+    ],
+    "knowledge_ids": [
+      "K08"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "atorvastatin",
+      "rosuvastatin"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED09",
+    "track": "medication",
+    "action_id": "liver_enzymes",
+    "action_name_ar": "ALT وAST",
+    "eligibility_ar": "قبل وصف الستاتين أو الزيادة المخطط لها بالجرعة",
+    "schedule": {
+      "kind": "baseline_or_change",
+      "text_ar": "قبل الوصف أو زيادة الجرعة حسب المصدر القديم",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 69"
+      }
+    ],
+    "required_inputs": [
+      "planned_start_or_dose_increase",
+      "last_alt_date",
+      "last_ast_date"
+    ],
+    "notes_ar": "لا تعتمد جدول إنزيمات دوري للجميع من هذا المصدر القديم.",
+    "review_flags": [
+      "legacy_2013"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "atorvastatin",
+      "rosuvastatin"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED10",
+    "track": "medication",
+    "action_id": "ck",
+    "action_name_ar": "CK / CPK",
+    "eligibility_ar": "مستخدم ستاتين يبلغ عن أعراض عضلية",
+    "schedule": {
+      "kind": "symptom_triggered",
+      "text_ar": "عند الأعراض؛ ليس فحصًا دوريًا للجميع",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S04",
+        "locator": "PDF p. 69"
+      }
+    ],
+    "required_inputs": [
+      "muscle_symptoms",
+      "last_ck_date"
+    ],
+    "notes_ar": "",
+    "review_flags": [
+      "legacy_2013",
+      "not_routine_screening"
+    ],
+    "knowledge_ids": [],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "atorvastatin",
+      "rosuvastatin"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED11",
+    "track": "medication",
+    "action_id": "inr",
+    "action_name_ar": "INR",
+    "eligibility_ar": "وارفارين؛ مستقر طبيًا ونتائج ثابتة دون تغيير جرعة مدة 3 أشهر على الأقل",
+    "schedule": {
+      "kind": "interval_range",
+      "text_ar": "كل 4–12 أسبوعًا وفق خطة العيادة",
+      "unit": "weeks",
+      "value": null,
+      "min": 4,
+      "max": 12,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S08",
+        "locator": "PDF p. 6, Table 2 and footnote c"
+      }
+    ],
+    "required_inputs": [
+      "last_inr_date",
+      "inr_stability_since",
+      "dose_stability_since",
+      "clinic_next_due_date"
+    ],
+    "notes_ar": "لا تختار 12 أسبوعًا افتراضيًا.",
+    "review_flags": [
+      "clinic_plan_required"
+    ],
+    "knowledge_ids": [
+      "K09"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "warfarin"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED12",
+    "track": "medication",
+    "action_id": "inr",
+    "action_name_ar": "INR",
+    "eligibility_ar": "وارفارين؛ المتابعة غير المستقرة ضمن جدول المصدر",
+    "schedule": {
+      "kind": "interval_range",
+      "text_ar": "كل 1–2 أسبوع وفق خطة العيادة",
+      "unit": "weeks",
+      "value": null,
+      "min": 1,
+      "max": 2,
+      "anchor": "last_completed_date"
+    },
+    "evidence": [
+      {
+        "source_id": "S08",
+        "locator": "PDF p. 6, Table 2"
+      }
+    ],
+    "required_inputs": [
+      "clinical_stability",
+      "last_inr_date",
+      "clinic_next_due_date"
+    ],
+    "notes_ar": "الحالات الحادة وخارج المجال ليست مجرد جدولة روتينية.",
+    "review_flags": [
+      "clinic_plan_required"
+    ],
+    "knowledge_ids": [
+      "K09"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "warfarin"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED13",
+    "track": "medication",
+    "action_id": "inr",
+    "action_name_ar": "INR بعد تغيير مؤثر",
+    "eligibility_ar": "وارفارين؛ تعديل جرعة أو دواء متداخل أو تغيير آخر مؤثر",
+    "schedule": {
+      "kind": "conditional",
+      "text_ar": "خلال أسبوع أو 1–2 أسبوع بحسب نوع التغيير في الجدول",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S08",
+        "locator": "PDF p. 6, Table 2 and footnote b"
+      }
+    ],
+    "required_inputs": [
+      "change_type",
+      "change_date",
+      "clinic_next_due_date"
+    ],
+    "notes_ar": "يلزم اختيار الفرع بواسطة العيادة؛ لم تُضمّن خوارزمية تعديل الجرعة.",
+    "review_flags": [
+      "clinic_plan_required"
+    ],
+    "knowledge_ids": [
+      "K09"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "warfarin"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  },
+  {
+    "id": "MED14",
+    "track": "medication",
+    "action_id": "cbc_lft_renal",
+    "action_name_ar": "صورة الدم ووظائف الكبد والكلى",
+    "eligibility_ar": "ميثوتريكسات في سياق روماتويد البالغين",
+    "schedule": {
+      "kind": "phased",
+      "text_ar": "أول <3 أشهر: كل 2–4 أسابيع؛ 3–6 أشهر: كل 8–12 أسبوعًا؛ >6 أشهر: كل 12 أسبوعًا",
+      "unit": null,
+      "value": null,
+      "min": null,
+      "max": null,
+      "anchor": null
+    },
+    "evidence": [
+      {
+        "source_id": "S09",
+        "locator": "PDF p. 15, monitoring table"
+      }
+    ],
+    "required_inputs": [
+      "medication_indication",
+      "medication_start_date",
+      "last_cbc_date",
+      "last_lft_date",
+      "last_renal_date"
+    ],
+    "notes_ar": "حدود الأشهر وتعديل الجدول عند تغير الجرعة/الحالة تحتاج اعتمادًا.",
+    "review_flags": [
+      "indication_specific",
+      "phase_boundary_review",
+      "baseline_not_covered_by_this_table"
+    ],
+    "knowledge_ids": [
+      "K10"
+    ],
+    "clinical_status": "draft_not_clinician_reviewed",
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "drug_ids": [
+      "methotrexate"
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
+  }
+]

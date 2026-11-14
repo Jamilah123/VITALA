@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vitala-rag"
+version = "0.2.0"
+description = "VITALA medical RAG prototype: grounded, cited answers from approved preventive, medication and app knowledge"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "numpy>=1.24",
+    "pymupdf>=1.24,<2",
+    "rank-bm25==0.2.2",
+    "openai>=1.40",
+    "anthropic>=0.80",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "httpx>=0.27",
+    "gradio>=4.40",
+    "requests>=2.31",
+    "python-dotenv>=1,<2",
+    "pandas>=2",
+]
+
+[project.optional-dependencies]
+hybrid = ["sentence-transformers>=3,<6", "faiss-cpu>=1.8,<2"]
+notebooks = ["matplotlib>=3.8", "ipykernel>=6", "nbformat>=5", "nbclient>=0.9"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+vitala-rag = "vitala_rag.interfaces:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

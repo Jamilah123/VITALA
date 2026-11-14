@@ -1,0 +1,3 @@
+# Reference data must stay byte-identical to the collected source files.
+backend/data/** -text
+docs/*.pdf binary
