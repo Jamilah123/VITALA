@@ -83,7 +83,7 @@ function MedicationForm({
             hint="قائمة أولية محدودة من الخادم، وليست شاملة لكل الأدوية."
           >
             <option value="">اختيار من القائمة</option>
-            {catalogue.map((medication) => (
+            {catalogue.filter((medication) => medication.status !== "archived").map((medication) => (
               <option key={medication.id} value={medication.id}>
                 {medication.name_ar} ({medication.generic_name})
               </option>

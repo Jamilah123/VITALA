@@ -184,13 +184,13 @@ def test_birth_date_cannot_move_after_a_recorded_test(client, patient, records_u
 def test_existing_database_without_the_history_table_keeps_its_records(settings):
     with TestClient(create_app(settings)) as first_run:
         patient = first_run.post("/patients", json={"sex": "male"}).json()
-        first_run.post(f"/patients/{patient['id']}/medications", json={"medication_id": "warfarin", "dose_text": "5 mg"})
+        first_run.post(f"/patients/{patient['id']}/medications", json={"medication_id": "lisinopril", "dose_text": "5 mg"})
         with Session(first_run.app.state.engine) as session:
             session.connection().exec_driver_sql("DROP TABLE screeningrecord")
             session.commit()
 
     with TestClient(create_app(settings)) as second_run:
         assert second_run.get(f"/patients/{patient['id']}").json() == patient
-        assert second_run.get(f"/patients/{patient['id']}/medications").json()[0]["medication_id"] == "warfarin"
+        assert second_run.get(f"/patients/{patient['id']}/medications").json()[0]["medication_id"] == "lisinopril"
         added = second_run.post(f"/patients/{patient['id']}/screening-records", json=hba1c())
         assert added.status_code == 201

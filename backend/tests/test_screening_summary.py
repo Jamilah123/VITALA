@@ -2,9 +2,9 @@ from datetime import date
 
 import pytest
 
-from app.catalogue import load_catalogue
+from tests.scope_helpers import full_scope_rule_set
+
 from app.models import ConditionStatus, DiabetesType, MedicationUse, Patient, RecordSource, ScreeningRecord
-from app.rules import DATA_DIR, load_rule_set
 from app.screening import preview_screening, summarize_screening
 from app.screening_tests import POSSIBLE_OVERLAPS, SCREENING_TESTS, check_test_mapping
 
@@ -23,7 +23,8 @@ TYPE_2_DIABETES = {
 
 @pytest.fixture(scope="module")
 def rule_set():
-    return load_rule_set(load_catalogue(DATA_DIR / "medications.json"))
+    # Engine mechanics are tested on every rule; the scope change has its own tests.
+    return full_scope_rule_set()
 
 
 def use(medication_id):

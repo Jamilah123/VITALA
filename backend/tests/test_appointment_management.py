@@ -71,7 +71,7 @@ def set_past(client, appointment_id: int) -> None:
         session.commit()
 
 
-# 1. Creating
+# Creating
 
 
 def test_create_books_a_scheduled_clinic_appointment(client, url, demo, booked):
@@ -101,7 +101,7 @@ def test_visit_reason_is_trimmed_and_limited(client, url, demo):
     assert error_fields(create(client, url, demo, minutes=120, visit_reason_ar="   ")) == ["visit_reason_ar"]
 
 
-# 2. Editing
+# Editing
 
 
 def test_reschedule_and_change_doctor(client, url, demo, booked):
@@ -131,7 +131,7 @@ def test_patch_rejects_null_for_required_fields(client, url, booked, field):
     assert error_fields(client.patch(f"{url}/{booked['id']}", json={field: None})) == [field]
 
 
-# 3. Cancelling
+# Cancelling
 
 
 def test_cancel_keeps_the_appointment_in_history(client, url, demo, booked):
@@ -151,7 +151,7 @@ def test_a_cancelled_slot_can_be_booked_again(client, url, demo, booked):
     assert create(client, url, demo, link=1).status_code == 201
 
 
-# 4. Doctor and patient ownership
+# Doctor and patient ownership
 
 
 def test_create_rejects_a_doctor_or_patient_from_another_clinic(client, url, demo, other):
@@ -178,7 +178,7 @@ def test_create_in_an_unknown_clinic_returns_404(client, demo):
     assert client.post("/clinics/9999/appointments", json=body).status_code == 404
 
 
-# 5. Cross-clinic updates
+# Cross-clinic updates
 
 
 @pytest.mark.parametrize(
@@ -195,7 +195,7 @@ def test_another_clinics_appointment_cannot_be_changed(client, url, other, metho
         assert row.visit_reason_ar is None
 
 
-# 6. Conflicts
+# Conflicts
 
 
 def test_a_doctor_cannot_be_double_booked_within_the_slot(client, url, demo, booked):
@@ -219,7 +219,7 @@ def test_changing_doctor_checks_the_new_doctors_schedule(client, url, demo, book
     assert error_fields(client.patch(f"{url}/{booked['id']}", json={"doctor_id": demo["doctors"][1]})) == ["scheduled_at"]
 
 
-# 7. Time zones and dates
+# Time zones and dates
 
 
 def test_riyadh_time_is_stored_and_returned_in_utc(client, url, demo):
@@ -259,7 +259,7 @@ def test_rescheduling_into_the_past_is_rejected(client, url, booked):
     assert error_fields(client.patch(f"{url}/{booked['id']}", json={"scheduled_at": past})) == ["scheduled_at"]
 
 
-# 8. Status transitions
+# Status transitions
 
 
 def test_a_future_appointment_cannot_be_completed_or_missed(client, url, booked):
@@ -289,7 +289,7 @@ def test_unknown_or_backward_status_values_are_rejected(client, url, booked, sta
     assert error_fields(client.post(f"{url}/{booked['id']}/status", json={"status": status})) == ["status"]
 
 
-# 9. Summary access
+# Summary access
 
 
 def test_summary_stays_available_after_create_edit_and_cancel(client, url, demo, booked):
@@ -306,7 +306,7 @@ def test_summary_stays_available_after_create_edit_and_cancel(client, url, demo,
     assert after_cancel["visit"]["patient"]["id"] == booked["clinic_patient_id"]
 
 
-# 10. Original patients
+# Original patients
 
 
 def test_appointment_writes_never_touch_or_expose_existing_patients(client, url, demo, patient):

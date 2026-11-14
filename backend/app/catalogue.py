@@ -13,4 +13,10 @@ def load_catalogue(path: Path) -> dict[str, CatalogueMedication]:
     catalogue = {medication.id: medication for medication in medications}
     if len(catalogue) != len(medications):
         raise ValueError(f"Duplicate medication ids in {path}")
+    for medication in medications:
+        archived = medication.status == "archived"
+        if archived != (medication.archived_on is not None) or archived != (medication.archive_reason_ar is not None):
+            raise ValueError(f"Medication {medication.id}: archived_on and archive_reason_ar are required when archived, and only then")
+        if archived == (medication.demo_scope is not None):
+            raise ValueError(f"Medication {medication.id}: an active entry needs a demo_scope, an archived one must not have it")
     return catalogue

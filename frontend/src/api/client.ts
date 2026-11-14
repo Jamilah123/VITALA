@@ -8,6 +8,7 @@ import type {
   CatalogueMedication,
   Clinic,
   ClinicPatient,
+  ClinicScreeningRecordCreate,
   Doctor,
   Health,
   MedicationUse,
@@ -80,6 +81,12 @@ export const api = {
     request<ClinicPatient[]>(`/clinics/${clinicId}/patients`, {}, signal),
   listAppointments: (clinicId: number, signal?: AbortSignal) =>
     request<Appointment[]>(`/clinics/${clinicId}/appointments`, {}, signal),
+  getClinicPatient: (clinicId: number, linkId: number, signal?: AbortSignal) =>
+    request<ClinicPatient>(`/clinics/${clinicId}/patients/${linkId}`, {}, signal),
+  listClinicPatientRecords: (clinicId: number, linkId: number, signal?: AbortSignal) =>
+    request<ScreeningRecord[]>(`/clinics/${clinicId}/patients/${linkId}/screening-records`, {}, signal),
+  addClinicPatientRecord: (clinicId: number, linkId: number, input: ClinicScreeningRecordCreate) =>
+    request<ScreeningRecord>(`/clinics/${clinicId}/patients/${linkId}/screening-records`, jsonBody("POST", input)),
   getAppointment: (clinicId: number, appointmentId: number, signal?: AbortSignal) =>
     request<AppointmentDetail>(`/clinics/${clinicId}/appointments/${appointmentId}`, {}, signal),
   getPreAppointmentSummary: (clinicId: number, appointmentId: number, signal?: AbortSignal) =>

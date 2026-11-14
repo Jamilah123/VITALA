@@ -40,7 +40,10 @@
     "reviewed_on": null,
     "drug_ids": [
       "metformin"
-    ]
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "MED02",
@@ -80,7 +83,10 @@
     "reviewed_on": null,
     "drug_ids": [
       "metformin"
-    ]
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "MED03",
@@ -126,7 +132,10 @@
       "losartan",
       "valsartan",
       "hydrochlorothiazide"
-    ]
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "MED04",
@@ -173,7 +182,10 @@
       "losartan",
       "valsartan",
       "hydrochlorothiazide"
-    ]
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "MED05",
@@ -218,7 +230,10 @@
       "lisinopril",
       "losartan",
       "valsartan"
-    ]
+    ],
+    "lifecycle": "active",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "MED06",
@@ -259,7 +274,10 @@
     "reviewed_on": null,
     "drug_ids": [
       "hydrochlorothiazide"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED07",
@@ -302,7 +320,10 @@
     "drug_ids": [
       "atorvastatin",
       "rosuvastatin"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED08",
@@ -344,7 +365,10 @@
     "drug_ids": [
       "atorvastatin",
       "rosuvastatin"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED09",
@@ -384,7 +408,10 @@
     "drug_ids": [
       "atorvastatin",
       "rosuvastatin"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED10",
@@ -424,7 +451,10 @@
     "drug_ids": [
       "atorvastatin",
       "rosuvastatin"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED11",
@@ -466,7 +496,10 @@
     "reviewed_on": null,
     "drug_ids": [
       "warfarin"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED12",
@@ -507,7 +540,10 @@
     "reviewed_on": null,
     "drug_ids": [
       "warfarin"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED13",
@@ -548,7 +584,10 @@
     "reviewed_on": null,
     "drug_ids": [
       "warfarin"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   },
   {
     "id": "MED14",
@@ -593,6 +632,9 @@
     "reviewed_on": null,
     "drug_ids": [
       "methotrexate"
-    ]
+    ],
+    "lifecycle": "archived",
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "كل أدوية هذه القاعدة خارج نطاق العرض التجريبي الحالي. محفوظة للمرجعية ولا تقيَّم."
   }
 ]

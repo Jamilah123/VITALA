@@ -115,7 +115,11 @@ def test_appointments_are_ordered_and_consistent(client, demo):
 def test_appointment_fields_have_the_expected_shape(client, demo):
     first = client.get(f"/clinics/{demo['id']}/appointments").json()[0]
 
-    assert set(first) == {"id", "clinic_id", "doctor_id", "clinic_patient_id", "scheduled_at", "status", "booking_source", "visit_reason_ar"}
+    assert set(first) == {
+        "id", "clinic_id", "doctor_id", "clinic_patient_id", "scheduled_at", "status", "booking_source", "visit_reason_ar",
+        "appointment_type", "virtual_session_status",
+    }
+    assert first["appointment_type"] == "in_person"
     assert first["scheduled_at"] == "2026-10-20T06:00:00Z"
     assert first["status"] in {"scheduled", "completed", "cancelled", "no_show"}
     assert first["booking_source"] in {"vitala", "clinic", "unknown"}

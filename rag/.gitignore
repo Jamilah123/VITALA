@@ -1,0 +1,38 @@
+# ---- secrets (never commit) -------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ---- Python / editors ---------------------------------------------------------
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+logs/
+*.log
+
+# ---- source documents and everything derived from them ----------------------
+# Most sources may not be redistributed (see redistribution_allowed in data/source_registry.csv):
+# Saudi PHA guidelines (no licence statement), StatPearls (CC BY-NC-ND: no altered copies), the Saudi medication
+# knowledge base (internal), the ADA standards (restricted), VITALA app documents (internal).
+# Chunks, review queues, indexes and per-question evaluation outputs quote their text, so they stay private too.
+data/raw/**
+!data/raw/**/
+!data/raw/medications/metformin_openfda_label_raw.json
+!data/raw/medications/candidate_drug_manifest.json
+data/processed/
+data/archive/
+indexes/
+results/data_quality/
+results/baseline/
+results/evaluation/*/*
+!results/evaluation/*/summary.json
+!results/evaluation/*/report.md
+results/evaluation/LATEST
+results/*.log

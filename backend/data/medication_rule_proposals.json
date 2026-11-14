@@ -1,0 +1,324 @@
+[
+  {
+    "id": "MRP01",
+    "topic": "Metformin: kidney-function monitoring frequency by eGFR band",
+    "drug_ids": [
+      "metformin"
+    ],
+    "proposed_action_id": "egfr",
+    "related_rule_ids": [
+      "MED02"
+    ],
+    "proposed_eligibility_en": "Adult taking metformin. Frequency would depend on the most recent eGFR band.",
+    "proposed_eligibility_ar": "بالغ يستخدم الميتفورمين؛ يعتمد التكرار على آخر فئة لقيمة eGFR.",
+    "timing_as_stated": [
+      {
+        "text_en": "eGFR above 60: monitor renal function annually; eGFR 45–60: every 3 to 6 months",
+        "source_id": "S10",
+        "locator": "Google.pdf p. 3–4, Specific Patient Populations (renal impairment)"
+      },
+      {
+        "text_en": "GFR 60 to 45: every 3 to 6 months; GFR below 45: every 3 months",
+        "source_id": "S10",
+        "locator": "Google.pdf p. 5, Monitoring"
+      },
+      {
+        "text_en": "Recheck renal function at least annually, sooner with older age, CKD, intercurrent illness or new interacting drugs",
+        "source_id": "S12",
+        "locator": "KSA-MED-0052 (cites S059 ADA Standards 2026, section 11)"
+      },
+      {
+        "text_en": "Increase eGFR monitoring to every 3 to 6 months once eGFR is below 60",
+        "source_id": "S12",
+        "locator": "KSA-MED-0032 (cites S076 ADA/KDIGO consensus 2022)"
+      }
+    ],
+    "required_inputs": [
+      "medication_start_date",
+      "latest_egfr_value",
+      "last_egfr_date",
+      "acute_illness_status"
+    ],
+    "inputs_vitala_collects": [
+      "medication_start_date",
+      "last_egfr_date"
+    ],
+    "inputs_not_collected": [
+      "latest_egfr_value",
+      "acute_illness_status"
+    ],
+    "missing_input_behavior": "needs_information",
+    "conflicts_en": [
+      "Below eGFR 45, S10 states every 3 months while S12 (ADA/KDIGO) states every 3 to 6 months below 60.",
+      "S02 p. 84 (the source of existing rule MED02) gives monitoring during use without a fixed interval."
+    ],
+    "why_not_executable_en": "Needs an interpreted eGFR value, which VITALA does not derive from stored result text; intervals conflict between sources; no clinician approval.",
+    "review_status": "pending_clinical_review",
+    "executable": false,
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  },
+  {
+    "id": "MRP02",
+    "topic": "Metformin: vitamin B12 assessment",
+    "drug_ids": [
+      "metformin"
+    ],
+    "proposed_action_id": "vitamin_b12",
+    "related_rule_ids": [
+      "MED01"
+    ],
+    "proposed_eligibility_en": "Long-term metformin use, especially with anaemia or peripheral neuropathy.",
+    "proposed_eligibility_ar": "استخدام طويل المدى للميتفورمين، خصوصًا مع فقر الدم أو اعتلال الأعصاب الطرفية.",
+    "timing_as_stated": [
+      {
+        "text_en": "Prolonged use is associated with decreased vitamin B12; monitor carefully, especially with anaemia or peripheral neuropathy",
+        "source_id": "S10",
+        "locator": "Google.pdf p. 4, Adverse Effects; p. 5, Monitoring"
+      },
+      {
+        "text_en": "Test symptomatic patients and consider periodic assessment in higher-risk patients; no fixed interval",
+        "source_id": "S12",
+        "locator": "KSA-MED-0056 and KSA-MED-0176 (cite S011 MHRA 2022)"
+      }
+    ],
+    "required_inputs": [
+      "medication_start_date",
+      "anemia_status",
+      "neuropathy_status",
+      "last_b12_date"
+    ],
+    "inputs_vitala_collects": [
+      "medication_start_date",
+      "last_b12_date"
+    ],
+    "inputs_not_collected": [
+      "anemia_status",
+      "neuropathy_status"
+    ],
+    "missing_input_behavior": "needs_information",
+    "conflicts_en": [],
+    "why_not_executable_en": "No source gives an interval, so nothing can be scheduled; 'long-term' is not numerically defined. Consistent with existing draft MED01, which it would only support.",
+    "review_status": "pending_clinical_review",
+    "executable": false,
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "collection_notes_en": "last_b12_date comes from screening records (history mapping HM16, pending review)."
+  },
+  {
+    "id": "MRP03",
+    "topic": "ACE inhibitor: baseline kidney function and electrolytes before starting",
+    "drug_ids": [
+      "enalapril",
+      "lisinopril"
+    ],
+    "proposed_action_id": "renal_potassium",
+    "related_rule_ids": [
+      "MED03"
+    ],
+    "proposed_eligibility_en": "Adult about to start an ACE inhibitor.",
+    "proposed_eligibility_ar": "بالغ على وشك بدء مثبط للإنزيم المحول.",
+    "timing_as_stated": [
+      {
+        "text_en": "Before initiation: BP, volume status, serum creatinine/eGFR, potassium and sodium",
+        "source_id": "S12",
+        "locator": "KSA-MED-0107 (cites S019 NHS SPS, updated 2026-08-12)"
+      },
+      {
+        "text_en": "Typical parameters to monitor are renal function (BUN, serum creatinine) and electrolytes such as potassium; no interval given",
+        "source_id": "S11",
+        "locator": "goog1.pdf p. 7, Monitoring"
+      }
+    ],
+    "required_inputs": [
+      "planned_start_date",
+      "last_creatinine_date",
+      "last_potassium_date"
+    ],
+    "inputs_vitala_collects": [
+      "last_creatinine_date",
+      "last_potassium_date"
+    ],
+    "inputs_not_collected": [
+      "planned_start_date"
+    ],
+    "missing_input_behavior": "needs_information",
+    "conflicts_en": [
+      "Existing draft MED03 (S02 p. 83) covers baseline tests only within the diabetes guideline context."
+    ],
+    "why_not_executable_en": "VITALA records medicines already started, not planned starts; SPS is a UK source, not Saudi guidance.",
+    "review_status": "pending_clinical_review",
+    "executable": false,
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "collection_notes_en": "last_creatinine_date and last_potassium_date come from screening records (history mappings HM17/HM18, pending review)."
+  },
+  {
+    "id": "MRP04",
+    "topic": "ACE inhibitor: kidney function and potassium after starting or increasing the dose",
+    "drug_ids": [
+      "enalapril",
+      "lisinopril"
+    ],
+    "proposed_action_id": "renal_potassium",
+    "related_rule_ids": [
+      "MED04",
+      "MED05"
+    ],
+    "proposed_eligibility_en": "Adult who started an ACE inhibitor or had its dose increased.",
+    "proposed_eligibility_ar": "بالغ بدأ مثبطًا للإنزيم المحول أو زيدت جرعته.",
+    "timing_as_stated": [
+      {
+        "text_en": "Usually renal function and electrolytes within 1–2 weeks; higher-risk patients may need 5–7-day checks",
+        "source_id": "S12",
+        "locator": "KSA-MED-0107 (cites S019 NHS SPS)"
+      },
+      {
+        "text_en": "Risk-adjusted checks within 2–4 weeks",
+        "source_id": "S12",
+        "locator": "KSA-MED-0111 (cites S020 KDIGO 2024, section 3.6)"
+      },
+      {
+        "text_en": "Reassess when creatinine rises more than 30% within four weeks of starting or escalating",
+        "source_id": "S12",
+        "locator": "KSA-MED-0108 (cites S020 KDIGO 2024)"
+      }
+    ],
+    "required_inputs": [
+      "medication_start_date",
+      "last_dose_change_date",
+      "change_was_dose_increase",
+      "last_creatinine_date",
+      "last_potassium_date",
+      "risk_level"
+    ],
+    "inputs_vitala_collects": [
+      "medication_start_date",
+      "last_dose_change_date",
+      "last_creatinine_date",
+      "last_potassium_date"
+    ],
+    "inputs_not_collected": [
+      "change_was_dose_increase",
+      "risk_level"
+    ],
+    "missing_input_behavior": "needs_information",
+    "conflicts_en": [
+      "1–2 weeks (SPS) and 2–4 weeks (KDIGO) disagree; S12 itself says neither interval should be imposed without clinical context.",
+      "A recorded dose change does not say whether the dose went up or down."
+    ],
+    "why_not_executable_en": "Conflicting intervals, both from non-Saudi guidance; the direction of a dose change is not recorded; no clinician approval.",
+    "review_status": "pending_clinical_review",
+    "executable": false,
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "collection_notes_en": "last_creatinine_date and last_potassium_date come from screening records (history mappings HM17/HM18, pending review)."
+  },
+  {
+    "id": "MRP05",
+    "topic": "ACE inhibitor: periodic kidney function and potassium during stable treatment",
+    "drug_ids": [
+      "enalapril",
+      "lisinopril"
+    ],
+    "proposed_action_id": "renal_potassium",
+    "related_rule_ids": [
+      "MED04",
+      "MED05"
+    ],
+    "proposed_eligibility_en": "Adult on a stable ACE inhibitor dose; frequency would depend on the indication (heart failure versus uncomplicated hypertension).",
+    "proposed_eligibility_ar": "بالغ على جرعة مستقرة من مثبط الإنزيم المحول؛ يعتمد التكرار على سبب الاستخدام.",
+    "timing_as_stated": [
+      {
+        "text_en": "Every 3–6 months in heart failure and annually in uncomplicated hypertension; more often with risk or illness",
+        "source_id": "S12",
+        "locator": "KSA-MED-0107 (cites S019 NHS SPS)"
+      },
+      {
+        "text_en": "Patients must be regularly monitored for renal function and electrolytes; no interval given",
+        "source_id": "S11",
+        "locator": "goog1.pdf p. 8, Enhancing Healthcare Team Outcomes"
+      }
+    ],
+    "required_inputs": [
+      "medication_indication",
+      "heart_failure_status",
+      "last_creatinine_date",
+      "last_potassium_date"
+    ],
+    "inputs_vitala_collects": [
+      "last_creatinine_date",
+      "last_potassium_date"
+    ],
+    "inputs_not_collected": [
+      "medication_indication",
+      "heart_failure_status"
+    ],
+    "missing_input_behavior": "needs_information",
+    "conflicts_en": [
+      "Existing draft MED05 (S04, 2013) says periodic monitoring without a fixed interval; MED04 (S03) says at least annually in diabetes."
+    ],
+    "why_not_executable_en": "VITALA does not record the indication or heart-failure status; UK source; no clinician approval.",
+    "review_status": "pending_clinical_review",
+    "executable": false,
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null,
+    "collection_notes_en": "last_creatinine_date and last_potassium_date come from screening records (history mappings HM17/HM18, pending review)."
+  },
+  {
+    "id": "MRP06",
+    "topic": "ACE inhibitor: action thresholds for potassium and creatinine results",
+    "drug_ids": [
+      "enalapril",
+      "lisinopril"
+    ],
+    "proposed_action_id": "renal_potassium",
+    "related_rule_ids": [],
+    "proposed_eligibility_en": "Not a screening eligibility rule: it would interpret a result value.",
+    "proposed_eligibility_ar": "ليست قاعدة أهلية للفحص؛ تتطلب تفسير قيمة النتيجة.",
+    "timing_as_stated": [
+      {
+        "text_en": "Potassium above 6.0 mmol/L requires urgent clinical action",
+        "source_id": "S12",
+        "locator": "KSA-MED-0109 (cites S019)"
+      },
+      {
+        "text_en": "SPS August 2026 directs potassium above 5.5 mmol/L to local guidance",
+        "source_id": "S12",
+        "locator": "KSA-MED-0127 (cites S019)"
+      },
+      {
+        "text_en": "If renal function starts to decline, discontinue the ACE inhibitor immediately",
+        "source_id": "S11",
+        "locator": "goog1.pdf p. 7, Relative Contraindications"
+      }
+    ],
+    "required_inputs": [
+      "latest_potassium_value",
+      "latest_creatinine_value",
+      "baseline_creatinine_value"
+    ],
+    "inputs_vitala_collects": [],
+    "inputs_not_collected": [
+      "latest_potassium_value",
+      "latest_creatinine_value",
+      "baseline_creatinine_value"
+    ],
+    "missing_input_behavior": "needs_information",
+    "conflicts_en": [
+      "Thresholds differ (5.5 versus 6.0 mmol/L).",
+      "S11 says discontinue immediately on any decline; S12/KDIGO says a small stable rise is expected and reassess above 30%."
+    ],
+    "why_not_executable_en": "VITALA stores results exactly as reported and never interprets them, and medication changes are clinician decisions. Kept only as explanation material for the chatbot.",
+    "review_status": "not_suitable_for_rule",
+    "executable": false,
+    "auto_schedule_enabled": false,
+    "reviewer": null,
+    "reviewed_on": null
+  }
+]

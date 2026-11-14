@@ -1,0 +1,23 @@
+# VITALA RAG prototype - tested with Python 3.12 (Windows, VS Code). Install: pip install -r requirements.txt
+# (equivalent to: pip install -e ".[hybrid,notebooks,dev]")
+numpy>=1.24
+pymupdf>=1.24,<2
+sentence-transformers>=3.0,<6
+faiss-cpu>=1.8,<2
+rank-bm25==0.2.2
+openai>=1.40          # Azure OpenAI and OpenAI-compatible providers
+anthropic>=0.80       # optional provider
+fastapi>=0.110
+uvicorn>=0.29
+httpx>=0.27           # FastAPI TestClient
+gradio>=4.40          # tested with 6.31
+requests>=2.31
+python-dotenv>=1,<2
+pandas>=2
+# notebooks
+matplotlib>=3.8
+ipykernel>=6
+nbformat>=5
+nbclient>=0.9
+# tests
+pytest>=8

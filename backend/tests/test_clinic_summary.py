@@ -171,6 +171,7 @@ def test_recorded_data_appears_in_the_summary(client, demo):
             "dose_text": "500 mg",
             "start_date": "2021-01-10",
             "last_dose_change_date": None,
+            "catalogue_status": "active",
         }
     ]
     hba1c = next(test for test in body["screening"]["tests"] if test["test_id"] == "hba1c")

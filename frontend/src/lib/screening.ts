@@ -136,6 +136,7 @@ const FIELDS: Record<string, string> = {
 export const MISSING_REASONS: Record<MissingReason, string> = {
   unknown: "غير مسجّل في الملف",
   not_collected: "لا يجمعه التطبيق بعد",
+  recorded_pending_review: "مسجّل، ولا تستخدمه القواعد قبل اعتماد طبي",
 };
 
 export const RECORD_SOURCES: Record<RecordSource, string> = {

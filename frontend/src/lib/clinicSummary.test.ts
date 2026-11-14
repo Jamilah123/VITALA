@@ -145,3 +145,11 @@ describe("summary API client", () => {
     await expect(api.getPreAppointmentSummary(1, 9)).rejects.toMatchObject({ kind: "not_found" });
   });
 });
+
+describe("record labels", () => {
+  it("shows the report's own name only when it differs from the catalogue name", async () => {
+    const { recordLabel } = await import("./clinicSummary");
+    expect(recordLabel("السكر التراكمي", "السكر التراكمي")).toBe("السكر التراكمي");
+    expect(recordLabel("السكر التراكمي", "HbA1c")).toBe("السكر التراكمي · HbA1c");
+  });
+});

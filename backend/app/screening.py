@@ -7,7 +7,7 @@ Unknown data yields "needs_information", never a negative finding.
 from collections.abc import Mapping, Sequence
 from datetime import date
 
-from app.criteria import CRITERIA, DIAGNOSED, INPUT_ALIASES, TYPE_1, Criteria
+from app.criteria import CRITERIA, DIAGNOSED, INPUT_ALIASES, TYPE_1, Criteria, rule_input_fields
 from app.history_mappings import (
     AMBIGUOUS_HISTORY_FIELDS,
     HISTORY_MAPPINGS,
@@ -17,9 +17,12 @@ from app.history_mappings import (
     mapped_rule_ids,
 )
 from app.models import ConditionStatus, DiabetesType, MedicationUse, Patient, ScreeningRecord
+from app.risk_inputs import EMPTY_RISK_CONTEXT, RISK_FIELDS, RiskContext
 from app.rules import Rule, RuleSet
 from app.schemas import (
     AmbiguousHistoryFieldRead,
+    OutOfScopeMedication,
+    RiskFactRead,
     HistoryInput,
     MissingInput,
     ScreeningAction,
@@ -63,6 +66,7 @@ def _check_eligibility(
     patient: Patient,
     known: Mapping[str, bool],
     today: date,
+    risk: RiskContext = EMPTY_RISK_CONTEXT,
 ) -> tuple[list[str], list[str]]:
     """Return the facts that exclude the rule, and the unknown fields that leave it undecided."""
     excluded: list[str] = []
@@ -99,9 +103,32 @@ def _check_eligibility(
         elif full_years(patient.date_of_birth, today) < criteria.min_age:
             excluded.append("age_below_minimum")
 
+    for field, required in criteria.risk_required:
+        # Without an approved mapping the recorded value is not used at all.
+        if not risk.approved(rule.id, field) or risk.state(field) == "unknown":
+            unknown.append(field)
+        elif risk.value(field) != required:
+            excluded.append(f"{field}_{risk.value(field)}")
+
     unknown.extend(field for field in criteria.on_record if not known.get(field))
     unknown.extend(criteria.uncollected)
     return excluded, unknown
+
+
+def _missing_reason(field: str, known: Mapping[str, bool], risk: RiskContext) -> str:
+    if field in RISK_FIELDS:
+        # VITALA records risk factors. Empty is "unknown"; a stored value that no
+        # approved mapping lets the rules use is "recorded_pending_review".
+        return "unknown" if risk.state(field) == "unknown" else "recorded_pending_review"
+    return "unknown" if field in known else "not_collected"
+
+
+def _risk_known(rule: Rule, risk: RiskContext) -> dict[str, bool]:
+    return {
+        field: risk.approved(rule.id, field) and risk.state(field) != "unknown"
+        for field in rule_input_fields(rule)
+        if field in RISK_FIELDS
+    }
 
 
 def _source_reference(rule_set: RuleSet, source_id: str, locator: str) -> SourceReference:
@@ -124,15 +151,18 @@ def evaluate_rule(
     uses: Sequence[MedicationUse],
     today: date,
     history: Mapping[str, bool] | None = None,
+    risk: RiskContext = EMPTY_RISK_CONTEXT,
 ) -> ScreeningAction:
-    matched = [use for use in uses if use.medication_id in rule.drug_ids]
+    # Archived catalogue entries never trigger a rule, even when they are recorded.
+    active_drug_ids = rule_set.active_drug_ids(rule)
+    matched = [use for use in uses if use.medication_id in active_drug_ids]
     missing: list[MissingInput] = []
 
     if rule.track == "medication" and not matched:
         status, reasons = "not_triggered", ["no_matching_medication_recorded"]
     else:
-        known = _known_inputs(patient, matched) | dict(history or {})
-        reasons, undecided = _check_eligibility(rule, CRITERIA[rule.id], patient, known, today)
+        known = _known_inputs(patient, matched) | dict(history or {}) | _risk_known(rule, risk)
+        reasons, undecided = _check_eligibility(rule, CRITERIA[rule.id], patient, known, today, risk)
         if reasons:
             status = "not_applicable"
         else:
@@ -141,7 +171,7 @@ def evaluate_rule(
             missing = [
                 MissingInput(
                     field=field,
-                    reason="unknown" if field in known else "not_collected",
+                    reason=_missing_reason(field, known, risk),
                     affects_eligibility=field in undecided,
                 )
                 for field in dict.fromkeys([*inputs, *undecided])
@@ -183,10 +213,36 @@ def _evaluate_all(
     recorded: Mapping[str, Sequence[ScreeningRecordRead]],
     mappings: Sequence[HistoryMapping],
     today: date,
+    risk: RiskContext = EMPTY_RISK_CONTEXT,
 ) -> list[ScreeningAction]:
+    # Archived rules are kept for reference but never evaluated.
     return [
-        evaluate_rule(rule_set, rule, patient, uses, today, applied_history(rule, recorded, mappings))
-        for rule in rule_set.rules
+        evaluate_rule(rule_set, rule, patient, uses, today, applied_history(rule, recorded, mappings), risk)
+        for rule in rule_set.active_rules
+    ]
+
+
+def risk_fact_reads(risk: RiskContext) -> list[RiskFactRead]:
+    return [
+        RiskFactRead(
+            field=fact.field,
+            state=fact.state,
+            value=fact.value,
+            source=fact.source,
+            rule_ids=list(fact.rule_ids),
+            actionable=bool(fact.actionable_rule_ids),
+            actionable_rule_ids=list(fact.actionable_rule_ids),
+            detail=dict(fact.detail),
+        )
+        for fact in risk.facts.values()
+    ]
+
+
+def out_of_scope_medications(rule_set: RuleSet, uses: Sequence[MedicationUse]) -> list[OutOfScopeMedication]:
+    return [
+        OutOfScopeMedication(use_id=use.id, medication_id=use.medication_id)
+        for use in uses
+        if use.medication_id in rule_set.archived_medication_ids
     ]
 
 
@@ -197,12 +253,15 @@ def preview_screening(
     today: date,
     records: Sequence[ScreeningRecord] = (),
     mappings: Sequence[HistoryMapping] = HISTORY_MAPPINGS,
+    risk: RiskContext = EMPTY_RISK_CONTEXT,
 ) -> ScreeningPreview:
     return ScreeningPreview(
         patient_id=patient.id,
         evaluated_on=today,
         notice_ar=NOTICE_AR,
-        actions=_evaluate_all(rule_set, patient, uses, _records_by_test(records), mappings, today),
+        actions=_evaluate_all(rule_set, patient, uses, _records_by_test(records), mappings, today, risk),
+        risk_factors=risk_fact_reads(risk),
+        out_of_scope_medications=out_of_scope_medications(rule_set, uses),
     )
 
 
@@ -238,6 +297,7 @@ def _summarize_test(
     rules: list[ScreeningAction],
     recorded: list[ScreeningRecordRead],
     history: list[HistoryInput],
+    archived_rule_ids: list[str] | None = None,
 ) -> ScreeningTestSummary:
     def rule_ids(status: str) -> list[str]:
         return [rule.rule_id for rule in rules if rule.status == status]
@@ -290,6 +350,7 @@ def _summarize_test(
         conflict_ids=conflict_ids,
         possible_overlap_test_ids=overlaps,
         rules=rules,
+        archived_rule_ids=archived_rule_ids or [],
     )
 
 
@@ -300,10 +361,12 @@ def summarize_screening(
     records: Sequence[ScreeningRecord],
     today: date,
     mappings: Sequence[HistoryMapping] = HISTORY_MAPPINGS,
+    risk: RiskContext = EMPTY_RISK_CONTEXT,
 ) -> ScreeningSummary:
     recorded = _records_by_test(records)
-    actions = {action.rule_id: action for action in _evaluate_all(rule_set, patient, uses, recorded, mappings, today)}
+    actions = {action.rule_id: action for action in _evaluate_all(rule_set, patient, uses, recorded, mappings, today, risk)}
     rules = {rule.id: rule for rule in rule_set.rules}
+    archived = {rule.id for rule in rule_set.archived_rules}
 
     return ScreeningSummary(
         patient_id=patient.id,
@@ -313,11 +376,14 @@ def summarize_screening(
             _summarize_test(
                 test_id,
                 test,
-                [actions[rule_id] for rule_id in test.rule_ids],
+                [actions[rule_id] for rule_id in test.rule_ids if rule_id in actions],
                 recorded.get(test_id, []),
                 _history_inputs(test_id, recorded.get(test_id, []), mappings, rules),
+                [rule_id for rule_id in test.rule_ids if rule_id in archived],
             )
             for test_id, test in SCREENING_TESTS.items()
         ],
         unmapped_records=[record for test_id, items in recorded.items() if test_id not in SCREENING_TESTS for record in items],
+        risk_factors=risk_fact_reads(risk),
+        out_of_scope_medications=out_of_scope_medications(rule_set, uses),
     )

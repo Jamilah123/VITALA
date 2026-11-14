@@ -69,7 +69,7 @@ def test_relative_database_path_is_anchored_to_the_backend_folder(tmp_path, monk
 def test_records_persist_across_database_sessions(client, patient):
     use = client.post(
         f"/patients/{patient['id']}/medications",
-        json={"medication_id": "losartan", "dose_text": "50 mg", "start_date": "2021-02-03"},
+        json={"medication_id": "lisinopril", "dose_text": "50 mg", "start_date": "2021-02-03"},
     ).json()
 
     with Session(client.app.state.engine) as session:
@@ -83,11 +83,11 @@ def test_records_persist_across_database_sessions(client, patient):
 def test_records_persist_when_the_app_restarts(settings):
     with TestClient(create_app(settings)) as first_run:
         patient = first_run.post("/patients", json={"sex": "male"}).json()
-        first_run.post(f"/patients/{patient['id']}/medications", json={"medication_id": "warfarin", "dose_text": "5 mg"})
+        first_run.post(f"/patients/{patient['id']}/medications", json={"medication_id": "lisinopril", "dose_text": "5 mg"})
 
     with TestClient(create_app(settings)) as second_run:
         assert second_run.get(f"/patients/{patient['id']}").json() == patient
-        assert second_run.get(f"/patients/{patient['id']}/medications").json()[0]["medication_id"] == "warfarin"
+        assert second_run.get(f"/patients/{patient['id']}/medications").json()[0]["medication_id"] == "lisinopril"
 
 
 def test_dates_are_stored_as_date_columns(client, patient):

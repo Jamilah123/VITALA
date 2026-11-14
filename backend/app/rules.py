@@ -51,11 +51,19 @@ class Rule(DataRecord):
     reviewer: None
     reviewed_on: None
     drug_ids: list[str] = []
+    # Archived rules stay loaded so every reference still resolves, but they are
+    # never evaluated. A medication rule is archived exactly when none of its
+    # medications is active in the catalogue (checked by load_rule_set).
+    lifecycle: Literal["active", "archived"] = "active"
+    archived_on: date | None = None
+    archive_reason_ar: str | None = None
 
     @model_validator(mode="after")
     def drug_ids_match_track(self) -> "Rule":
         if (self.track == "medication") != bool(self.drug_ids):
             raise ValueError("drug_ids are required for medication rules and only for them")
+        if (self.lifecycle == "archived") != (self.archived_on is not None):
+            raise ValueError("archived_on is required for archived rules and only for them")
         return self
 
 
@@ -69,6 +77,7 @@ class Source(DataRecord):
     verified_on: date
     locator: str
     limitation_ar: str
+    licence: str | None = None
 
 
 class Conflict(DataRecord):
@@ -89,6 +98,19 @@ class RuleSet:
     rules: tuple[Rule, ...]
     sources: dict[str, Source]
     conflicts: tuple[Conflict, ...]
+    # Catalogue ids marked archived: kept for history, never trigger a rule.
+    archived_medication_ids: frozenset[str] = frozenset()
+
+    @property
+    def active_rules(self) -> tuple[Rule, ...]:
+        return tuple(rule for rule in self.rules if rule.lifecycle == "active")
+
+    @property
+    def archived_rules(self) -> tuple[Rule, ...]:
+        return tuple(rule for rule in self.rules if rule.lifecycle == "archived")
+
+    def active_drug_ids(self, rule: Rule) -> list[str]:
+        return [drug_id for drug_id in rule.drug_ids if drug_id not in self.archived_medication_ids]
 
 
 def _read[T](path: Path, model: type[T]) -> list[T]:
@@ -120,10 +142,20 @@ def load_rule_set(catalogue: dict[str, CatalogueMedication], data_dir: Path = DA
     knowledge_ids = _unique_ids(knowledge, "knowledge")
     _unique_ids(conflicts, "conflict")
 
+    archived = frozenset(medication.id for medication in catalogue.values() if medication.status == "archived")
     for rule in rules:
         _require_known((item.source_id for item in rule.evidence), source_ids, f"Rule {rule.id} evidence")
         _require_known(rule.knowledge_ids, knowledge_ids, f"Rule {rule.id} knowledge_ids")
         _require_known(rule.drug_ids, set(catalogue), f"Rule {rule.id} drug_ids")
+        if rule.track == "medication":
+            only_archived = all(drug_id in archived for drug_id in rule.drug_ids)
+            if only_archived != (rule.lifecycle == "archived"):
+                raise ValueError(
+                    f"Rule {rule.id} lifecycle is {rule.lifecycle}, but its medications are "
+                    f"{'all archived' if only_archived else 'not all archived'}"
+                )
+        elif rule.lifecycle != "active":
+            raise ValueError(f"Rule {rule.id}: only medication rules can be archived")
 
     for conflict in conflicts:
         _require_known(conflict.rule_ids, rule_ids, f"Conflict {conflict.id}")
@@ -138,4 +170,4 @@ def load_rule_set(catalogue: dict[str, CatalogueMedication], data_dir: Path = DA
                 f"but the rule files link it to {linked}"
             )
 
-    return RuleSet(tuple(rules), {source.id: source for source in sources}, tuple(conflicts))
+    return RuleSet(tuple(rules), {source.id: source for source in sources}, tuple(conflicts), archived)

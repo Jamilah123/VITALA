@@ -11,7 +11,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   },
   {
     "id": "K02",
@@ -25,7 +26,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   },
   {
     "id": "K03",
@@ -39,7 +41,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   },
   {
     "id": "K04",
@@ -53,7 +56,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   },
   {
     "id": "K05",
@@ -67,7 +71,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   },
   {
     "id": "K06",
@@ -81,7 +86,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   },
   {
     "id": "K07",
@@ -99,7 +105,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   },
   {
     "id": "K08",
@@ -113,7 +120,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "archived"
   },
   {
     "id": "K09",
@@ -127,7 +135,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "archived"
   },
   {
     "id": "K10",
@@ -141,7 +150,8 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "archived"
   },
   {
     "id": "K11",
@@ -155,6 +165,7 @@
     ],
     "clinical_status": "draft_not_clinician_reviewed",
     "text_type": "paraphrase_not_verbatim",
-    "ai_use": "explanation_only_not_recommendation_generation"
+    "ai_use": "explanation_only_not_recommendation_generation",
+    "lifecycle": "active"
   }
 ]

@@ -235,9 +235,7 @@ export function CheckDetail() {
 
           {adding && (
             <RecordForm
-              patientId={state.data.patient.id}
-              testId={test.test_id}
-              testName={test.name_ar}
+              target={{ kind: "patient", patientId: state.data.patient.id, testId: test.test_id, testName: test.name_ar }}
               birthDate={state.data.patient.date_of_birth}
               onClose={() => setAdding(false)}
               onSaved={() => {

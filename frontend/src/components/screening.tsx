@@ -7,6 +7,7 @@ import type {
   RuleStatus,
   ScreeningAction,
   ScreeningRecord,
+  ScreeningTest,
   SourceReference,
   SummaryMissingInput,
 } from "../api/types";
@@ -292,23 +293,25 @@ export function RecordList({ records, onRemove }: { records: ScreeningRecord[]; 
 
 const SOURCE_OPTIONS = Object.keys(RECORD_SOURCES) as RecordSource[];
 
+/** Where a record is saved: by the patient for one test, or by a clinic for any test. */
+export type RecordTarget =
+  | { kind: "patient"; patientId: number; testId: string; testName: string }
+  | { kind: "clinic"; clinicId: number; linkId: number; tests: ScreeningTest[] };
+
 export function RecordForm({
-  patientId,
-  testId,
-  testName,
+  target,
   birthDate,
   onSaved,
   onClose,
 }: {
-  patientId: number;
-  testId: string;
-  testName: string;
+  target: RecordTarget;
   birthDate: string | null;
   onSaved: () => void;
   onClose: () => void;
 }) {
+  const [testId, setTestId] = useState(target.kind === "patient" ? target.testId : "");
   const [input, setInput] = useState<ScreeningRecordInput>({
-    test_name: testName,
+    test_name: target.kind === "patient" ? target.testName : "",
     completed_on: todayIso(),
     result: "",
     unit: "",
@@ -320,25 +323,34 @@ export function RecordForm({
   const [saving, setSaving] = useState(false);
 
   const set = (field: keyof ScreeningRecordInput) => (value: string) => setInput((previous) => ({ ...previous, [field]: value }));
+  const nameOf = (id: string) => (target.kind === "clinic" ? target.tests.find((test) => test.id === id)?.name_ar ?? "" : "");
+
+  const chooseTest = (id: string) => {
+    // Fill the name from the catalogue unless it was already typed for another test.
+    setInput((previous) => (!previous.test_name.trim() || previous.test_name === nameOf(testId) ? { ...previous, test_name: nameOf(id) } : previous));
+    setTestId(id);
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const found = validateScreeningRecord(input, birthDate);
+    if (!testId) found.test_id = "يلزم اختيار الفحص.";
     setErrors(found);
     setFormError(null);
     if (Object.keys(found).length > 0) return;
 
+    const fields = {
+      test_id: testId,
+      test_name: input.test_name.trim(),
+      completed_on: input.completed_on,
+      result: input.result.trim() || null,
+      unit: input.unit.trim() || null,
+      notes: input.notes.trim() || null,
+    };
     setSaving(true);
     try {
-      await api.addScreeningRecord(patientId, {
-        test_id: testId,
-        test_name: input.test_name.trim(),
-        completed_on: input.completed_on,
-        result: input.result.trim() || null,
-        unit: input.unit.trim() || null,
-        source,
-        notes: input.notes.trim() || null,
-      });
+      if (target.kind === "clinic") await api.addClinicPatientRecord(target.clinicId, target.linkId, fields);
+      else await api.addScreeningRecord(target.patientId, { ...fields, source });
       onSaved();
     } catch (error) {
       if (error instanceof ApiError) setErrors(error.fieldErrors);
@@ -348,21 +360,35 @@ export function RecordForm({
   };
 
   return (
-    <Modal title="تسجيل فحص مكتمل" onClose={onClose}>
+    <Modal title={target.kind === "clinic" ? "إضافة نتيجة فحص" : "تسجيل فحص مكتمل"} onClose={onClose}>
       <form onSubmit={submit} onChange={clearErrorOnEdit(setErrors)} noValidate className="stack">
         <SyntheticDataNotice />
+        {target.kind === "clinic" && (
+          <SelectField name="test_id" label="الفحص" value={testId} onChange={chooseTest} error={errors.test_id} hint="من قائمة الفحوصات التي يدعمها التطبيق فقط.">
+            <option value="">اختيار الفحص</option>
+            {target.tests.map((test) => (
+              <option key={test.id} value={test.id}>
+                {test.name_ar}
+              </option>
+            ))}
+          </SelectField>
+        )}
         <Field name="test_name" label="اسم الفحص" value={input.test_name} onChange={set("test_name")} error={errors.test_name} maxLength={200} hint="كما يظهر في التقرير." />
         <DateField name="completed_on" label="تاريخ الإجراء" value={input.completed_on} onChange={set("completed_on")} error={errors.completed_on} />
         <Field name="result" label="النتيجة" value={input.result} onChange={set("result")} error={errors.result} maxLength={100} hint="اختياري. تُحفظ كما كُتبت ولا يفسّرها التطبيق." />
-        <Field name="unit" label="الوحدة" value={input.unit} onChange={set("unit")} error={errors.unit} maxLength={50} dir="ltr" />
-        <SelectField name="source" label="المصدر" value={source} onChange={(value) => setSource(value as RecordSource)} error={errors.source}>
-          {SOURCE_OPTIONS.map((value) => (
-            <option key={value} value={value}>
-              {RECORD_SOURCES[value]}
-            </option>
-          ))}
-        </SelectField>
-        <Field name="notes" label="ملاحظات" value={input.notes} onChange={set("notes")} error={errors.notes} maxLength={1000} />
+        <Field name="unit" label="الوحدة" value={input.unit} onChange={set("unit")} error={errors.unit} maxLength={50} dir="ltr" hint="اختيارية، وتلزمها نتيجة." />
+        {target.kind === "clinic" ? (
+          <p className="field__hint">المصدر: {RECORD_SOURCES.clinician_entered}. يحدده الخادم ولا يمكن تغييره.</p>
+        ) : (
+          <SelectField name="source" label="المصدر" value={source} onChange={(value) => setSource(value as RecordSource)} error={errors.source}>
+            {SOURCE_OPTIONS.map((value) => (
+              <option key={value} value={value}>
+                {RECORD_SOURCES[value]}
+              </option>
+            ))}
+          </SelectField>
+        )}
+        <Field name="notes" label="ملاحظات" value={input.notes} onChange={set("notes")} error={errors.notes} maxLength={1000} hint="اختيارية." />
         <FormError message={formError} />
         <div className="btn-row">
           <button type="button" className="btn btn--outline" onClick={onClose} disabled={saving}>

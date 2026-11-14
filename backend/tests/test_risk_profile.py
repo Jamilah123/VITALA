@@ -18,6 +18,11 @@ UNKNOWN_PROFILE = {
     "family_heart_disease": "unknown",
     "family_breast_cancer": "unknown",
     "family_colorectal_cancer": "unknown",
+    "information_source": "unknown",
+    "known_allergies": "unknown",
+    "family_cancer_history": "unknown",
+    "family_chronic_or_autoimmune_history": "unknown",
+    "known_genetic_findings": "unknown",
 }
 
 # Invented values, not a real person.
@@ -71,7 +76,7 @@ def test_create_stores_every_factor_and_calculates_bmi(client, patient, url):
 
     assert response.status_code == 201
     body = response.json()
-    assert body == FULL_PROFILE | {"patient_id": patient["id"], "stored": True, "bmi": 35.1, "height_cm": 165.0}
+    assert body == UNKNOWN_PROFILE | FULL_PROFILE | {"patient_id": patient["id"], "stored": True, "bmi": 35.1, "height_cm": 165.0}
     assert client.get(url).json() == body
 
 
@@ -228,16 +233,28 @@ def hypertensive_patient(client) -> dict:
 @pytest.mark.parametrize("endpoint", ["screening-preview", "screening-summary"])
 def test_risk_factors_never_change_screening(client, hypertensive_patient, endpoint):
     base = f"/patients/{hypertensive_patient['id']}"
-    client.post(f"{base}/medications", json={"medication_id": "atorvastatin", "dose_text": "20 mg"})
-    before = client.get(f"{base}/{endpoint}").json()
+    client.post(f"{base}/medications", json={"medication_id": "lisinopril", "dose_text": "20 mg"})
 
+    def statuses():
+        body = client.get(f"{base}/{endpoint}").json()
+        rules = body["actions"] if endpoint == "screening-preview" else [rule for test in body["tests"] for rule in test["rules"]]
+        return {rule["rule_id"]: (rule["status"], rule["reasons"]) for rule in rules}, body["risk_factors"]
+
+    before, facts_before = statuses()
     client.post(f"{base}/risk-profile", json=FULL_PROFILE)
-    with_profile = client.get(f"{base}/{endpoint}").json()
+    with_profile, facts = statuses()
     client.patch(f"{base}/risk-profile", json={"smoking_status": "never", "pregnancy_status": "no", "weight_kg": 60})
-    after_change = client.get(f"{base}/{endpoint}").json()
+    after_change, _ = statuses()
 
     assert with_profile == before
     assert after_change == before
+    # The facts are passed to the engine and reported, but none is actionable.
+    assert all(fact["state"] == "unknown" for fact in facts_before)
+    by_field = {fact["field"]: fact for fact in facts}
+    assert by_field["smoking_status"]["state"] == "present"
+    assert by_field["family_colorectal_cancer"]["state"] == "absent"
+    assert by_field["bmi"]["state"] == "value"
+    assert not any(fact["actionable"] for fact in facts)
 
 
 @pytest.mark.parametrize("pregnancy", ["yes", "no", "unknown"])
@@ -249,11 +266,15 @@ def test_recorded_pregnancy_does_not_activate_pregnancy_eligibility(client, hype
     missing = {item["field"]: item for item in actions["HTN03"]["missing_inputs"]}
 
     assert actions["HTN03"]["status"] == "needs_information"
-    assert missing["pregnancy_status"] == {"field": "pregnancy_status", "reason": "not_collected", "affects_eligibility": True}
+    # VITALA records pregnancy, so it is never "not_collected". A stored value is
+    # reported as recorded but not used until mapping RM01 is approved.
+    reason = "unknown" if pregnancy == "unknown" else "recorded_pending_review"
+    assert missing["pregnancy_status"] == {"field": "pregnancy_status", "reason": reason, "affects_eligibility": True}
 
 
 @pytest.mark.parametrize("module", ["screening.py", "criteria.py", "history_mappings.py", "rules.py", "screening_tests.py"])
-def test_the_screening_engine_does_not_read_risk_factors(module):
+def test_the_screening_engine_reads_risk_factors_only_through_the_risk_context(module):
+    # The engine receives a RiskContext (risk_inputs.py); it never queries the table itself.
     source = (BACKEND_DIR / "app" / module).read_text(encoding="utf-8")
 
     assert "PatientRiskProfile" not in source

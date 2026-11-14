@@ -24,6 +24,10 @@ class Criteria:
     on_record: tuple[str, ...] = ()
     # Eligibility depends on the value of these, which VITALA does not record yet.
     uncollected: tuple[str, ...] = ()
+    # Eligibility depends on a recorded risk factor having this value. It is applied
+    # only when an approved RiskInputMapping (risk_inputs.py) covers the rule and
+    # field; until then the field leaves the rule undecided, as if uncollected.
+    risk_required: tuple[tuple[str, str], ...] = ()
 
 
 CLINICIAN_DECIDES_NEED = Criteria(uncollected=("clinician_next_due_date",))
@@ -41,7 +45,7 @@ CRITERIA: dict[str, Criteria] = {
     "DM10": Criteria(diabetes_types=(TYPE_1, TYPE_2)),
     "HTN01": Criteria(uncollected=("bp_control_status", "stable_since")),
     "HTN02": Criteria(uncollected=("medication_change_date",)),
-    "HTN03": Criteria(min_age=18, uncollected=("pregnancy_status",)),
+    "HTN03": Criteria(min_age=18, risk_required=(("pregnancy_status", "no"),)),
     "HTN04": CLINICIAN_DECIDES_NEED,
     "HTN05": CLINICIAN_DECIDES_NEED,
     "HTN06": CLINICIAN_DECIDES_NEED,
@@ -77,4 +81,5 @@ def check_criteria_cover(rules: Iterable[Rule]) -> None:
 def rule_input_fields(rule: Rule) -> list[str]:
     criteria = CRITERIA[rule.id]
     inputs = [INPUT_ALIASES.get(field, field) for field in rule.required_inputs]
-    return list(dict.fromkeys([*inputs, *criteria.on_record, *criteria.uncollected]))
+    risk = [name for name, _ in criteria.risk_required]
+    return list(dict.fromkeys([*inputs, *criteria.on_record, *criteria.uncollected, *risk]))

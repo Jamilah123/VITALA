@@ -10,6 +10,7 @@ import {
   ClinicAppointments,
   ClinicDoctors,
   ClinicHome,
+  ClinicPatientDetail,
   ClinicPatients,
   ClinicPatientSummary,
 } from "./screens/clinic";
@@ -73,6 +74,7 @@ export function App() {
                 <Route path="/clinic/appointments/:appointmentId" element={<ClinicAppointmentDetail />} />
                 <Route path="/clinic/appointments/:appointmentId/summary" element={<ClinicPatientSummary />} />
                 <Route path="/clinic/patients" element={<ClinicPatients />} />
+                <Route path="/clinic/patients/:linkId" element={<ClinicPatientDetail />} />
                 <Route path="/clinic/doctors" element={<ClinicDoctors />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

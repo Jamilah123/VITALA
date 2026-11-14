@@ -3,7 +3,8 @@ from datetime import date
 
 import pytest
 
-from app.catalogue import load_catalogue
+from tests.scope_helpers import full_scope_rule_set
+
 from app.history_mappings import (
     AMBIGUOUS_HISTORY_FIELDS,
     CLINICAL_INTERPRETATIONS,
@@ -15,7 +16,6 @@ from app.history_mappings import (
     mapped_rule_ids,
 )
 from app.models import ConditionStatus, DiabetesType, MedicationUse, Patient, RecordSource, ScreeningRecord
-from app.rules import DATA_DIR, load_rule_set
 from app.screening import preview_screening, summarize_screening
 
 TODAY = date(2026, 11, 4)
@@ -35,7 +35,8 @@ MEDICATIONS = ["metformin", "losartan", "hydrochlorothiazide", "atorvastatin"]
 
 @pytest.fixture(scope="module")
 def rule_set():
-    return load_rule_set(load_catalogue(DATA_DIR / "medications.json"))
+    # Engine mechanics are tested on every rule; the scope change has its own tests.
+    return full_scope_rule_set()
 
 
 @pytest.fixture(scope="module")

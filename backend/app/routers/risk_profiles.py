@@ -7,6 +7,14 @@ from app.routers.profiles import get_patient_or_404
 from app.schemas import RiskProfileCreate, RiskProfileRead, RiskProfileUpdate
 from app.validation import pregnancy_conflict, raise_if_invalid
 
+
+def _record_conflicts(session, patient_id: int, profile: dict) -> dict[str, str]:
+    # Imported here: medical_history imports risk_profile_read from this module.
+    from app.medical_history import load_history, negative_flag_errors
+
+    records = load_history(session, patient_id)
+    return negative_flag_errors(profile, records.conditions, len(records.allergies), len(records.genetic))
+
 router = APIRouter(prefix="/patients/{patient_id}/risk-profile", tags=["Risk factors"])
 
 
@@ -29,6 +37,7 @@ def read_risk_profile(patient_id: int, session: SessionDep) -> RiskProfileRead:
 def create_risk_profile(patient_id: int, body: RiskProfileCreate, session: SessionDep) -> RiskProfileRead:
     patient = get_patient_or_404(session, patient_id)
     raise_if_invalid(pregnancy_conflict(patient.sex, body.pregnancy_status, "pregnancy_status"))
+    raise_if_invalid(_record_conflicts(session, patient_id, body.model_dump()))
 
     profile = PatientRiskProfile(patient_id=patient_id, **body.model_dump())
     session.add(profile)
@@ -53,6 +62,7 @@ def update_risk_profile(patient_id: int, body: RiskProfileUpdate, session: Sessi
     changes = body.model_dump(exclude_unset=True)
     merged = profile.model_dump() | changes
     raise_if_invalid(pregnancy_conflict(patient.sex, merged["pregnancy_status"], "pregnancy_status"))
+    raise_if_invalid(_record_conflicts(session, patient_id, merged))
 
     profile.sqlmodel_update(changes)
     session.add(profile)

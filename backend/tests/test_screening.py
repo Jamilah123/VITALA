@@ -2,9 +2,11 @@ from datetime import date
 
 import pytest
 
+from tests.scope_helpers import full_scope_rule_set
+
 from app.catalogue import load_catalogue
 from app.models import ConditionStatus, DiabetesType, MedicationUse, Patient
-from app.rules import DATA_DIR, load_rule_set
+from app.rules import DATA_DIR
 from app.criteria import CRITERIA
 from app.screening import preview_screening
 
@@ -25,7 +27,8 @@ TYPE_2_DIABETES = {
 
 @pytest.fixture(scope="module")
 def rule_set():
-    return load_rule_set(load_catalogue(DATA_DIR / "medications.json"))
+    # Engine mechanics are tested on every rule; the scope change has its own tests.
+    return full_scope_rule_set()
 
 
 def use(medication_id, start_date=None):
@@ -269,12 +272,14 @@ def test_preview_uses_the_stored_profile_and_medications(client, patient):
     assert body["clinically_approved"] is False
     assert body["auto_schedule_enabled"] is False
     actions = {action["rule_id"]: action for action in body["actions"]}
-    assert len(actions) == len(CRITERIA)
+    # Since 2026-11-14 the nine rules for archived medications are kept but not evaluated.
+    archived = {f"MED{number:02d}" for number in range(6, 15)}
+    assert set(actions) == set(CRITERIA) - archived
     assert actions["DM05"]["status"] == "candidate"
     assert actions["DM06"]["status"] == "not_applicable"
     assert actions["HTN01"]["status"] == "needs_information"
     assert actions["MED01"]["status"] == "candidate"
-    assert actions["MED11"]["status"] == "not_triggered"
+    assert actions["MED03"]["status"] == "not_triggered"
     assert "schedule" not in actions["DM01"]
 
 

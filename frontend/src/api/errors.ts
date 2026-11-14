@@ -17,6 +17,7 @@ const MESSAGES = {
   server: "حدث خطأ في الخادم. يُرجى إعادة المحاولة بعد قليل.",
   not_found: "لم يُعثر على هذا السجل في الخادم.",
   conflict: "هذا السجل موجود مسبقاً. يمكن تعديل السجل الحالي بدلاً من إضافته.",
+  duplicateRecord: "هذه النتيجة مسجّلة مسبقاً بالقيم نفسها، فلم تُحفظ مرة ثانية.",
   validation: "يُرجى مراجعة الحقول المحددة ثم إعادة المحاولة.",
   unknownField: "قيمة غير صالحة.",
 } as const;
@@ -80,7 +81,10 @@ export function errorFromResponse(status: number, body: { detail?: unknown } | u
     return new ApiError("validation", MESSAGES.validation, parseFieldErrors(body?.detail));
   }
   if (status === 404) return new ApiError("not_found", MESSAGES.not_found);
-  if (status === 409) return new ApiError("conflict", MESSAGES.conflict);
+  if (status === 409) {
+    const duplicateRecord = typeof body?.detail === "string" && /identical record already exists/.test(body.detail);
+    return new ApiError("conflict", duplicateRecord ? MESSAGES.duplicateRecord : MESSAGES.conflict);
+  }
   // The dev proxy answers with a bodyless 5xx when the backend is down.
   if (status >= 500 && body === undefined) return new ApiError("network", MESSAGES.network);
   return new ApiError("server", MESSAGES.server);

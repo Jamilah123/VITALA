@@ -15,7 +15,11 @@
     "monitoring_rule_ids": [
       "MED01",
       "MED02"
-    ]
+    ],
+    "status": "active",
+    "demo_scope": "metformin",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "enalapril",
@@ -34,7 +38,11 @@
       "MED03",
       "MED04",
       "MED05"
-    ]
+    ],
+    "status": "active",
+    "demo_scope": "ace_inhibitor",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "lisinopril",
@@ -53,7 +61,11 @@
       "MED03",
       "MED04",
       "MED05"
-    ]
+    ],
+    "status": "active",
+    "demo_scope": "ace_inhibitor",
+    "archived_on": null,
+    "archive_reason_ar": null
   },
   {
     "id": "losartan",
@@ -72,7 +84,11 @@
       "MED03",
       "MED04",
       "MED05"
-    ]
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
   },
   {
     "id": "valsartan",
@@ -91,7 +107,11 @@
       "MED03",
       "MED04",
       "MED05"
-    ]
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
   },
   {
     "id": "hydrochlorothiazide",
@@ -110,7 +130,11 @@
       "MED03",
       "MED04",
       "MED06"
-    ]
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
   },
   {
     "id": "atorvastatin",
@@ -130,7 +154,11 @@
       "MED08",
       "MED09",
       "MED10"
-    ]
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
   },
   {
     "id": "rosuvastatin",
@@ -150,7 +178,11 @@
       "MED08",
       "MED09",
       "MED10"
-    ]
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
   },
   {
     "id": "warfarin",
@@ -169,7 +201,11 @@
       "MED11",
       "MED12",
       "MED13"
-    ]
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
   },
   {
     "id": "methotrexate",
@@ -186,6 +222,10 @@
     "brand_names": [],
     "monitoring_rule_ids": [
       "MED14"
-    ]
+    ],
+    "status": "archived",
+    "demo_scope": null,
+    "archived_on": "2026-11-14",
+    "archive_reason_ar": "خارج نطاق العرض التجريبي للأدوية (الميتفورمين ومثبطات الإنزيم المحول فقط) بقرار الفريق الطبي. يبقى في الكتالوج لقراءة السجلات السابقة، ولا تضاف له استخدامات جديدة."
   }
 ]

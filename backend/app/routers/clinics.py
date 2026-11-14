@@ -4,9 +4,13 @@ from fastapi import APIRouter, HTTPException, Request, status
 from sqlmodel import Session, select
 
 from app.database import SessionDep
+from app.medical_history import medical_history_read, patient_risk_context
+from app.routers.insurance import insurance_summary
+from app.virtual_care import VirtualCareNotConfigured
 from app.models import (
     Appointment,
     AppointmentStatus,
+    AppointmentType,
     BookingSource,
     Clinic,
     ClinicPatient,
@@ -14,20 +18,24 @@ from app.models import (
     MedicationUse,
     Patient,
     PatientRiskProfile,
+    RecordSource,
+    ScreeningRecord,
 )
 from app.routers.risk_profiles import risk_profile_read
-from app.routers.screening_records import list_records
+from app.routers.screening_records import create_record, list_records
 from app.schemas import (
     AppointmentCreate,
     AppointmentDetail,
     AppointmentRead,
     AppointmentStatusChange,
     AppointmentUpdate,
+    ClinicScreeningRecordCreate,
     ClinicPatientRead,
     ClinicRead,
     DoctorRead,
     PatientRead,
     PreAppointmentSummary,
+    ScreeningRecordRead,
     SummaryMedication,
 )
 from app.screening import summarize_screening
@@ -143,16 +151,40 @@ def read_pre_appointment_summary(clinic_id: int, appointment_id: int, request: R
                 dose_text=use.dose_text,
                 start_date=use.start_date,
                 last_dose_change_date=use.last_dose_change_date,
+                catalogue_status=entry.status if entry else None,
             )
         )
 
+    rule_set = request.app.state.rule_set
+    risk_profile = risk_profile_read(patient.id, session.get(PatientRiskProfile, patient.id))
+    risk = patient_risk_context(session, patient.id, rule_set)
     return PreAppointmentSummary(
         clinic=ClinicRead.model_validate(clinic, from_attributes=True),
         visit=detail,
-        risk_profile=risk_profile_read(patient.id, session.get(PatientRiskProfile, patient.id)),
+        risk_profile=risk_profile,
         medications=medications,
-        screening=summarize_screening(request.app.state.rule_set, patient, uses, list_records(session, patient.id), date.today()),
+        screening=summarize_screening(rule_set, patient, uses, list_records(session, patient.id), date.today(), risk=risk),
+        medical_history=medical_history_read(session, patient.id, rule_set, risk_profile),
+        insurance=insurance_summary(session, patient.id),
     )
+
+
+@router.get(
+    "/{clinic_id}/appointments/{appointment_id}/virtual-session",
+    responses={409: {"description": "The appointment is in person"}, 501: {"description": "Video visits are not implemented"}},
+    description="Extension point for in-app video visits. Not implemented: always 501 for virtual appointments.",
+)
+def read_virtual_session(clinic_id: int, appointment_id: int, request: Request, session: SessionDep) -> None:
+    appointment = clinic_appointment(session, clinic_id, appointment_id)
+    if appointment.appointment_type != AppointmentType.virtual:
+        raise HTTPException(status.HTTP_409_CONFLICT, detail={"code": "not_virtual", "message": "This appointment is in person."})
+    try:
+        request.app.state.virtual_care.create_session(appointment.id)
+    except VirtualCareNotConfigured:
+        raise HTTPException(
+            status.HTTP_501_NOT_IMPLEMENTED,
+            detail={"code": "virtual_care_not_implemented", "message": "In-app video visits are not available yet. Contact the clinic for the visit link."},
+        )
 
 
 def ownership_errors(session: Session, clinic_id: int, doctor_id: int | None = None, link_id: int | None = None) -> dict[str, str]:
@@ -238,3 +270,43 @@ def change_appointment_status(clinic_id: int, appointment_id: int, body: Appoint
     session.commit()
     session.refresh(appointment)
     return appointment
+
+
+def clinic_link_or_404(session: Session, clinic_id: int, link_id: int) -> tuple[ClinicPatient, Patient]:
+    get_clinic_or_404(session, clinic_id)
+    link = session.get(ClinicPatient, link_id)
+    # A link from another clinic reads as not found, so it reveals nothing.
+    if link is None or link.clinic_id != clinic_id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Patient {link_id} not found in clinic {clinic_id}")
+    return link, session.get(Patient, link.patient_id)
+
+
+@router.get("/{clinic_id}/patients/{link_id}", response_model=ClinicPatientRead)
+def read_clinic_patient(clinic_id: int, link_id: int, session: SessionDep) -> ClinicPatientRead:
+    return clinic_patient_read(*clinic_link_or_404(session, clinic_id, link_id))
+
+
+@router.get("/{clinic_id}/patients/{link_id}/screening-records", response_model=list[ScreeningRecordRead])
+def list_clinic_patient_records(clinic_id: int, link_id: int, session: SessionDep) -> list[ScreeningRecord]:
+    _, patient = clinic_link_or_404(session, clinic_id, link_id)
+    return list_records(session, patient.id)
+
+
+@router.post(
+    "/{clinic_id}/patients/{link_id}/screening-records",
+    response_model=ScreeningRecordRead,
+    status_code=status.HTTP_201_CREATED,
+    description=f"Records a result as clinician_entered for the linked patient. {DEMO_WRITE_NOTE}",
+)
+def add_clinic_patient_record(clinic_id: int, link_id: int, body: ClinicScreeningRecordCreate, session: SessionDep) -> ScreeningRecord:
+    _, patient = clinic_link_or_404(session, clinic_id, link_id)
+    fields = body.model_dump() | {"source": RecordSource.clinician_entered}
+    # An identical record is almost always a repeated submission. Records that differ
+    # in any field, including several on one day, are still allowed.
+    for existing in list_records(session, patient.id):
+        if all(getattr(existing, name) == value for name, value in fields.items()):
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                detail=f"An identical record already exists for this patient (record {existing.id})",
+            )
+    return create_record(session, patient, fields)

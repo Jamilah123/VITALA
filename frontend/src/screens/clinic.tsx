@@ -10,6 +10,8 @@ import type {
   ClinicPatient,
   Doctor,
   PreAppointmentSummary,
+  ScreeningRecord,
+  ScreeningTest,
   ScreeningTestSummary,
 } from "../api/types";
 import { AppointmentFormDialog, OutcomeDialog } from "../components/appointments";
@@ -18,6 +20,7 @@ import { IconTile, Pill, Screen, SectionHead } from "../components/layout";
 import {
   ClinicalReviewNotice,
   MissingList,
+  RecordForm,
   RecordList,
   RuleCard,
   TestStatusPill,
@@ -43,6 +46,7 @@ import {
   dateFact,
   diabetesTypeFact,
   measureFact,
+  recordLabel,
   screeningGroups,
   sexFact,
   smokingFact,
@@ -269,7 +273,7 @@ export function ClinicPatients() {
           {lists.patients.length === 0 && <p className="empty">لا يوجد مرضى مرتبطون بالعيادة.</p>}
           <div className="grid-2">
             {lists.patients.map((item) => (
-              <div key={item.id} className="card row-card">
+              <Link key={item.id} to={`/clinic/patients/${item.id}`} className="card row-card row-card--link">
                 <IconTile name="user" tone="plain" />
                 <div className="row-card__body">
                   <strong>{item.display_name_ar}</strong>
@@ -284,11 +288,123 @@ export function ClinicPatients() {
                   </span>
                   <span className="muted small">{conditionsSummary(item.patient)}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </>
       )}
+    </ClinicScreen>
+  );
+}
+
+function useLinkId(): number | null {
+  const id = Number(useParams().linkId);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+interface PatientPageData {
+  patient: ClinicPatient;
+  records: ScreeningRecord[];
+  tests: ScreeningTest[];
+  appointments: Appointment[];
+}
+
+export function ClinicPatientDetail() {
+  const linkId = useLinkId();
+  const toast = useToast();
+  const [adding, setAdding] = useState(false);
+  const state = useClinic<PatientPageData | null>(
+    async (clinic, signal) => {
+      if (linkId === null) return null;
+      const [patient, records, tests, appointments] = await Promise.all([
+        api.getClinicPatient(clinic.id, linkId, signal),
+        api.listClinicPatientRecords(clinic.id, linkId, signal),
+        api.listScreeningTests(signal),
+        api.listAppointments(clinic.id, signal),
+      ]);
+      return { patient, records, tests, appointments: appointments.filter((item) => item.clinic_patient_id === linkId) };
+    },
+    [linkId],
+  );
+  return (
+    <ClinicScreen title="ملف المريض في العيادة" back="/clinic/patients" state={state}>
+      {(clinic, data) => {
+        if (data === null) return <p className="empty">لم يُعثر على هذا المريض في العيادة.</p>;
+        const { patient, records, tests, appointments } = data;
+        const names = Object.fromEntries(tests.map((test) => [test.id, test.name_ar]));
+        return (
+          <div className="stack">
+            <section className="card stack-tight" aria-label="بيانات المريض">
+              <div className="spread">
+                <strong>{patient.display_name_ar}</strong>
+                {patient.file_number && (
+                  <bdi dir="ltr" className="code">
+                    {patient.file_number}
+                  </bdi>
+                )}
+              </div>
+              <span className="muted small">
+                {SEX_LABELS[patient.patient.sex]}
+                {patient.patient.date_of_birth ? ` · ${ageFrom(patient.patient.date_of_birth)} سنة` : " · العمر غير معروف"}
+              </span>
+              <span className="muted small">{conditionsSummary(patient.patient)}</span>
+            </section>
+
+            <div className="grid-2">
+              <section className="card stack" aria-label="سجل الفحوصات">
+                <SectionHead title="سجل الفحوصات" aside={<SourceBadge kind="live" />} />
+                <p className="muted small">نتائج مسجّلة كما أُدخلت، دون تفسير ودون تحقق سريري. غياب السجل لا يعني أن الفحص لم يُجرَ.</p>
+                <button type="button" className="btn btn--primary btn--block" onClick={() => setAdding(true)}>
+                  إضافة نتيجة فحص
+                </button>
+                {records.length === 0 ? (
+                  <p className="empty">لا توجد فحوصات مسجّلة لهذا المريض.</p>
+                ) : (
+                  <RecordList records={records.map((record) => ({ ...record, test_name: recordLabel(names[record.test_id] ?? record.test_id, record.test_name) }))} />
+                )}
+              </section>
+
+              <section className="card stack" aria-label="مواعيد المريض">
+                <SectionHead title="مواعيد المريض" />
+                {appointments.length === 0 ? (
+                  <p className="empty">لا توجد مواعيد لهذا المريض.</p>
+                ) : (
+                  <ul className="med-list">
+                    {appointments.map((appointment) => (
+                      <li key={appointment.id}>
+                        <Link to={`/clinic/appointments/${appointment.id}`} className="med med--link">
+                          <div className="med__body">
+                            <strong>
+                              {formatClinicDay(appointment.scheduled_at, clinic.time_zone)} ·{" "}
+                              <bdi dir="ltr">{formatClinicTime(appointment.scheduled_at, clinic.time_zone)}</bdi>
+                            </strong>
+                            {appointment.visit_reason_ar && <span className="muted small">{appointment.visit_reason_ar}</span>}
+                          </div>
+                          <Pill tone={APPOINTMENT_STATUS[appointment.status].tone}>{APPOINTMENT_STATUS[appointment.status].label}</Pill>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <p className="muted small">الملخص الطبي قبل الموعد متاح من صفحة كل موعد.</p>
+              </section>
+            </div>
+
+            {adding && (
+              <RecordForm
+                target={{ kind: "clinic", clinicId: clinic.id, linkId: patient.id, tests }}
+                birthDate={patient.patient.date_of_birth}
+                onClose={() => setAdding(false)}
+                onSaved={() => {
+                  setAdding(false);
+                  state.reload();
+                  toast("حُفظت نتيجة الفحص.");
+                }}
+              />
+            )}
+          </div>
+        );
+      }}
     </ClinicScreen>
   );
 }
@@ -400,6 +516,9 @@ export function ClinicAppointmentDetail() {
             <VisitCard clinic={clinic} visit={data.visit} />
             <Link to={`/clinic/appointments/${appointment.id}/summary`} className="btn btn--primary btn--block">
               عرض الملخص الطبي
+            </Link>
+            <Link to={`/clinic/patients/${appointment.clinic_patient_id}`} className="btn btn--outline btn--block">
+              ملف المريض وسجل الفحوصات
             </Link>
             {canEditAppointment(appointment) ? (
               <section className="card stack-tight" aria-label="إدارة الموعد">
@@ -634,7 +753,7 @@ function SummaryBody({ clinic, summary }: { clinic: Clinic; summary: PreAppointm
         {records.length === 0 ? (
           <p className="empty">لا توجد فحوصات مسجّلة.</p>
         ) : (
-          <RecordList records={records.map((record) => ({ ...record, test_name: `${record.test_name_ar} · ${record.test_name}` }))} />
+          <RecordList records={records.map((record) => ({ ...record, test_name: recordLabel(record.test_name_ar, record.test_name) }))} />
         )}
       </SummarySection>
     </div>

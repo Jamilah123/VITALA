@@ -23,3 +23,32 @@ htmlcov/
 .vscode/
 Thumbs.db
 .DS_Store
+
+# Automatic pre-migration database backups
+backend/db_backups/
+
+# Secrets
+secrets/
+*.pem
+*.key
+
+# Additional environments, caches and build output
+venv/
+env/
+node_modules/
+dist/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Logs
+logs/
+*.log
+
+# IDE folders
+.idea/
+*.swp
+
+# Local assistant tooling
+.claude/
+CLAUDE.md

@@ -42,6 +42,8 @@ export interface CatalogueMedication {
   name_ar: string;
   drug_class: string;
   brand_names: string[];
+  /** "archived": outside the metformin + ACE inhibitor scope; kept so recorded uses keep their names. */
+  status?: "active" | "archived";
 }
 
 export type SmokingStatus = "current" | "former" | "never" | "unknown";
@@ -158,7 +160,7 @@ export interface Health {
 
 export type RuleStatus = "candidate" | "needs_information" | "not_applicable" | "not_triggered";
 export type RecordSource = "patient_reported" | "lab_report" | "clinician_entered" | "device";
-export type MissingReason = "unknown" | "not_collected";
+export type MissingReason = "unknown" | "not_collected" | "recorded_pending_review";
 
 export interface MissingInput {
   field: string;
@@ -221,6 +223,9 @@ export interface ScreeningRecordCreate {
   source: RecordSource;
   notes: string | null;
 }
+
+/** A clinic-entered result: the server sets source to clinician_entered and the patient from the link. */
+export type ClinicScreeningRecordCreate = Omit<ScreeningRecordCreate, "source">;
 
 export interface ScreeningTest {
   id: string;

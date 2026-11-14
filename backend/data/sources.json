@@ -8,7 +8,8 @@
     "version": "تعديل المحتوى: 13 صفر 1445 هـ",
     "verified_on": "2026-11-01",
     "locator": "الفحوصات الدورية لمرضى السكري",
-    "limitation_ar": "تاريخ تحديث تذييل الموقع ليس تاريخ تحديث التوصية الطبية. توقيت العين يختلف عن مصادر أخرى."
+    "limitation_ar": "تاريخ تحديث تذييل الموقع ليس تاريخ تحديث التوصية الطبية. توقيت العين يختلف عن مصادر أخرى.",
+    "licence": null
   },
   {
     "id": "S02",
@@ -19,7 +20,8 @@
     "version": "First Edition 2021",
     "verified_on": "2026-11-01",
     "locator": "PDF pp. 53, 80–84",
-    "limitation_ar": "منشور لدى الوزارة؛ الجهة المصدرة هي المركز الوطني للسكري بالمجلس الصحي السعودي. لم يثبت أنه أحدث إصدار."
+    "limitation_ar": "منشور لدى الوزارة؛ الجهة المصدرة هي المركز الوطني للسكري بالمجلس الصحي السعودي. لم يثبت أنه أحدث إصدار.",
+    "licence": null
   },
   {
     "id": "S03",
@@ -30,7 +32,8 @@
     "version": "ينص الملف على أن النسخة الأولى أُنشئت عام 2020",
     "verified_on": "2026-11-01",
     "locator": "PDF pp. 4, 26–27",
-    "limitation_ar": "السياق عيادات السكري؛ لا تعمم قواعده الدوائية على كل المستخدمين دون اعتماد. ذكر تحديث سنوي لا يثبت أن الملف محدّث سنويًا."
+    "limitation_ar": "السياق عيادات السكري؛ لا تعمم قواعده الدوائية على كل المستخدمين دون اعتماد. ذكر تحديث سنوي لا يثبت أن الملف محدّث سنويًا.",
+    "licence": null
   },
   {
     "id": "S04",
@@ -41,7 +44,8 @@
     "version": "Third Edition, 2013",
     "verified_on": "2026-11-01",
     "locator": "PDF pp. 5, 16, 35–36, 52, 55–56, 69",
-    "limitation_ar": "قديم. توقيتات الضغط ومراقبة الأدوية المستخرجة منه تحتاج مراجعة إصدار أحدث قبل تفعيل الجدولة."
+    "limitation_ar": "قديم. توقيتات الضغط ومراقبة الأدوية المستخرجة منه تحتاج مراجعة إصدار أحدث قبل تفعيل الجدولة.",
+    "licence": null
   },
   {
     "id": "S05",
@@ -52,7 +56,8 @@
     "version": "تاريخ المحتوى الظاهر: 14/05/2026",
     "verified_on": "2026-11-01",
     "locator": "تعليمات قياس ضغط الدم والمضاعفات",
-    "limitation_ar": "تثقيف المريض؛ لا يوفر وحده جدولًا كاملًا للتحاليل الدورية."
+    "limitation_ar": "تثقيف المريض؛ لا يوفر وحده جدولًا كاملًا للتحاليل الدورية.",
+    "licence": null
   },
   {
     "id": "S06",
@@ -63,7 +68,8 @@
     "version": null,
     "verified_on": "2026-11-01",
     "locator": "الأعراض؛ تأثير السكري على الكلى",
-    "limitation_ar": "يستخدم للشرح؛ لا يستنتج منه موعد فحص غير منصوص عليه."
+    "limitation_ar": "يستخدم للشرح؛ لا يستنتج منه موعد فحص غير منصوص عليه.",
+    "licence": null
   },
   {
     "id": "S07",
@@ -74,7 +80,8 @@
     "version": "تعديل المحتوى: 15 محرم 1447 هـ",
     "verified_on": "2026-11-01",
     "locator": "إرشادات فحص العين لمرض السكري؛ الأعراض",
-    "limitation_ar": "ينص على متابعة سنوية؛ توجد صيغ مختلفة للتكرار في S01 وS02. الحمل مسار خاص."
+    "limitation_ar": "ينص على متابعة سنوية؛ توجد صيغ مختلفة للتكرار في S01 وS02. الحمل مسار خاص.",
+    "licence": null
   },
   {
     "id": "S08",
@@ -85,7 +92,8 @@
     "version": null,
     "verified_on": "2026-11-01",
     "locator": "PDF p. 6, Table (2) and footnotes",
-    "limitation_ar": "توقيت INR يعتمد على الاستقرار والنتائج وتغييرات العلاج؛ فاصل 12 أسبوعًا ليس قاعدة لكل مستخدم للوارفارين."
+    "limitation_ar": "توقيت INR يعتمد على الاستقرار والنتائج وتغييرات العلاج؛ فاصل 12 أسبوعًا ليس قاعدة لكل مستخدم للوارفارين.",
+    "licence": null
   },
   {
     "id": "S09",
@@ -96,6 +104,43 @@
     "version": null,
     "verified_on": "2026-11-01",
     "locator": "PDF p. 15, csDMARD monitoring table",
-    "limitation_ar": "قاعدة مراقبة الميثوتريكسات هنا في سياق روماتويد البالغين؛ لا تعمم على استخدامه في الأورام أو بقية الاستطبابات."
+    "limitation_ar": "قاعدة مراقبة الميثوتريكسات هنا في سياق روماتويد البالغين؛ لا تعمم على استخدامه في الأورام أو بقية الاستطبابات.",
+    "licence": null
+  },
+  {
+    "id": "S10",
+    "title": "Metformin (StatPearls)",
+    "url": "https://www.ncbi.nlm.nih.gov/books/NBK518983/",
+    "issuer": "StatPearls Publishing (Corcoran C, Jacobs TF)",
+    "host": "NCBI Bookshelf, US National Library of Medicine",
+    "version": "Last update: 2023-08-17 (Bookshelf ID NBK518983)",
+    "verified_on": "2026-11-14",
+    "locator": "Google.pdf pp. 3–5: Specific Patient Populations, Adverse Effects, Contraindications, Monitoring",
+    "licence": "CC BY-NC-ND 4.0",
+    "limitation_ar": "مرجع أمريكي ثانوي غير سعودي وأقدم من مصادر 2026. فيه تناقضات داخلية (عمر النصف 20 ساعة مقابل 6.2 ساعة، ووحدة GFR ناقصة، وعبارة intra-articularly بدل intra-arterial). الرخصة غير تجارية وتمنع الاشتقاق. تاريخ التحقق هو تاريخ مراجعة الملف المرفق لا تاريخ مراجعة سريرية."
+  },
+  {
+    "id": "S11",
+    "title": "ACE Inhibitors (StatPearls)",
+    "url": "https://www.ncbi.nlm.nih.gov/books/NBK430896/",
+    "issuer": "StatPearls Publishing (Singh B, Cusick AS, Goyal A, Patel P)",
+    "host": "NCBI Bookshelf, US National Library of Medicine",
+    "version": "Last update: 2025-05-04 (Bookshelf ID NBK430896)",
+    "verified_on": "2026-11-14",
+    "locator": "goog1.pdf pp. 5–7: Adverse Effects, Contraindications, Monitoring; p. 14 dosing table",
+    "licence": "CC BY-NC-ND 4.0",
+    "limitation_ar": "مرجع أمريكي ثانوي. قسم المراقبة لا يحدد فترات زمنية، فلا يكفي لجدولة. فيه تناقضات (الحد الأعلى للكابتوبريل 450 ملغ في النص مقابل 150 ملغ في الجدول، وذكر إنالابريل وريديًا بدل إنالابريلات). الرخصة غير تجارية وتمنع الاشتقاق."
+  },
+  {
+    "id": "S12",
+    "title": "Saudi Medication Clinical Knowledge Base: Metformin and ACE inhibitors",
+    "url": "internal:Metformin_and_ACE_Inhibitors_Referenced.pdf",
+    "issuer": "فريق VITALA (تجميع ثانوي داخلي)",
+    "host": "VITALA internal document",
+    "version": "Reviewed 2026-11-11, records KSA-MED-0001 to KSA-MED-0183",
+    "verified_on": "2026-11-14",
+    "locator": "Record identifiers KSA-MED-####; source registry S001–S084",
+    "licence": "project-internal; underlying sources have mixed licences",
+    "limitation_ar": "تجميع ثانوي لم يُعتمد سريريًا، وينص بنفسه على ضرورة التحقق السريري قبل الاستخدام مع المرضى. لم يُتحقق من المصادر الأولية. سبعة سجلات بلا مصدر، والسجل S060 مفقود من قائمة المصادر. فترات المراقبة مأخوذة غالبًا من مصادر بريطانية وأمريكية وتتعارض فيما بينها."
   }
 ]

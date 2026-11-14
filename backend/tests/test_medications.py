@@ -103,7 +103,7 @@ def test_list_is_empty_for_a_patient_without_medications(client, uses_url):
 
 
 def test_add_with_only_required_fields_leaves_dates_unknown(client, uses_url):
-    body = client.post(uses_url, json={"medication_id": "losartan", "dose_text": "50 mg"}).json()
+    body = client.post(uses_url, json={"medication_id": "lisinopril", "dose_text": "50 mg"}).json()
 
     assert body["start_date"] is None
     assert body["last_dose_change_date"] is None

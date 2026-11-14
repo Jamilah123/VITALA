@@ -1,0 +1,43 @@
+{
+  "manifest_name": "candidate_drug_manifest",
+  "status": "CANDIDATE_NOT_USER_VERIFIED",
+  "why_this_file_exists": "VITALA_3_drug_source_manifest.json was referenced in the brief but was not found among the provided files. These set IDs were looked up by the implementing engineer via the openFDA drug label API on 2026-11-10. Notebook 02 uses VITALA_3_drug_source_manifest.json automatically if you place it in data/raw/medications/; until then it uses this candidate file and marks every medication record manifest_status=CANDIDATE_NOT_USER_VERIFIED.",
+  "selection_rules": [
+    "Single-ingredient, oral, human prescription label",
+    "Prefer the reference brand (NDA) label when it is present in openFDA",
+    "If the brand label is not in openFDA, use an immediate-release tablet label from the original manufacturer (not a repackager)"
+  ],
+  "lookup_date": "2026-11-10",
+  "drugs": [
+    {
+      "drug": "metformin",
+      "set_id": "4ac6d01a-af26-44e7-ae2e-3618de0080aa",
+      "expected_active_ingredient": "METFORMIN HYDROCHLORIDE",
+      "expected_application_number": "ANDA077095",
+      "expected_spl_id": "61f56acf-2add-4ee0-ad61-9dc5334cfc6a",
+      "expected_version": "17",
+      "product": "Metformin Hydrochloride Tablets USP 500/850/1000 mg (immediate release), Aurobindo Pharma Limited",
+      "selection_note": "The reference brand GLUCOPHAGE (NDA020357) is not available in openFDA, so a manufacturer ANDA label for immediate-release tablets was selected. Extended-release and combination products were excluded."
+    },
+    {
+      "drug": "amlodipine",
+      "set_id": "7367289c-b0b0-466a-83e2-558e2985c29f",
+      "expected_active_ingredient": "AMLODIPINE BESYLATE",
+      "expected_application_number": "NDA019787",
+      "expected_spl_id": "643fa1a0-53d9-4ce8-bc04-44285b006997",
+      "expected_version": "10",
+      "product": "Norvasc (amlodipine besylate) tablets, Viatris Specialty LLC",
+      "selection_note": "Reference brand NDA label, current holder Viatris. An older Pfizer Norvasc SPL (set abd6a2ca-..., 2019) also exists and was not used."
+    },
+    {
+      "drug": "atorvastatin",
+      "set_id": "a60cc18b-0631-4cf0-b021-9f52224ece65",
+      "expected_active_ingredient": "ATORVASTATIN CALCIUM",
+      "expected_application_number": "NDA020702",
+      "expected_spl_id": "dd011a82-7356-4b83-86c4-b21cd9138fc6",
+      "expected_version": "8",
+      "product": "Lipitor (atorvastatin calcium) tablets, Viatris Specialty LLC",
+      "selection_note": "Reference brand NDA label."
+    }
+  ]
+}

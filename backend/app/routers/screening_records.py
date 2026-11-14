@@ -9,7 +9,7 @@ from app.history_mappings import (
     changes_eligibility,
     mapped_rule_ids,
 )
-from app.models import ScreeningRecord
+from app.models import Patient, ScreeningRecord
 from app.routers.profiles import get_patient_or_404
 from app.schemas import (
     AmbiguousHistoryFieldRead,
@@ -40,6 +40,19 @@ def list_records(session: Session, patient_id: int) -> list[ScreeningRecord]:
         .order_by(ScreeningRecord.completed_on.desc(), ScreeningRecord.id.desc())
     )
     return list(session.exec(query).all())
+
+
+def create_record(session: Session, patient: Patient, fields: dict) -> ScreeningRecord:
+    """The one place a screening record is validated and created, for patient and clinic alike."""
+    if fields["test_id"] not in SCREENING_TESTS:
+        raise_if_invalid({"test_id": f"'{fields['test_id']}' is not a known screening test"})
+    raise_if_invalid(screening_record_errors(fields, patient.date_of_birth))
+
+    record = ScreeningRecord(patient_id=patient.id, **fields)
+    session.add(record)
+    session.commit()
+    session.refresh(record)
+    return record
 
 
 @router.get("/screening-tests", response_model=list[ScreeningTestRead], tags=["Screening history"])
@@ -84,16 +97,7 @@ def list_history_mappings(request: Request) -> HistoryMappingCatalogue:
     tags=["Screening history"],
 )
 def add_screening_record(patient_id: int, body: ScreeningRecordCreate, session: SessionDep) -> ScreeningRecord:
-    patient = get_patient_or_404(session, patient_id)
-    if body.test_id not in SCREENING_TESTS:
-        raise_if_invalid({"test_id": f"'{body.test_id}' is not a known screening test"})
-    raise_if_invalid(screening_record_errors(body.model_dump(), patient.date_of_birth))
-
-    record = ScreeningRecord(patient_id=patient_id, **body.model_dump())
-    session.add(record)
-    session.commit()
-    session.refresh(record)
-    return record
+    return create_record(session, get_patient_or_404(session, patient_id), body.model_dump())
 
 
 @router.get("/patients/{patient_id}/screening-records", response_model=list[ScreeningRecordRead], tags=["Screening history"])

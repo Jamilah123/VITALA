@@ -74,3 +74,8 @@ export function screeningGroups(summary: PreAppointmentSummary) {
     otherCount: tests.filter((test) => testGroup(test) === "other").length,
   };
 }
+
+/** The catalogue name, plus the name on the report only when it differs. */
+export function recordLabel(catalogueName: string, reportName: string): string {
+  return reportName.trim() === catalogueName ? catalogueName : `${catalogueName} · ${reportName}`;
+}

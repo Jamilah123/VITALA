@@ -4,6 +4,7 @@ from fastapi import APIRouter, Request
 from sqlmodel import select
 
 from app.database import SessionDep
+from app.medical_history import patient_risk_context
 from app.models import MedicationUse
 from app.routers.profiles import get_patient_or_404
 from app.routers.screening_records import list_records
@@ -23,7 +24,9 @@ def screening_preview(patient_id: int, request: Request, session: SessionDep) ->
     patient = get_patient_or_404(session, patient_id)
     uses = session.exec(select(MedicationUse).where(MedicationUse.patient_id == patient_id)).all()
     records = list_records(session, patient_id)
-    return preview_screening(request.app.state.rule_set, patient, uses, date.today(), records)
+    rule_set = request.app.state.rule_set
+    risk = patient_risk_context(session, patient_id, rule_set)
+    return preview_screening(rule_set, patient, uses, date.today(), records, risk=risk)
 
 
 @router.get(
@@ -39,4 +42,6 @@ def screening_summary(patient_id: int, request: Request, session: SessionDep) ->
     patient = get_patient_or_404(session, patient_id)
     uses = session.exec(select(MedicationUse).where(MedicationUse.patient_id == patient_id)).all()
     records = list_records(session, patient_id)
-    return summarize_screening(request.app.state.rule_set, patient, uses, records, date.today())
+    rule_set = request.app.state.rule_set
+    risk = patient_risk_context(session, patient_id, rule_set)
+    return summarize_screening(rule_set, patient, uses, records, date.today(), risk=risk)
